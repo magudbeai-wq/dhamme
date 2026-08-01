@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1138889214730390639",
+    "project_id": "dhamme-realestate",
+    "storage_bucket": "dhamme-realestate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1138889214730390639:android:dhammeapp",
+        "android_client_info": {
+          "package_name": "com.dhamme.realestate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHAMME_REAL_ESTATE_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
