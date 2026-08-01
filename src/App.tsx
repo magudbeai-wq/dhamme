@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { ScreenName, PropertyListing, FilterState } from './types';
+import type { ScreenName, PropertyListing, FilterState, UserProfile } from './types';
 import { INITIAL_PROPERTIES } from './data/propertiesData';
 import { SplashScreen } from './components/SplashScreen';
 import { Onboarding } from './components/Onboarding';
@@ -19,12 +19,15 @@ export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
   const [properties, setProperties] = useState<PropertyListing[]>(INITIAL_PROPERTIES);
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
-  const [favorites, setFavorites] = useState<string[]>(['prop-1', 'prop-3']);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [userListings, setUserListings] = useState<PropertyListing[]>([]);
   
+  // Real Logged-in User Profile State (Starts null so users must register/login)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authScreen, setAuthScreen] = useState<'login' | 'signup' | 'otp' | 'forgot_password'>('login');
+  const [authScreen, setAuthScreen] = useState<'login' | 'signup' | 'forgot_password'>('signup');
   const [showAIModal, setShowAIModal] = useState(false);
 
   const [activeFilter, setActiveFilter] = useState<FilterState>({
@@ -46,10 +49,27 @@ export function App() {
   };
 
   const handleAddProperty = (newProp: PropertyListing) => {
-    setProperties((prev) => [newProp, ...prev]);
-    setUserListings((prev) => [newProp, ...prev]);
-    setSelectedProperty(newProp);
+    const updatedProp: PropertyListing = {
+      ...newProp,
+      agentName: userProfile?.fullName || 'Landlord in Jigjiga',
+      agentPhone: userProfile?.phone || '+251 91 000 0000',
+      agentAvatar: userProfile?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      ownerEmail: userProfile?.email
+    };
+
+    setProperties((prev) => [updatedProp, ...prev]);
+    setUserListings((prev) => [updatedProp, ...prev]);
+    setSelectedProperty(updatedProp);
     setCurrentScreen('details');
+  };
+
+  const handleNavigateScreen = (screen: ScreenName) => {
+    if ((screen.startsWith('post_step') || screen === 'my_listings') && !userProfile) {
+      setAuthScreen('signup');
+      setShowAuthModal(true);
+      return;
+    }
+    setCurrentScreen(screen);
   };
 
   return (
@@ -68,7 +88,7 @@ export function App() {
       {/* Main Layout Header */}
       {currentScreen !== 'splash' && currentScreen !== 'onboarding' && (
         <HeaderNav 
-          onNavigate={(s) => setCurrentScreen(s)} 
+          onNavigate={handleNavigateScreen} 
           onOpenAI={() => setShowAIModal(true)}
         />
       )}
@@ -132,16 +152,22 @@ export function App() {
                 setSelectedProperty(prop);
                 setCurrentScreen('details');
               }}
-              onStartNewListing={() => setCurrentScreen('post_step1')}
+              onStartNewListing={() => handleNavigateScreen('post_step1')}
             />
           )}
 
           {/* PROFILE */}
           {currentScreen === 'profile' && (
             <Profile
+              userProfile={userProfile}
+              onUpdateProfile={(updated) => setUserProfile(updated)}
               onOpenAuth={() => {
                 setAuthScreen('login');
                 setShowAuthModal(true);
+              }}
+              onLogout={() => {
+                setUserProfile(null);
+                setCurrentScreen('home');
               }}
               onOpenAI={() => setShowAIModal(true)}
             />
@@ -154,7 +180,7 @@ export function App() {
       {currentScreen !== 'splash' && currentScreen !== 'onboarding' && (
         <BottomNav
           currentScreen={currentScreen}
-          onNavigate={(s) => setCurrentScreen(s)}
+          onNavigate={handleNavigateScreen}
         />
       )}
 
@@ -171,7 +197,10 @@ export function App() {
       {showAuthModal && (
         <AuthModal
           initialScreen={authScreen}
-          onSuccess={() => alert('Waad soo gashay (Login successful)!')}
+          onSuccess={(profile) => {
+            setUserProfile(profile);
+            setShowAuthModal(false);
+          }}
           onClose={() => setShowAuthModal(false)}
         />
       )}

@@ -28,21 +28,31 @@ export type PropertyCategory =
   | 'Villa' 
   | 'Apartment';
 
+export interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  avatarUrl: string;
+  bio?: string;
+  isVerified: boolean;
+}
+
 export interface PropertyListing {
   id: string;
   title: string;
   priceEtb: number;
-  priceLocalFormatted: string; // e.g. "25,000 ETB/mo" or "1,800,000 ETB"
+  priceLocalFormatted: string; // e.g. "25,000 ETB/mo"
   mode: ListingMode;
   category: PropertyCategory;
-  city: string; // Jigjiga, Somali Region, Ethiopia
-  kebele: string; // Kebele 01, Kebele 02, Kebele 03, Kebele 06, Kebele 08, Garab'ase, Taiwan Area
+  city: string; // Jigjiga
+  kebele: string; // Kebele 01 - Kebele 10, Garab'ase, Taiwan Area
   beds: number;
   baths: number;
   areaSqm?: number;
-  water: boolean | string; // 'Yes' | '24h'
-  electricity: boolean | string; // '24h' | 'Solar'
-  pool: boolean | string; // 'Private' | 'Shared'
+  water: boolean | string;
+  electricity: boolean | string;
+  pool: boolean | string;
   isFeatured?: boolean;
   images: string[];
   description: string;
@@ -50,6 +60,7 @@ export interface PropertyListing {
   agentPhone: string;
   agentAvatar: string;
   postedDate: string;
+  ownerEmail?: string;
 }
 
 export interface FilterState {
