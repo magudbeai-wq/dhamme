@@ -1,0 +1,8 @@
+{
+  "appId": "com.dhamme.realestate",
+  "appName": "DHAMME Real Estate",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
