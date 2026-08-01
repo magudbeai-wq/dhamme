@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+:root {
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+  /* Stitch Design Token Colors */
+  --color-brand-sand: #F2E8DC;
+  --color-primary: #005145;
+  --color-primary-container: #0f6b5c;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #99e8d5;
+  --color-secondary: #645d54;
+  --color-secondary-container: #ebe1d5;
+  --color-tertiary: #7b2f10;
+  --color-on-tertiary: #ffffff;
+  --color-surface: #fcf9f8;
+  --color-surface-container: #f0eded;
+  --color-surface-container-high: #eae7e7;
+  --color-surface-container-highest: #e5e2e1;
+  --color-on-surface: #1b1b1c;
+  --color-on-surface-variant: #3f4946;
+  --color-outline: #6f7976;
+  --color-outline-variant: #bec9c5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-brand-sand);
+  color: var(--color-on-surface);
+  font-family: var(--font-inter);
+  -webkit-tap-highlight-color: transparent;
+  min-height: 100vh;
+  line-height: 1.4;
+}
+
+.font-poppins {
+  font-family: var(--font-poppins);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.material-symbols-outlined.fill-1 {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.listing-card-shadow {
+  box-shadow: 0px 4px 16px rgba(30, 30, 30, 0.08);
+}
+
+.nav-shadow {
+  box-shadow: 0px -6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}

@@ -1,0 +1,16 @@
+{
+  "short_name": "DHAMME",
+  "name": "DHAMME - Real Estate Jigjiga",
+  "icons": [
+    {
+      "src": "https://www.gstatic.com/labs-code/stitch/favicon-32x32.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#005145",
+  "background_color": "#F2E8DC",
+  "orientation": "portrait"
+}
