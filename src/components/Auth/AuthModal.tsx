@@ -1,39 +1,52 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../../types';
 
+interface RegisteredAccount extends UserProfile {
+  passwordHash: string;
+}
+
 interface AuthModalProps {
   initialScreen: 'login' | 'signup' | 'forgot_password';
-  onSuccess: (profile: UserProfile) => void;
+  registeredAccounts: RegisteredAccount[];
+  onRegisterAccount: (account: RegisteredAccount) => void;
+  onLoginSuccess: (profile: UserProfile) => void;
   onClose: () => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   initialScreen,
-  onSuccess,
+  registeredAccounts,
+  onRegisterAccount,
+  onLoginSuccess,
   onClose
 }) => {
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
   
-  // Registration & Login Form State
+  // Form State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('+251 9');
+  const [phone, setPhone] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const validateEmail = (emailStr: string) => {
     return /\S+@\S+\.\S+/.test(emailStr);
   };
 
+  // SIGN UP HANDLER - Strict account creation
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
+    setSuccessMsg('');
+
+    const trimmedEmail = email.trim().toLowerCase();
 
     if (!fullName.trim()) {
       setErrorMsg('Fadlan qor magacaaga buuxa.');
       return;
     }
-    if (!validateEmail(email)) {
+    if (!validateEmail(trimmedEmail)) {
       setErrorMsg('Fadlan qor Gmail ama Email sax ah (e.g. magac@gmail.com).');
       return;
     }
@@ -41,55 +54,74 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrorMsg('Password-ku waa inuu ka badan yahay 6 xaraf/nambar.');
       return;
     }
-    if (!phone.trim() || phone.length < 8) {
-      setErrorMsg('Fadlan qor nambarkaaga telefoonka oo sax ah.');
+    if (!phone.trim() || phone.length < 6) {
+      setErrorMsg('Fadlan qor nambarkaaga telefoonka.');
       return;
     }
 
-    const newProfile: UserProfile = {
+    // Check if account already exists
+    const existing = registeredAccounts.find((acc) => acc.email === trimmedEmail);
+    if (existing) {
+      setErrorMsg('Gmail-kan horay ayaa loo isticmaalay. Fadlan badal ama soo gal (Login).');
+      return;
+    }
+
+    const newAccount: RegisteredAccount = {
       id: `user-${Date.now()}`,
-      email: email.toLowerCase(),
+      email: trimmedEmail,
       fullName: fullName.trim(),
       phone: phone.trim(),
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-      bio: 'User in Jigjiga, Somali Region, Ethiopia',
-      isVerified: true
+      avatarUrl: '', // No fake avatar - user uploads their own!
+      bio: '',
+      isVerified: true,
+      passwordHash: password
     };
 
-    onSuccess(newProfile);
-    onClose();
+    onRegisterAccount(newAccount);
+    setSuccessMsg('Koontadaada waa la sameeyay! Hada waad soo geli kartaa.');
+    setScreen('login');
+    setPassword('');
   };
 
+  // LOGIN HANDLER - Strict account verification
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
+    setSuccessMsg('');
 
-    if (!validateEmail(email)) {
+    const trimmedEmail = email.trim().toLowerCase();
+
+    if (!validateEmail(trimmedEmail)) {
       setErrorMsg('Fadlan qor Gmail ama Email sax ah.');
       return;
     }
-    if (!password || password.length < 6) {
-      setErrorMsg('Password-ku waa inuu ka badan yahay 6 xaraf.');
+    if (!password) {
+      setErrorMsg('Fadlan qor password-kaaga.');
       return;
     }
 
-    const loginProfile: UserProfile = {
-      id: `user-${Date.now()}`,
-      email: email.toLowerCase(),
-      fullName: email.split('@')[0].toUpperCase(),
-      phone: phone.trim() || '+251 91 000 0000',
-      avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
-      bio: 'Verified User',
-      isVerified: true
-    };
+    // Search strictly in registered accounts list
+    const account = registeredAccounts.find((acc) => acc.email === trimmedEmail);
 
-    onSuccess(loginProfile);
+    if (!account) {
+      setErrorMsg('Gmail-kan ma diwaan gashana. Fadlan marka hore sameey koonto (Sign Up).');
+      return;
+    }
+
+    if (account.passwordHash !== password) {
+      setErrorMsg('Password-ka aad gelisay waa ku khaldan yahay.');
+      return;
+    }
+
+    // Login successful
+    const { passwordHash, ...userProfile } = account;
+    onLoginSuccess(userProfile);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-[#fcf9f8] max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-5 text-center relative border border-[#bec9c5]/40">
+      <div className="bg-[#fcf9f8] max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-4 text-center relative border border-[#bec9c5]/40">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-[#645d54] hover:text-[#1b1b1c]"
@@ -108,15 +140,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
+        {successMsg && (
+          <div className="p-3 bg-[#99e8d5]/40 text-[#00201a] rounded-xl text-xs font-bold">
+            {successMsg}
+          </div>
+        )}
+
         {/* LOGIN SCREEN */}
         {screen === 'login' && (
           <form onSubmit={handleLogin} className="space-y-3.5 text-left">
             <div className="text-center">
               <h3 className="font-poppins font-bold text-xl text-[#1b1b1c]">
-                Kusoo Dhawaw DHAMME
+                Soo Gal (Login)
               </h3>
               <p className="text-xs text-[#3f4946]">
-                Geli Gmail-kaaga iyo Password-ka si aad usoo gasho.
+                Geli Gmail-ka aad ku sameysatay koontada iyo Password-ka.
               </p>
             </div>
 
@@ -127,7 +165,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <input
                 type="email"
                 required
-                placeholder="magacaga@gmail.com"
+                placeholder="magacaaga@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
@@ -159,7 +197,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               Ma lehid koonto?{' '}
               <button 
                 type="button"
-                onClick={() => setScreen('signup')} 
+                onClick={() => {
+                  setErrorMsg('');
+                  setScreen('signup');
+                }} 
                 className="text-[#005145] font-bold underline"
               >
                 Sameey Koonto (Sign Up)
@@ -170,13 +211,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* SIGN UP SCREEN */}
         {screen === 'signup' && (
-          <form onSubmit={handleSignUp} className="space-y-3.5 text-left">
+          <form onSubmit={handleSignUp} className="space-y-3 text-left">
             <div className="text-center">
               <h3 className="font-poppins font-bold text-xl text-[#1b1b1c]">
                 Sameey Koonto Cusub
               </h3>
               <p className="text-xs text-[#3f4946]">
-                Ku kireeyso ama ku iibi guryaha Jigjiga.
+                Geli macluumaadkaaga saxda ah si aad koonto u abuurto.
               </p>
             </div>
 
@@ -187,7 +228,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <input
                 type="text"
                 required
-                placeholder="Magaca Iyo Aabaha"
+                placeholder="Qor magacaaga Buuxa"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
@@ -201,7 +242,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <input
                 type="email"
                 required
-                placeholder="magacaga@gmail.com"
+                placeholder="magacaaga@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
@@ -240,14 +281,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               type="submit"
               className="w-full py-3.5 rounded-2xl bg-[#005145] hover:bg-[#0f6b5c] text-white font-poppins font-bold text-xs uppercase shadow-md transition"
             >
-              Abuur Koonto (Register Account)
+              Abuur Koonto (Sign Up)
             </button>
 
             <div className="text-center text-xs text-[#645d54] pt-2">
               Hadaad leedahay koonto?{' '}
               <button 
                 type="button"
-                onClick={() => setScreen('login')} 
+                onClick={() => {
+                  setErrorMsg('');
+                  setScreen('login');
+                }} 
                 className="text-[#005145] font-bold underline"
               >
                 Soo Gal (Login)

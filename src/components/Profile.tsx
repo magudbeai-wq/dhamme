@@ -19,11 +19,8 @@ export const Profile: React.FC<ProfileProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(userProfile?.fullName || '');
   const [phone, setPhone] = useState(userProfile?.phone || '');
-  const [bio, setBio] = useState(userProfile?.bio || 'User in Jigjiga, Somali Region, Ethiopia');
-  const [avatarUrl, setAvatarUrl] = useState(
-    userProfile?.avatarUrl ||
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
-  );
+  const [bio, setBio] = useState(userProfile?.bio || '');
+  const [avatarUrl, setAvatarUrl] = useState(userProfile?.avatarUrl || '');
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,13 +60,13 @@ export const Profile: React.FC<ProfileProps> = ({
             Weli Ma Soo Galin (Not Logged In)
           </h2>
           <p className="text-xs text-[#3f4946] max-w-xs mx-auto">
-            Fadlan ku sameey koonto Gmail ama ku soo gal si aad u maamusho profile-kaaga iyo guryahaaga Jigjiga.
+            Qof aan samaysan koonto ma soo gali karo. Fadlan kowaad ku sameey koonto Gmail ama ku soo gal.
           </p>
           <button
             onClick={onOpenAuth}
             className="px-8 py-3.5 rounded-2xl bg-[#005145] text-white font-poppins font-bold text-xs uppercase shadow-md hover:bg-[#0f6b5c]"
           >
-            Soo Gal / Sameey Koonto (Login / Sign Up)
+            Sameey Koonto / Soo Gal (Sign Up / Login)
           </button>
         </div>
       </main>
@@ -83,13 +80,21 @@ export const Profile: React.FC<ProfileProps> = ({
       <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-4 border border-[#bec9c5]/40">
         <div className="flex items-center space-x-4">
           
-          {/* Avatar with Upload overlay */}
+          {/* Custom Avatar or Upload Placeholder */}
           <div className="relative group shrink-0">
-            <img
-              src={avatarUrl}
-              alt={fullName}
-              className="w-20 h-20 rounded-full object-cover border-2 border-[#005145] shadow-md"
-            />
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={fullName}
+                className="w-20 h-20 rounded-full object-cover border-2 border-[#005145] shadow-md"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-[#f0eded] border-2 border-dashed border-[#005145] flex flex-col items-center justify-center text-[#005145]">
+                <span className="material-symbols-outlined text-[28px]">add_a_photo</span>
+                <span className="text-[9px] font-bold mt-0.5">Sawir Geli</span>
+              </div>
+            )}
+
             <label className="absolute inset-0 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
               <span className="material-symbols-outlined text-[20px]">photo_camera</span>
               <input
@@ -120,9 +125,11 @@ export const Profile: React.FC<ProfileProps> = ({
         </div>
 
         {/* Bio / Description */}
-        <p className="text-xs text-[#3f4946] italic pt-1 border-t border-[#bec9c5]/30">
-          "{bio}"
-        </p>
+        {bio && (
+          <p className="text-xs text-[#3f4946] italic pt-1 border-t border-[#bec9c5]/30">
+            "{bio}"
+          </p>
+        )}
 
         {/* Toggle Edit Form */}
         <button
@@ -138,7 +145,7 @@ export const Profile: React.FC<ProfileProps> = ({
           <form onSubmit={handleSave} className="pt-4 border-t border-[#bec9c5]/40 space-y-3 text-left">
             <div>
               <label className="block text-[11px] font-bold text-[#3f4946] uppercase mb-1">
-                Upload Sawir Cusub (Profile Photo):
+                Upload Sawirkaaga (Profile Photo):
               </label>
               <input
                 type="file"
@@ -178,6 +185,7 @@ export const Profile: React.FC<ProfileProps> = ({
               </label>
               <textarea
                 rows={2}
+                placeholder="Qor macluumaad ku saabsan adiga..."
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 className="w-full p-3 bg-[#f0eded] rounded-xl text-xs text-[#1b1b1c]"
@@ -194,7 +202,7 @@ export const Profile: React.FC<ProfileProps> = ({
         )}
       </div>
 
-      {/* Profile Settings Options */}
+      {/* Settings Options */}
       <div className="bg-[#fcf9f8] rounded-3xl listing-card-shadow overflow-hidden divide-y divide-[#bec9c5]/30 text-xs border border-[#bec9c5]/40">
         
         <div 

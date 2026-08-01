@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ScreenName, PropertyListing, FilterState, UserProfile } from './types';
 import { INITIAL_PROPERTIES } from './data/propertiesData';
 import { SplashScreen } from './components/SplashScreen';
@@ -15,15 +15,28 @@ import { Profile } from './components/Profile';
 import { AuthModal } from './components/Auth/AuthModal';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 
+interface RegisteredAccount extends UserProfile {
+  passwordHash: string;
+}
+
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
   const [properties, setProperties] = useState<PropertyListing[]>(INITIAL_PROPERTIES);
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [userListings, setUserListings] = useState<PropertyListing[]>([]);
-  
-  // Real Logged-in User Profile State (Starts null so users must register/login)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  // Registered accounts stored locally (no sample accounts - starts empty or from LocalStorage)
+  const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
+    const saved = localStorage.getItem('dhamme_registered_accounts');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Current logged in profile (starts null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
+    const saved = localStorage.getItem('dhamme_active_user');
+    return saved ? JSON.parse(saved) : null;
+  });
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -42,6 +55,20 @@ export function App() {
     powerRequired: false
   });
 
+  // Save registered accounts to LocalStorage
+  useEffect(() => {
+    localStorage.setItem('dhamme_registered_accounts', JSON.stringify(registeredAccounts));
+  }, [registeredAccounts]);
+
+  // Save active logged-in user to LocalStorage
+  useEffect(() => {
+    if (userProfile) {
+      localStorage.setItem('dhamme_active_user', JSON.stringify(userProfile));
+    } else {
+      localStorage.removeItem('dhamme_active_user');
+    }
+  }, [userProfile]);
+
   const handleToggleFavorite = (id: string) => {
     setFavorites((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -51,9 +78,9 @@ export function App() {
   const handleAddProperty = (newProp: PropertyListing) => {
     const updatedProp: PropertyListing = {
       ...newProp,
-      agentName: userProfile?.fullName || 'Landlord in Jigjiga',
+      agentName: userProfile?.fullName || 'Landlord',
       agentPhone: userProfile?.phone || '+251 91 000 0000',
-      agentAvatar: userProfile?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      agentAvatar: userProfile?.avatarUrl || '',
       ownerEmail: userProfile?.email
     };
 
@@ -70,6 +97,19 @@ export function App() {
       return;
     }
     setCurrentScreen(screen);
+  };
+
+  const handleRegisterAccount = (newAccount: RegisteredAccount) => {
+    setRegisteredAccounts((prev) => [...prev, newAccount]);
+  };
+
+  const handleLoginSuccess = (profile: UserProfile) => {
+    setUserProfile(profile);
+  };
+
+  const handleLogout = () => {
+    setUserProfile(null);
+    setCurrentScreen('home');
   };
 
   return (
@@ -160,15 +200,17 @@ export function App() {
           {currentScreen === 'profile' && (
             <Profile
               userProfile={userProfile}
-              onUpdateProfile={(updated) => setUserProfile(updated)}
+              onUpdateProfile={(updated) => {
+                setUserProfile(updated);
+                setRegisteredAccounts((prev) =>
+                  prev.map((acc) => (acc.email === updated.email ? { ...acc, ...updated } : acc))
+                );
+              }}
               onOpenAuth={() => {
-                setAuthScreen('login');
+                setAuthScreen('signup');
                 setShowAuthModal(true);
               }}
-              onLogout={() => {
-                setUserProfile(null);
-                setCurrentScreen('home');
-              }}
+              onLogout={handleLogout}
               onOpenAI={() => setShowAIModal(true)}
             />
           )}
@@ -197,10 +239,9 @@ export function App() {
       {showAuthModal && (
         <AuthModal
           initialScreen={authScreen}
-          onSuccess={(profile) => {
-            setUserProfile(profile);
-            setShowAuthModal(false);
-          }}
+          registeredAccounts={registeredAccounts}
+          onRegisterAccount={handleRegisterAccount}
+          onLoginSuccess={handleLoginSuccess}
           onClose={() => setShowAuthModal(false)}
         />
       )}
