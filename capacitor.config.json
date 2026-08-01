@@ -1,5 +1,5 @@
 {
-  "appId": "com.dhamme.realestate",
+  "appId": "dhamme.vercel.app",
   "appName": "DHAMME Real Estate",
   "webDir": "dist",
   "server": {

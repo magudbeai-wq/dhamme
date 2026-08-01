@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "1138889214730390639",
-    "project_id": "dhamme-realestate",
-    "storage_bucket": "dhamme-realestate.appspot.com"
+    "project_number": "1003342051986",
+    "project_id": "dhamme-9421c",
+    "storage_bucket": "dhamme-9421c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1138889214730390639:android:dhammeapp",
+        "mobilesdk_app_id": "1:1003342051986:android:947ae4b99fa0007d2c444b",
         "android_client_info": {
-          "package_name": "com.dhamme.realestate"
+          "package_name": "dhamme.vercel.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1003342051986-879fvsjt5mq8n076pfe06bdk2qmhq0hf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDHAMME_REAL_ESTATE_API_KEY"
+          "current_key": "AIzaSyA5v0njTVOCkYCpXn_MWgEl-VilgYvATZ4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1003342051986-879fvsjt5mq8n076pfe06bdk2qmhq0hf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
