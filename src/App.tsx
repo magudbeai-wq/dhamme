@@ -26,7 +26,7 @@ export function App() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [userListings, setUserListings] = useState<PropertyListing[]>([]);
 
-  // Registered accounts stored locally (no sample accounts - starts empty or from LocalStorage)
+  // Registered accounts stored locally
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
     const saved = localStorage.getItem('dhamme_registered_accounts');
     return saved ? JSON.parse(saved) : [];
@@ -128,6 +128,7 @@ export function App() {
       {/* Main Layout Header */}
       {currentScreen !== 'splash' && currentScreen !== 'onboarding' && (
         <HeaderNav 
+          userProfile={userProfile}
           onNavigate={handleNavigateScreen} 
           onOpenAI={() => setShowAIModal(true)}
         />

@@ -1,12 +1,13 @@
 import React from 'react';
-import type { ScreenName } from '../types';
+import type { ScreenName, UserProfile } from '../types';
 
 interface HeaderNavProps {
+  userProfile: UserProfile | null;
   onNavigate: (screen: ScreenName) => void;
   onOpenAI: () => void;
 }
 
-export const HeaderNav: React.FC<HeaderNavProps> = ({ onNavigate, onOpenAI }) => {
+export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, onOpenAI }) => {
   return (
     <header className="sticky top-0 z-40 bg-[#F2E8DC]/90 backdrop-blur-md shadow-sm border-b border-[#bec9c5]/40 transition-all duration-300">
       <div className="flex items-center justify-between px-5 h-16 w-full max-w-screen-xl mx-auto">
@@ -42,16 +43,22 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onNavigate, onOpenAI }) =>
             <span className="material-symbols-outlined text-[#3f4946]">notifications</span>
           </button>
 
-          {/* Profile Avatar */}
+          {/* User Profile Avatar / Blank Icon (No sample image) */}
           <div 
             onClick={() => onNavigate('profile')}
-            className="w-10 h-10 rounded-full border-2 border-[#a2f2de] bg-[#ebe1d5] overflow-hidden active:scale-95 duration-100 cursor-pointer shadow-sm"
+            className="w-10 h-10 rounded-full border-2 border-[#a2f2de] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 duration-100 cursor-pointer shadow-sm"
           >
-            <img 
-              className="w-full h-full object-cover" 
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80" 
-              alt="User Profile" 
-            />
+            {userProfile?.avatarUrl ? (
+              <img 
+                className="w-full h-full object-cover" 
+                src={userProfile.avatarUrl} 
+                alt={userProfile.fullName} 
+              />
+            ) : (
+              <span className="material-symbols-outlined text-[#005145] text-[24px]">
+                person
+              </span>
+            )}
           </div>
 
         </div>
