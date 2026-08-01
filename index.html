@@ -7,10 +7,38 @@
     <meta name="theme-color" content="#005145" />
     <link rel="manifest" href="/manifest.json" />
     <title>DHAMME - Real Estate Marketplace (Jigjiga)</title>
+
+    <!-- Google Fonts & Material Symbols from Stitch -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN & Config from Stitch Design -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#005145",
+              "primary-container": "#0f6b5c",
+              "brand-sand": "#F2E8DC",
+              "secondary-container": "#ebe1d5",
+              "tertiary": "#7b2f10",
+              "surface": "#fcf9f8",
+              "surface-container-high": "#eae7e7",
+              "surface-container-highest": "#e5e2e1",
+              "on-surface": "#1b1b1c",
+              "on-surface-variant": "#3f4946",
+              "outline": "#6f7976",
+              "outline-variant": "#bec9c5"
+            }
+          }
+        }
+      }
+    </script>
   </head>
   <body class="bg-[#F2E8DC] text-[#1b1b1c] font-inter">
     <div id="root"></div>
