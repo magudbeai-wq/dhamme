@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScreenName, UserProfile } from '../types';
+import { DhammeLogo } from './DhammeLogo';
 
 interface HeaderNavProps {
   userProfile: UserProfile | null;
@@ -9,44 +10,44 @@ interface HeaderNavProps {
 
 export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, onOpenAI }) => {
   return (
-    <header className="sticky top-0 z-40 bg-[#F2E8DC]/90 backdrop-blur-md shadow-sm border-b border-[#bec9c5]/40 transition-all duration-300">
-      <div className="flex items-center justify-between px-5 h-16 w-full max-w-screen-xl mx-auto">
+    <header className="sticky top-0 z-40 bg-[#F2E8DC]/95 backdrop-blur-xl shadow-md border-b border-[#bec9c5]/40 transition-all duration-300">
+      <div className="flex items-center justify-between px-4 sm:px-6 h-16 w-full max-w-screen-xl mx-auto">
         
-        {/* Brand Title matching Stitch Header */}
-        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => onNavigate('home')}>
-          <h1 className="font-poppins text-2xl font-black text-[#005145] tracking-tight">
-            DHAMME
-          </h1>
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#005145]/10 text-[#005145] border border-[#005145]/20">
-            REAL ESTATE
-          </span>
-        </div>
+        {/* Animated Brand Logo */}
+        <DhammeLogo 
+          variant="sm"
+          animated={true}
+          showSubtitle={true}
+          onClick={() => onNavigate('home')}
+        />
 
         {/* Right Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           
           {/* AI Helper Trigger */}
           <button
             onClick={onOpenAI}
-            className="flex items-center space-x-1 px-3 py-1.5 rounded-full bg-[#005145] text-white text-xs font-bold shadow-sm hover:bg-[#0f6b5c] transition"
+            className="flex items-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white text-xs font-bold shadow-md hover:shadow-lg hover:brightness-110 active:scale-95 transition-all"
             title="Dhamme AI Helper"
           >
-            <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
+            <span className="material-symbols-outlined text-[18px] text-[#a2f2de] animate-pulse">auto_awesome</span>
             <span className="hidden sm:inline">AI Helper</span>
           </button>
 
           {/* Notifications button */}
           <button 
             onClick={() => alert('Biilasha iyo fariimaha wax cusub ma jiraan.')}
-            className="w-10 h-10 rounded-full bg-[#eae7e7] flex items-center justify-center hover:bg-[#e5e2e1] transition-colors"
+            className="w-10 h-10 rounded-full bg-[#f0eded] border border-[#bec9c5]/40 flex items-center justify-center hover:bg-[#e5e2e1] active:scale-95 transition-all relative"
+            title="Notifications"
           >
-            <span className="material-symbols-outlined text-[#3f4946]">notifications</span>
+            <span className="material-symbols-outlined text-[#3f4946] text-[20px]">notifications</span>
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#7b2f10] ring-2 ring-white" />
           </button>
 
-          {/* User Profile Avatar / Blank Icon (No sample image) */}
+          {/* User Profile Avatar */}
           <div 
             onClick={() => onNavigate('profile')}
-            className="w-10 h-10 rounded-full border-2 border-[#a2f2de] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 duration-100 cursor-pointer shadow-sm"
+            className="w-10 h-10 rounded-full border-2 border-[#005145] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-2 hover:ring-[#005145]/30"
           >
             {userProfile?.avatarUrl ? (
               <img 

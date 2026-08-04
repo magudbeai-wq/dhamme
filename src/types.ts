@@ -42,11 +42,11 @@ export interface PropertyListing {
   id: string;
   title: string;
   priceEtb: number;
-  priceLocalFormatted: string; // e.g. "25,000 ETB/mo"
+  priceLocalFormatted: string; // e.g. "25,000 ETB/mo" or "2,000,000 ETB"
   mode: ListingMode;
   category: PropertyCategory;
-  city: string; // Jigjiga
-  kebele: string; // Kebele 01 - Kebele 10, Garab'ase, Taiwan Area
+  city: string; // Strictly Jigjiga
+  kebele: string; // Kebele 01 - Kebele 10, Garab'ase, Taiwan Area, Airport Road
   beds: number;
   baths: number;
   areaSqm?: number;
@@ -61,6 +61,11 @@ export interface PropertyListing {
   agentAvatar: string;
   postedDate: string;
   ownerEmail?: string;
+  // GPS Location Fields
+  gpsCoords?: string; // e.g. "9.3500° N, 42.8000° E"
+  nearDistance?: string; // e.g. "0.8 km from Taiwan Market"
+  lat?: number; // e.g. 9.3500
+  lng?: number; // e.g. 42.8000
 }
 
 export interface FilterState {
@@ -89,4 +94,6 @@ export interface NewListingDraft {
   water: boolean;
   electricity: boolean;
   images: string[];
+  gpsCoords?: string;
+  nearDistance?: string;
 }

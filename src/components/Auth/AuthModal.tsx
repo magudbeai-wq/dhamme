@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../../types';
+import { DhammeLogo } from '../DhammeLogo';
 
 interface RegisteredAccount extends UserProfile {
   passwordHash: string;
@@ -34,7 +35,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return /\S+@\S+\.\S+/.test(emailStr);
   };
 
-  // SIGN UP HANDLER - Strict account creation
+  // SIGN UP HANDLER
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -71,7 +72,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       email: trimmedEmail,
       fullName: fullName.trim(),
       phone: phone.trim(),
-      avatarUrl: '', // No fake avatar - user uploads their own!
+      avatarUrl: '',
       bio: '',
       isVerified: true,
       passwordHash: password
@@ -83,7 +84,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setPassword('');
   };
 
-  // LOGIN HANDLER - Strict account verification
+  // LOGIN HANDLER
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -100,7 +101,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // Search strictly in registered accounts list
     const account = registeredAccounts.find((acc) => acc.email === trimmedEmail);
 
     if (!account) {
@@ -113,35 +113,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // Login successful
     const { passwordHash, ...userProfile } = account;
     onLoginSuccess(userProfile);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-[#fcf9f8] max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-4 text-center relative border border-[#bec9c5]/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
+      <div className="bg-[#fcf9f8] max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-4 text-center relative border border-[#bec9c5]/40 my-auto">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-[#645d54] hover:text-[#1b1b1c]"
+          className="absolute right-4 top-4 text-[#645d54] hover:text-[#1b1b1c] p-1 rounded-full"
         >
           <span className="material-symbols-outlined">close</span>
         </button>
 
         {/* Header Logo */}
-        <div className="w-14 h-14 rounded-2xl bg-[#005145] text-white flex items-center justify-center mx-auto shadow-md">
-          <span className="material-symbols-outlined text-[32px]">home_work</span>
+        <div className="pt-2 flex justify-center">
+          <DhammeLogo variant="md" animated={true} showSubtitle={true} />
         </div>
 
         {errorMsg && (
-          <div className="p-3 bg-[#ffdad6] text-[#ba1a1a] rounded-xl text-xs font-semibold">
+          <div className="p-3 bg-[#ffdad6] text-[#ba1a1a] rounded-2xl text-xs font-semibold border border-[#ba1a1a]/20">
             {errorMsg}
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 bg-[#99e8d5]/40 text-[#00201a] rounded-xl text-xs font-bold">
+          <div className="p-3 bg-[#99e8d5]/40 text-[#00201a] rounded-2xl text-xs font-bold border border-[#005145]/20">
             {successMsg}
           </div>
         )}
@@ -149,7 +148,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* LOGIN SCREEN */}
         {screen === 'login' && (
           <form onSubmit={handleLogin} className="space-y-3.5 text-left">
-            <div className="text-center">
+            <div className="text-center pt-1">
               <h3 className="font-poppins font-bold text-xl text-[#1b1b1c]">
                 Soo Gal (Login)
               </h3>
@@ -168,7 +167,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="magacaaga@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
+                className="w-full p-3.5 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c] border border-[#bec9c5]/30 focus:ring-2 focus:ring-[#005145]"
               />
             </div>
 
@@ -182,13 +181,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
+                className="w-full p-3.5 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c] border border-[#bec9c5]/30 focus:ring-2 focus:ring-[#005145]"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl bg-[#005145] hover:bg-[#0f6b5c] text-white font-poppins font-bold text-xs uppercase shadow-md transition"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-bold text-xs uppercase shadow-md transition-all active:scale-95"
             >
               Soo Gal (Login)
             </button>
@@ -212,7 +211,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* SIGN UP SCREEN */}
         {screen === 'signup' && (
           <form onSubmit={handleSignUp} className="space-y-3 text-left">
-            <div className="text-center">
+            <div className="text-center pt-1">
               <h3 className="font-poppins font-bold text-xl text-[#1b1b1c]">
                 Sameey Koonto Cusub
               </h3>
@@ -231,7 +230,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="Qor magacaaga Buuxa"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
+                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c] border border-[#bec9c5]/30 focus:ring-2 focus:ring-[#005145]"
               />
             </div>
 
@@ -245,7 +244,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="magacaaga@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
+                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c] border border-[#bec9c5]/30 focus:ring-2 focus:ring-[#005145]"
               />
             </div>
 
@@ -259,7 +258,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="+251 9..."
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
+                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c] border border-[#bec9c5]/30 focus:ring-2 focus:ring-[#005145]"
               />
             </div>
 
@@ -273,13 +272,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c]"
+                className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-semibold text-[#1b1b1c] border border-[#bec9c5]/30 focus:ring-2 focus:ring-[#005145]"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl bg-[#005145] hover:bg-[#0f6b5c] text-white font-poppins font-bold text-xs uppercase shadow-md transition"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-bold text-xs uppercase shadow-md transition-all active:scale-95"
             >
               Abuur Koonto (Sign Up)
             </button>

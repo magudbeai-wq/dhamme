@@ -1,8 +1,9 @@
 {
-  "appId": "dhamme.vercel.app",
+  "appId": "store.capilorix.dhamme",
   "appName": "DHAMME Real Estate",
   "webDir": "dist",
   "server": {
+    "hostname": "capilorix.store",
     "androidScheme": "https"
   }
 }

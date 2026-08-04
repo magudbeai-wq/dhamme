@@ -1,4 +1,5 @@
 import React from 'react';
+import { DhammeLogo } from './DhammeLogo';
 
 interface SplashScreenProps {
   onStart: () => void;
@@ -8,34 +9,57 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onStart }) => {
   return (
     <div 
       onClick={onStart}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-between p-8 bg-[#005145] text-white cursor-pointer select-none animate-fade-in"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-between p-6 sm:p-10 bg-gradient-to-b from-[#002b24] via-[#005145] to-[#001c17] text-white cursor-pointer select-none overflow-hidden animate-fade-in"
     >
-      <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-        <div className="w-24 h-24 rounded-3xl bg-[#0f6b5c] border-2 border-[#99e8d5]/40 flex items-center justify-center shadow-2xl shadow-black/30 transform hover:scale-105 transition">
-          <span className="material-symbols-outlined text-[54px] text-[#99e8d5]">
-            home_work
-          </span>
-        </div>
+      {/* Background Decorative Ambient Glowing Orbs */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#d4af37]/20 blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-[#00e6a5]/15 blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute bottom-10 left-1/3 w-80 h-80 rounded-full bg-[#005145]/40 blur-3xl pointer-events-none" />
 
-        <div className="text-center space-y-2">
-          <h1 className="font-poppins text-4xl font-extrabold tracking-tight text-white">
-            DHAMME
-          </h1>
-          <p className="text-sm font-medium text-[#99e8d5] uppercase tracking-widest">
-            Somali Real Estate & Property Marketplace
-          </p>
-        </div>
+      {/* Top Location Pill Badge */}
+      <div className="pt-6 z-10">
+        <span className="inline-flex items-center space-x-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-[#a2f2de] tracking-widest uppercase shadow-xl">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#d4af37] animate-ping" />
+          <span>JIGJIGA CITY • KEBELE 01 - KEBELE 10</span>
+        </span>
       </div>
 
-      <div className="w-full max-w-xs text-center space-y-3 pb-6">
+      {/* Prominent Center Hero Logo & Tagline */}
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 my-auto text-center px-4">
+        
+        {/* Animated Brand Logo Emblem */}
+        <div className="transform hover:scale-105 transition-transform duration-500">
+          <DhammeLogo 
+            variant="xl"
+            animated={true}
+            lightMode={true}
+            showSubtitle={true}
+          />
+        </div>
+
+        <div className="space-y-3 max-w-md">
+          <p className="text-base sm:text-lg font-bold text-[#a2f2de] uppercase tracking-widest leading-snug drop-shadow-md">
+            Jigjiga Real Estate & Property Marketplace
+          </p>
+          <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-medium max-w-sm mx-auto">
+            Hel guryaha Kiro (Rent) iyo Iibka (Sale) ee ugu haboon ee dhamaan Kebelada magaalada Jigjiga.
+          </p>
+        </div>
+
+      </div>
+
+      {/* Bottom CTA Button */}
+      <div className="w-full max-w-xs sm:max-w-sm text-center space-y-3 pb-8 z-10">
         <button 
           onClick={onStart}
-          className="w-full py-4 rounded-2xl bg-[#a2f2de] hover:bg-[#86d5c3] text-[#00201a] font-poppins font-bold text-base shadow-lg transition"
+          className="w-full py-4 sm:py-4.5 rounded-2xl bg-gradient-to-r from-[#d4af37] via-[#f5d77f] to-[#d4af37] hover:brightness-110 text-[#002821] font-poppins font-black text-base sm:text-lg uppercase tracking-wider shadow-2xl shadow-black/50 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center space-x-2 border border-white/40"
         >
-          Biloow (Get Started)
+          <span>Biloow (Get Started)</span>
+          <span className="material-symbols-outlined text-[26px]">arrow_forward</span>
         </button>
-        <span className="text-xs text-[#99e8d5]/70 block">
-          Taabo si aad u bilowdo
+        
+        <span className="text-xs text-[#a2f2de]/80 block font-semibold">
+          Taabo si aad u bilowdo (Tap anywhere to start)
         </span>
       </div>
     </div>
