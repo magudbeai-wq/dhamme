@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../../types';
+import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
-
-interface RegisteredAccount extends UserProfile {
-  passwordHash: string;
-}
 
 interface AuthModalProps {
   initialScreen: 'login' | 'signup' | 'forgot_password';

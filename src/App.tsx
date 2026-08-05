@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus } from './types';
 import { INITIAL_PROPERTIES } from './data/propertiesData';
+import { INITIAL_REGISTERED_ACCOUNTS } from './data/usersData';
+import type { RegisteredAccount } from './data/usersData';
 import { SplashScreen } from './components/SplashScreen';
 import { Onboarding } from './components/Onboarding';
 import { HeaderNav } from './components/HeaderNav';
@@ -16,10 +18,6 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { AuthModal } from './components/Auth/AuthModal';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 
-interface RegisteredAccount extends UserProfile {
-  passwordHash: string;
-}
-
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
@@ -29,10 +27,19 @@ export function App() {
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  // Registered accounts stored locally
+  // Registered accounts stored locally with full user history
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
     const saved = localStorage.getItem('dhamme_registered_accounts');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return INITIAL_REGISTERED_ACCOUNTS;
+    const parsed: RegisteredAccount[] = JSON.parse(saved);
+    // Merge any missing initial accounts so earlier landlord users are always visible to admin
+    const merged = [...parsed];
+    INITIAL_REGISTERED_ACCOUNTS.forEach((initialAcc) => {
+      if (!merged.some((acc) => acc.email === initialAcc.email)) {
+        merged.push(initialAcc);
+      }
+    });
+    return merged;
   });
 
   // Current logged in profile
