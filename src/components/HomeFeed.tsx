@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { PropertyListing, ListingMode, PropertyCategory } from '../types';
+import { DhammeLogo } from './DhammeLogo';
 
 interface HomeFeedProps {
   properties: PropertyListing[];
@@ -103,8 +104,80 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
   }
 
   return (
-    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-4">
+    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-6">
       
+      {/* AWARD WINNER DESIGNER LUXURY HERO BACKDROP BANNER */}
+      <section className="relative w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-[#d4af37]/60 group transition-all duration-500 hover:border-[#d4af37] hover:shadow-[#005145]/20">
+        
+        {/* Jigjiga Statue Landmark Background Image */}
+        <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-[#002b24]">
+          <img
+            src="/jigjiga-landmark.jpg"
+            alt="Jigjiga Horse Statue Landmark"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+          />
+
+          {/* Premium Multi-layer Emerald Glass Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#002b24] via-[#00382f]/70 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#002b24]/90 via-transparent to-[#002b24]/60" />
+
+          {/* Luxury Floating Content Container */}
+          <div className="absolute inset-0 p-5 sm:p-8 flex flex-col justify-between z-10">
+            
+            {/* Top Row: Unhidden High-Visibility Dhamme Logo & Location Tag */}
+            <div className="flex items-center justify-between">
+              <div className="bg-[#00382f]/85 backdrop-blur-xl border border-[#d4af37]/60 p-2.5 sm:p-3 rounded-2xl shadow-2xl flex items-center space-x-2 group-hover:border-[#d4af37] transition-all">
+                <DhammeLogo 
+                  variant="sm" 
+                  animated={true} 
+                  showSubtitle={true} 
+                  lightMode={true} 
+                />
+              </div>
+
+              <span className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-black/60 text-[#d4af37] border border-[#d4af37]/40 backdrop-blur-md shadow-lg flex items-center space-x-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span>📍 JIGJIGA CITY LANDMARK</span>
+              </span>
+            </div>
+
+            {/* Middle/Bottom Main Typography Slogan & Hover Animation */}
+            <div className="space-y-2 sm:space-y-3 max-w-2xl text-left">
+              <span className="inline-block px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-widest bg-[#d4af37] text-[#002b24] shadow-md">
+                SOMALI REGION REAL ESTATE PLATFORM
+              </span>
+
+              {/* Exact User Requested Hover Text */}
+              <h1 className="font-poppins font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight drop-shadow-xl group-hover:translate-x-1 transition-transform duration-300">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffffff] via-[#f0cf65] to-[#d4af37] animate-gold-shimmer">
+                  DHamme ayaa kuu dhamaystiraya
+                </span>
+              </h1>
+
+              <p className="text-xs sm:text-sm text-gray-200 font-medium max-w-lg leading-relaxed drop-shadow-md">
+                Kirayso ama Iibso guryaha ugu casrisan ee Jigjiga. Si professional ah oo degdeg ah!
+              </p>
+            </div>
+
+            {/* Bottom Controls inside Banner */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleRequestLiveGps}
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#002b24] font-poppins font-black text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center space-x-1.5"
+              >
+                <span className="material-symbols-outlined text-[18px]">my_location</span>
+                <span>{userGps ? '📍 Live GPS Active' : '📍 Hel GPS Location Near Me'}</span>
+              </button>
+
+              <div className="text-[11px] text-white/90 font-bold bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl border border-white/20">
+                ⭐ Rated #1 Real Estate App in Jigjiga
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Daily In-App Notification Banner */}
       <div className="bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-between border border-[#a2f2de]/30">
         <div className="flex items-center space-x-3">
@@ -376,7 +449,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
                   {/* Views Count & Floating Price Tag on Image */}
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-10">
-                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
+                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3.5 py-1 rounded-xl backdrop-blur-md border border-white/20">
                       {property.priceLocalFormatted}
                     </span>
 
