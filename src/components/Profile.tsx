@@ -17,6 +17,7 @@ export const Profile: React.FC<ProfileProps> = ({
   onOpenAI
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showPolicyModal, setShowPolicyModal] = useState(false);
   const [fullName, setFullName] = useState(userProfile?.fullName || '');
   const [phone, setPhone] = useState(userProfile?.phone || '');
   const [bio, setBio] = useState(userProfile?.bio || '');
@@ -80,7 +81,6 @@ export const Profile: React.FC<ProfileProps> = ({
       <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-4 border border-[#bec9c5]/40">
         <div className="flex items-center space-x-4">
           
-          {/* Custom Avatar or Upload Placeholder */}
           <div className="relative group shrink-0">
             {avatarUrl ? (
               <img
@@ -124,14 +124,12 @@ export const Profile: React.FC<ProfileProps> = ({
           </div>
         </div>
 
-        {/* Bio / Description */}
         {bio && (
           <p className="text-xs text-[#3f4946] italic pt-1 border-t border-[#bec9c5]/30">
             "{bio}"
           </p>
         )}
 
-        {/* Toggle Edit Form */}
         <button
           onClick={() => setIsEditing(!isEditing)}
           className="text-xs font-bold text-[#005145] underline flex items-center space-x-1"
@@ -202,7 +200,7 @@ export const Profile: React.FC<ProfileProps> = ({
         )}
       </div>
 
-      {/* Settings Options */}
+      {/* Official Support & Anti-Fraud Policy Section */}
       <div className="bg-[#fcf9f8] rounded-3xl listing-card-shadow overflow-hidden divide-y divide-[#bec9c5]/30 text-xs border border-[#bec9c5]/40">
         
         <div 
@@ -216,20 +214,37 @@ export const Profile: React.FC<ProfileProps> = ({
           <span className="material-symbols-outlined text-[#645d54]">chevron_right</span>
         </div>
 
-        <div className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition">
-          <div className="flex items-center space-x-3">
-            <span className="material-symbols-outlined text-[#005145]">translate</span>
-            <span className="font-bold text-[#1b1b1c]">Luqadda / Language (Somali / English)</span>
+        {/* Customer Support Contact Info */}
+        <div className="p-4 space-y-2 bg-[#f0eded]/50">
+          <div className="flex items-center space-x-2 text-[#005145]">
+            <span className="material-symbols-outlined text-[20px]">support_agent</span>
+            <span className="font-bold text-[#1b1b1c]">Customer Support & Help</span>
           </div>
-          <span className="text-xs font-bold text-[#005145]">Af-Soomaali</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-mono text-xs">
+            <a href="tel:0915752826" className="p-2.5 bg-white rounded-xl border border-[#bec9c5]/40 flex items-center justify-between text-[#005145] font-bold hover:bg-emerald-50">
+              <span>📞 0915752826</span>
+              <span className="text-[10px] font-sans font-normal text-gray-500">Wac Hada</span>
+            </a>
+            <a href="mailto:magudbeai@gmail.com" className="p-2.5 bg-white rounded-xl border border-[#bec9c5]/40 flex items-center justify-between text-[#005145] font-bold hover:bg-emerald-50 truncate">
+              <span className="truncate">✉️ magudbeai@gmail.com</span>
+              <span className="text-[10px] font-sans font-normal text-gray-500 shrink-0">Email</span>
+            </a>
+          </div>
         </div>
 
-        <div className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition">
+        {/* Anti-Fraud Terms & Policy Trigger */}
+        <div 
+          onClick={() => setShowPolicyModal(true)}
+          className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition"
+        >
           <div className="flex items-center space-x-3">
-            <span className="material-symbols-outlined text-[#005145]">help</span>
-            <span className="font-bold text-[#1b1b1c]">Customer Support Helpline</span>
+            <span className="material-symbols-outlined text-amber-700">gavel</span>
+            <div>
+              <span className="font-bold text-[#1b1b1c] block">Sharciyada & Siyaasadda (Terms & Anti-Fraud Policy)</span>
+              <span className="text-[10px] text-amber-800 font-semibold block">Mamnuucista Sawirada Been Abuurka ah & Fraud</span>
+            </div>
           </div>
-          <span className="text-xs font-mono text-[#005145]">+251 91 000 8888</span>
+          <span className="material-symbols-outlined text-[#645d54]">chevron_right</span>
         </div>
 
       </div>
@@ -241,6 +256,56 @@ export const Profile: React.FC<ProfileProps> = ({
         <span className="material-symbols-outlined text-[18px]">logout</span>
         <span>Ka Bax Koontada (Logout)</span>
       </button>
+
+      {/* Anti-Fraud Terms & Policy Modal */}
+      {showPolicyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#fcf9f8] max-w-md w-full p-6 rounded-3xl shadow-2xl space-y-4 border border-[#bec9c5]/40 text-left max-h-[85vh] overflow-y-auto">
+            <div className="flex justify-between items-center pb-2 border-b border-[#bec9c5]/30">
+              <div className="flex items-center space-x-2 text-amber-800">
+                <span className="material-symbols-outlined text-[24px]">verified_user</span>
+                <h3 className="font-poppins font-bold text-base text-[#1b1b1c]">
+                  Sharciyada DHAMME (Anti-Fraud Policy)
+                </h3>
+              </div>
+              <button onClick={() => setShowPolicyModal(false)} className="text-[#645d54] p-1">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-[#3f4946] leading-relaxed">
+              <div className="p-3 bg-red-50 rounded-2xl border border-red-200 text-red-900 font-bold space-y-1">
+                <h4>⚠️ Mamnuucista Sawirada Been Abuurka ah (No Fake Listings):</h4>
+                <p className="font-normal text-[11px]">
+                  Waa strictly mamnuuc in DHAMME Real Estate lagu soo dhigo sawiro been ah, guryo aan jirin, ama qiimo been abuur ah.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-bold text-[#1b1b1c]">1. Xaqiijinta Guryaha:</h4>
+                <p>Guri kasta oo lagu soo dhigo DHAMME waa inuu yahay guri dhab ah oo ku yaala magaalada Jigjiga.</p>
+
+                <h4 className="font-bold text-[#1b1b1c]">2. Sawirada Rasmiga ah:</h4>
+                <p>Sawirada guriga waa in ay yihiin kuwii dhabta ahaa ee guriga, laguma ogola sawiro Google laga soo min-guuriyay oo aan guriga khuseyn.</p>
+
+                <h4 className="font-bold text-[#1b1b1c]">3. Taageerada & Support Contact:</h4>
+                <p>Wixii cabasho ama fraud ah fadlan si degdeg ah ugu soo dir Customer Support:</p>
+                <div className="p-2.5 bg-[#f0eded] rounded-xl font-mono text-xs font-bold text-[#005145]">
+                  📞 Phone: 0915752826<br/>
+                  ✉️ Email: magudbeai@gmail.com
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowPolicyModal(false)}
+              className="w-full py-3.5 rounded-2xl bg-[#005145] text-white font-bold text-xs uppercase shadow-md"
+            >
+              Waan Fahmay Sharciyada (I Agree)
+            </button>
+          </div>
+        </div>
+      )}
 
     </main>
   );

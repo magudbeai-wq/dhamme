@@ -37,6 +37,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
   const [detectingGps, setDetectingGps] = useState<boolean>(false);
   const [gpsStatus, setGpsStatus] = useState<string | null>(null);
   const [urlInput, setUrlInput] = useState<string>('');
+  const [agreedToAntiFraud, setAgreedToAntiFraud] = useState<boolean>(true);
 
   const categories: PropertyCategory[] = ['Family House', 'Single Room', 'Studio', 'Villa', 'Apartment'];
   const kebeles = [
@@ -115,6 +116,8 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
   };
 
   const handleFinalSubmit = () => {
+    if (!agreedToAntiFraud) return;
+
     const newProperty: PropertyListing = {
       id: `prop-${Date.now()}`,
       title: draft.title || 'DHAMME Jigjiga Residence',
@@ -136,7 +139,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
       ],
       description: draft.description || 'DHAMME Real Estate listing created in Jigjiga, Somali Region, Ethiopia.',
       agentName: 'You (Owner)',
-      agentPhone: '+251 91 500 0000',
+      agentPhone: '0915752826',
       agentAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
       postedDate: 'Just now',
       gpsCoords: draft.gpsCoords || '9.3524° N, 42.7961° E',
@@ -161,7 +164,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
               {currentStep === 2 && '2. Cabirka & Qolalka (Specs)'}
               {currentStep === 3 && '3. Kebele & GPS Location (Jigjiga)'}
               {currentStep === 4 && '4. Sawirada Guriga (Upload Photos)'}
-              {currentStep === 5 && '5. Qiimaha ETB & Daabacaada (Publish)'}
+              {currentStep === 5 && '5. Qiimaha ETB & Sharciyada (Publish)'}
             </h1>
           </div>
 
@@ -433,14 +436,13 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
       {currentStep === 4 && (
         <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40 text-center">
           
-          {/* File Upload Trigger Area */}
           <div className="border-2 border-dashed border-[#005145] rounded-3xl p-6 bg-[#f0eded] space-y-3 relative group hover:bg-[#e5e2e1] transition">
             <span className="material-symbols-outlined text-[48px] text-[#005145]">add_a_photo</span>
             <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
               Soo Geli Sawirada Guriga (Upload Photos)
             </h4>
             <p className="text-xs text-[#3f4946]">
-              Taabo halkan si aad sawiro badan oo guri ah uga soo doorato telefoonkaaga ama gallery-ga.
+              Taabo halkan si aad sawiro dhab ah oo guri ah uga soo doorato telefoonkaaga.
             </p>
 
             <label className="inline-block px-5 py-2.5 rounded-xl bg-[#005145] text-white text-xs font-bold cursor-pointer shadow-md hover:bg-[#0f6b5c]">
@@ -455,7 +457,6 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
             </label>
           </div>
 
-          {/* Fallback URL Add Option */}
           <div className="flex gap-2 pt-1">
             <input
               type="url"
@@ -473,7 +474,6 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
             </button>
           </div>
 
-          {/* Uploaded Photos Gallery Preview with Delete buttons */}
           {draft.images.length > 0 && (
             <div className="space-y-2 text-left">
               <span className="text-xs font-bold text-[#3f4946] block">
@@ -514,7 +514,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
         </div>
       )}
 
-      {/* STEP 5: Pricing ETB & Final Publish */}
+      {/* STEP 5: Pricing ETB & Anti-Fraud Agreement */}
       {currentStep === 5 && (
         <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40">
           <div>
@@ -554,9 +554,25 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
             </div>
           </div>
 
+          {/* Anti-Fraud Explicit Agreement Checkbox */}
+          <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2">
+            <label className="flex items-start space-x-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreedToAntiFraud}
+                onChange={(e) => setAgreedToAntiFraud(e.target.checked)}
+                className="w-4 h-4 rounded text-[#005145] mt-0.5"
+              />
+              <span className="font-semibold text-[11px] leading-snug">
+                Waan waafaqsanahay sharciyada DHAMME: Sawirada iyo faahfaahinta gurigani waa 100% dhab. Waxaa si adag loo mamnuucay sawirada been abuurka ah ama guryaha aan jirin (Anti-Fraud Policy).
+              </span>
+            </label>
+          </div>
+
           <button
             onClick={handleFinalSubmit}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all"
+            disabled={!agreedToAntiFraud}
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
             Daabac Guriga (Publish Property Now)
           </button>

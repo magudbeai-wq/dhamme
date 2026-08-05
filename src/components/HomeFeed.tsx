@@ -8,6 +8,7 @@ interface HomeFeedProps {
   onOpenFilter: () => void;
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  onStartPostListing?: () => void;
 }
 
 function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -27,7 +28,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
   onSelectProperty,
   onOpenFilter,
   favorites,
-  onToggleFavorite
+  onToggleFavorite,
+  onStartPostListing
 }) => {
   const [activeMode, setActiveMode] = useState<ListingMode>('kiro');
   const [selectedCategory, setSelectedCategory] = useState<PropertyCategory>('All Properties');
@@ -353,24 +355,24 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       <section className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {filteredProperties.length === 0 ? (
           <div className="col-span-full text-center py-16 bg-[#fcf9f8] rounded-3xl border border-[#bec9c5]/40 p-8 space-y-4 shadow-sm">
-            <div className="w-16 h-16 rounded-full bg-[#f0eded] text-[#005145] flex items-center justify-center mx-auto">
-              <span className="material-symbols-outlined text-[36px]">real_estate_agent</span>
+            <div className="w-16 h-16 rounded-full bg-[#005145]/10 text-[#005145] flex items-center justify-center mx-auto">
+              <span className="material-symbols-outlined text-[36px]">add_home</span>
             </div>
             <h3 className="font-poppins font-bold text-lg text-[#1b1b1c]">
-              Guri Ma Loo Helin Kebele-kan Jigjiga
+              Weli Ma Jirtay Guryo La Soo Dhigay Jigjiga
             </h3>
             <p className="text-xs text-[#3f4946] max-w-md mx-auto leading-relaxed">
-              Fadlan beddel Kebele-ka ama raadinta si aad u hesho guryaha Jigjiga.
+              Noqo qofka ugu horeeya ee gurigiisa ama dabaq kiro/iib ah Jigjiga ugu soo dhiga DHAMME Real Estate!
             </p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('All Properties');
-              }}
-              className="px-5 py-2.5 rounded-xl bg-[#005145] text-white font-bold text-xs shadow-md hover:bg-[#0f6b5c] transition-colors inline-block"
-            >
-              Nadiifi Raadinta (Reset Search)
-            </button>
+            {onStartPostListing && (
+              <button
+                onClick={onStartPostListing}
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white font-poppins font-bold text-xs shadow-md hover:brightness-110 active:scale-95 transition-all inline-flex items-center space-x-2"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span>
+                <span>📍 Soo Dhig Gurigii Ugu Horeeyay (Post First Home)</span>
+              </button>
+            )}
           </div>
         ) : (
           filteredProperties.map((property) => {

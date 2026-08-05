@@ -22,7 +22,7 @@ interface RegisteredAccount extends UserProfile {
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
-    const saved = localStorage.getItem('dhamme_properties_v2');
+    const saved = localStorage.getItem('dhamme_user_posted_properties_v1');
     return saved ? JSON.parse(saved) : INITIAL_PROPERTIES;
   });
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
@@ -57,9 +57,9 @@ export function App() {
     powerRequired: false
   });
 
-  // Save properties state to LocalStorage
+  // Save user-posted properties state to LocalStorage
   useEffect(() => {
-    localStorage.setItem('dhamme_properties_v2', JSON.stringify(properties));
+    localStorage.setItem('dhamme_user_posted_properties_v1', JSON.stringify(properties));
   }, [properties]);
 
   // Save registered accounts to LocalStorage
@@ -82,7 +82,6 @@ export function App() {
     );
   };
 
-  // Increment views count whenever a property is selected / viewed
   const handleSelectProperty = (prop: PropertyListing) => {
     const updatedProp = {
       ...prop,
@@ -97,7 +96,6 @@ export function App() {
     setCurrentScreen('details');
   };
 
-  // Handler to update property status ('active' | 'sold' | 'rented')
   const handleUpdatePropertyStatus = (id: string, newStatus: ListingStatus) => {
     setProperties((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
@@ -146,7 +144,6 @@ export function App() {
     setCurrentScreen('home');
   };
 
-  // Filter listings belonging to the active user profile or landlord
   const userListings = properties.filter((p) => 
     (userProfile?.email && p.ownerEmail === userProfile.email) ||
     p.agentName === (userProfile?.fullName || 'Landlord') ||
@@ -188,6 +185,7 @@ export function App() {
               onOpenFilter={() => setShowFilterModal(true)}
               favorites={favorites}
               onToggleFavorite={handleToggleFavorite}
+              onStartPostListing={() => handleNavigateScreen('post_step1')}
             />
           )}
 
