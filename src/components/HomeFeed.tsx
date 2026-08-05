@@ -109,15 +109,24 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       {/* AWARD WINNER DESIGNER LUXURY HERO BACKDROP BANNER */}
       <section className="relative w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-[#d4af37]/60 group transition-all duration-500 hover:border-[#d4af37] hover:shadow-[#005145]/20">
         
-        {/* Jigjiga Statue Landmark Background Image */}
+        {/* Aspect Ratio Container */}
         <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-[#002b24]">
+          
+          {/* Image 1: Primary Default Background (Jigjiga Aerial Avenue View) */}
           <img
-            src="/jigjiga-landmark.jpg"
-            alt="Jigjiga Horse Statue Landmark"
+            src="/jigjiga-aerial.jpg"
+            alt="Jigjiga City Aerial Boulevard"
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
           />
 
-          {/* Premium Multi-layer Emerald Glass Gradient Overlay */}
+          {/* Image 2: Hover Transition Background (Jigjiga Statue Landmark) */}
+          <img
+            src="/jigjiga-landmark.jpg"
+            alt="Jigjiga Horse Statue Landmark"
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+          />
+
+          {/* Multi-layer Emerald Glass Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#002b24] via-[#00382f]/70 to-black/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#002b24]/90 via-transparent to-[#002b24]/60" />
 
@@ -137,17 +146,17 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
               <span className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-black/60 text-[#d4af37] border border-[#d4af37]/40 backdrop-blur-md shadow-lg flex items-center space-x-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>📍 JIGJIGA CITY LANDMARK</span>
+                <span>📍 JIGJIGA CITY MARKETPLACE</span>
               </span>
             </div>
 
-            {/* Middle/Bottom Main Typography Slogan & Hover Animation */}
+            {/* Middle/Bottom Main Typography Slogan */}
             <div className="space-y-2 sm:space-y-3 max-w-2xl text-left">
               <span className="inline-block px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-widest bg-[#d4af37] text-[#002b24] shadow-md">
                 SOMALI REGION REAL ESTATE PLATFORM
               </span>
 
-              {/* Exact User Requested Hover Text */}
+              {/* Slogan */}
               <h1 className="font-poppins font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight drop-shadow-xl group-hover:translate-x-1 transition-transform duration-300">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffffff] via-[#f0cf65] to-[#d4af37] animate-gold-shimmer">
                   DHamme ayaa kuu dhamaystiraya
@@ -449,7 +458,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
                   {/* Views Count & Floating Price Tag on Image */}
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-10">
-                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3.5 py-1 rounded-xl backdrop-blur-md border border-white/20">
+                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
                       {property.priceLocalFormatted}
                     </span>
 
