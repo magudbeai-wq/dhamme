@@ -4,7 +4,7 @@ interface DhammeLogoProps {
   variant?: 'sm' | 'md' | 'lg' | 'xl';
   animated?: boolean;
   showSubtitle?: boolean;
-  lightMode?: boolean; // True if placed on dark background
+  lightMode?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -17,12 +17,12 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
   onClick,
   className = ''
 }) => {
-  // Sizing configurations
+  // Sizing configurations - Compact mobile subtitle text
   const sizeMap = {
-    sm: { icon: 'w-8 h-8', title: 'text-xl', subtitle: 'text-[9px] px-1.5 py-0.5', gap: 'space-x-2' },
-    md: { icon: 'w-12 h-12', title: 'text-2xl', subtitle: 'text-[10px] px-2 py-0.5', gap: 'space-x-3' },
-    lg: { icon: 'w-20 h-20', title: 'text-4xl', subtitle: 'text-xs px-3 py-1', gap: 'space-x-4' },
-    xl: { icon: 'w-28 h-28', title: 'text-5xl sm:text-6xl', subtitle: 'text-xs sm:text-sm px-3.5 py-1', gap: 'space-x-4 sm:space-x-5' }
+    sm: { icon: 'w-7 h-7', title: 'text-lg', subtitle: 'text-[8px] px-1.5 py-0.5', gap: 'space-x-2' },
+    md: { icon: 'w-10 h-10 sm:w-11 sm:h-11', title: 'text-xl sm:text-2xl', subtitle: 'text-[8px] sm:text-[9px] px-1.5 py-0.5', gap: 'space-x-2' },
+    lg: { icon: 'w-16 h-16', title: 'text-3xl', subtitle: 'text-[9px] sm:text-xs px-2 py-0.5', gap: 'space-x-3' },
+    xl: { icon: 'w-20 h-20 sm:w-24 sm:h-24', title: 'text-4xl sm:text-5xl', subtitle: 'text-[9px] sm:text-xs px-2.5 py-0.5', gap: 'space-x-3 sm:space-x-4' }
   };
 
   const currentSize = sizeMap[variant];
@@ -30,7 +30,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
   // Theme colors
   const titleColor = lightMode ? 'text-white drop-shadow-md' : 'text-[#005145]';
   const subtitleBg = lightMode 
-    ? 'bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#00382f] border-white/40 shadow-lg font-black' 
+    ? 'bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#00382f] border-white/40 shadow-sm font-black' 
     : 'bg-[#005145] text-white border-[#005145] shadow-xs font-bold';
 
   return (
@@ -43,19 +43,18 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
         
         {/* Expanding Ring Halo Pulse behind emblem */}
         {animated && (
-          <div className="absolute -inset-3 rounded-3xl bg-gradient-to-tr from-[#d4af37]/40 to-[#00e6a5]/30 animate-ring-expand blur-md pointer-events-none" />
+          <div className="absolute -inset-2 rounded-2xl bg-gradient-to-tr from-[#d4af37]/40 to-[#00e6a5]/30 animate-ring-expand blur-md pointer-events-none" />
         )}
         
-        {/* SVG Container with subtle 3D border, shadow, gradient */}
-        <div className={`relative w-full h-full rounded-2xl bg-gradient-to-br from-[#00382f] via-[#005145] to-[#0f6b5c] p-2 shadow-2xl border-2 border-[#d4af37]/60 flex items-center justify-center overflow-hidden transition-all duration-300 ${
-          animated ? 'group-hover:scale-105 group-hover:border-[#d4af37] group-hover:shadow-[#d4af37]/30' : ''
+        {/* SVG Container */}
+        <div className={`relative w-full h-full rounded-2xl bg-gradient-to-br from-[#00382f] via-[#005145] to-[#0f6b5c] p-1.5 shadow-xl border-2 border-[#d4af37]/60 flex items-center justify-center overflow-hidden transition-all duration-300 ${
+          animated ? 'group-hover:scale-105 group-hover:border-[#d4af37]' : ''
         }`}>
           
-          {/* Glass shine overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent pointer-events-none" />
 
           <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-md">
-            {/* Outer Luxury Arch */}
+            {/* Outer Arch */}
             <path 
               d="M15 55 L50 18 L85 55" 
               stroke="#D4AF37" 
@@ -64,7 +63,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
               strokeLinejoin="round" 
             />
 
-            {/* Inner Modern House Wall & "D" Curve */}
+            {/* Inner Wall & "D" Curve */}
             <path 
               d="M26 52 V78 C26 81.5 28.5 84 32 84 H52 C65 84 74 76 74 65 C74 54 65 46 52 46 H26" 
               stroke="#A2F2DE" 
@@ -105,7 +104,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
         </div>
 
         {showSubtitle && (
-          <span className={`mt-1 inline-block font-poppins uppercase tracking-widest rounded-md border ${subtitleBg} self-start shadow-sm transition-all duration-300`}>
+          <span className={`mt-0.5 inline-block font-poppins uppercase tracking-wider rounded-md border ${subtitleBg} ${currentSize.subtitle} self-start shadow-xs transition-all duration-300`}>
             REAL ESTATE • JIGJIGA
           </span>
         )}

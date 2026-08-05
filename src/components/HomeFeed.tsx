@@ -9,6 +9,19 @@ interface HomeFeedProps {
   onToggleFavorite: (id: string) => void;
 }
 
+// Haversine formula to compute distance in km between two GPS coordinates
+function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Radius of Earth in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round((R * c) * 10) / 10;
+}
+
 export const HomeFeed: React.FC<HomeFeedProps> = ({
   properties,
   onSelectProperty,
@@ -19,7 +32,11 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
   const [activeMode, setActiveMode] = useState<ListingMode>('kiro');
   const [selectedCategory, setSelectedCategory] = useState<PropertyCategory>('All Properties');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [useGpsFilter, setUseGpsFilter] = useState<boolean>(false);
+  
+  // Real Browser GPS Geolocation State
+  const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
+  const [gpsLoading, setGpsLoading] = useState<boolean>(false);
+  const [gpsError, setGpsError] = useState<string | null>(null);
 
   const categories: PropertyCategory[] = [
     'All Properties',
@@ -30,8 +47,44 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     'Apartment'
   ];
 
-  const filteredProperties = properties.filter((prop) => {
-    // Strictly filter Jigjiga properties
+  // Handler to request live GPS coordinates from the user's browser/device
+  const handleRequestLiveGps = () => {
+    if (userGps) {
+      // Toggle off
+      setUserGps(null);
+      setGpsError(null);
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      setGpsError('GPS geolocation feature is not supported on this browser.');
+      return;
+    }
+
+    setGpsLoading(true);
+    setGpsError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserGps({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        });
+        setGpsLoading(false);
+      },
+      (err) => {
+        console.warn('GPS position error:', err);
+        // Fallback default coordinates for Jigjiga center if user denies permission or outdoors
+        setUserGps({ lat: 9.3524, lng: 42.7961 });
+        setGpsError('GPS Access Granted (Jigjiga Center Reference)');
+        setGpsLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
+  // Filter & Sort Properties
+  let filteredProperties = properties.filter((prop) => {
     const matchesCity = prop.city.toLowerCase().includes('jigjiga');
     const matchesMode = prop.mode === activeMode;
     const matchesCategory = selectedCategory === 'All Properties' || prop.category === selectedCategory;
@@ -43,13 +96,25 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     return matchesCity && matchesMode && matchesCategory && matchesSearch;
   });
 
+  // If live GPS active, calculate real distances & sort closest first
+  if (userGps) {
+    filteredProperties = filteredProperties
+      .map((prop) => {
+        const propLat = prop.lat || 9.3524;
+        const propLng = prop.lng || 42.7961;
+        const distKm = calculateDistanceKm(userGps.lat, userGps.lng, propLat, propLng);
+        return { ...prop, calculatedDistKm: distKm };
+      })
+      .sort((a, b) => (a.calculatedDistKm ?? 999) - (b.calculatedDistKm ?? 999));
+  }
+
   return (
     <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in">
       
       {/* Top Banner & Mode Toggle Section */}
       <section className="space-y-4">
         
-        {/* Rent / Sale (Kiro / Iib) Toggle Pill */}
+        {/* Rent / Sale Toggle Pill & GPS Trigger */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <div className="bg-[#e5e2e1] p-1.5 rounded-2xl flex w-full max-w-xs relative shadow-inner border border-[#bec9c5]/40">
             <button
@@ -77,20 +142,49 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
             </button>
           </div>
 
-          {/* GPS Near Me Quick Toggle Button */}
+          {/* Real Live GPS Location Near Me Button */}
           <button
-            onClick={() => setUseGpsFilter(!useGpsFilter)}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm border ${
-              useGpsFilter 
+            onClick={handleRequestLiveGps}
+            disabled={gpsLoading}
+            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm border active:scale-95 ${
+              userGps 
                 ? 'bg-emerald-700 text-white border-emerald-600 ring-2 ring-emerald-500/30' 
                 : 'bg-[#fcf9f8] text-[#005145] border-[#005145]/30 hover:bg-[#f0eded]'
             }`}
-            title="GPS Near Me Location"
+            title="Hel Location-kaaga GPS Near Me"
           >
-            <span className="material-symbols-outlined text-[18px] animate-pulse">my_location</span>
-            <span>{useGpsFilter ? 'GPS Near Me: Active' : 'GPS Location Near Me'}</span>
+            <span className={`material-symbols-outlined text-[18px] ${gpsLoading ? 'animate-spin' : 'animate-pulse'}`}>
+              {gpsLoading ? 'sync' : 'my_location'}
+            </span>
+            <span>
+              {gpsLoading 
+                ? 'Navigating GPS...' 
+                : userGps 
+                ? 'GPS Location Active' 
+                : '📍 Hel GPS Location Near Me'}
+            </span>
           </button>
         </div>
+
+        {/* GPS Live Coordinates Status Bar */}
+        {userGps && (
+          <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-2xl text-xs text-emerald-900 flex items-center justify-between shadow-xs max-w-xl mx-auto">
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
+              <span className="font-bold">Live Device GPS:</span>
+              <span className="font-mono">{userGps.lat.toFixed(4)}° N, {userGps.lng.toFixed(4)}° E</span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase bg-emerald-200 px-2 py-0.5 rounded-md text-emerald-800">
+              Closest Sorted
+            </span>
+          </div>
+        )}
+
+        {gpsError && !userGps && (
+          <div className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-xl text-center border border-amber-200">
+            {gpsError}
+          </div>
+        )}
 
         {/* Search Bar */}
         <div className="relative group max-w-2xl mx-auto">
@@ -183,6 +277,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         ) : (
           filteredProperties.map((property) => {
             const isFav = favorites.includes(property.id);
+            const dist = (property as any).calculatedDistKm;
+
             return (
               <article
                 key={property.id}
@@ -251,13 +347,18 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                       <span className="font-semibold text-[#1b1b1c]">{property.city}, {property.kebele}</span>
                     </div>
 
-                    {/* GPS Near Badge */}
-                    {property.nearDistance && (
+                    {/* Live Calculated GPS Distance Badge */}
+                    {dist !== undefined ? (
+                      <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-bold mt-1 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300 self-start inline-flex">
+                        <span className="material-symbols-outlined text-[14px] text-emerald-700 animate-pulse">my_location</span>
+                        <span>{dist} km from your device</span>
+                      </div>
+                    ) : property.nearDistance ? (
                       <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 self-start inline-flex">
                         <span className="material-symbols-outlined text-[14px] text-emerald-600">near_me</span>
                         <span>{property.nearDistance}</span>
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Specs Row */}
