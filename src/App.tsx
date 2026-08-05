@@ -12,6 +12,7 @@ import { PostListingWizard } from './components/PostListingWizard';
 import { Favorites } from './components/Favorites';
 import { MyListings } from './components/MyListings';
 import { Profile } from './components/Profile';
+import { AdminDashboard } from './components/AdminDashboard';
 import { AuthModal } from './components/Auth/AuthModal';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 
@@ -137,6 +138,9 @@ export function App() {
 
   const handleLoginSuccess = (profile: UserProfile) => {
     setUserProfile(profile);
+    if (profile.isAdmin || profile.email === 'magudbeai@gmail.com') {
+      setCurrentScreen('admin_dashboard');
+    }
   };
 
   const handleLogout = () => {
@@ -229,10 +233,20 @@ export function App() {
             />
           )}
 
+          {/* MASTER ADMIN DASHBOARD */}
+          {currentScreen === 'admin_dashboard' && (
+            <AdminDashboard
+              properties={properties}
+              registeredAccounts={registeredAccounts}
+              onSelectProperty={handleSelectProperty}
+            />
+          )}
+
           {/* PROFILE */}
           {currentScreen === 'profile' && (
             <Profile
               userProfile={userProfile}
+              onNavigate={handleNavigateScreen}
               onUpdateProfile={(updated) => {
                 setUserProfile(updated);
                 setRegisteredAccounts((prev) =>

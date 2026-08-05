@@ -16,7 +16,8 @@ export type ScreenName =
   | 'favorites' 
   | 'my_listings' 
   | 'profile' 
-  | 'ai';
+  | 'ai'
+  | 'admin_dashboard';
 
 export type ListingMode = 'kiro' | 'iib'; // Kiro = Rent, Iib = Sale
 export type ListingStatus = 'active' | 'sold' | 'rented';
@@ -37,6 +38,8 @@ export interface UserProfile {
   avatarUrl: string;
   bio?: string;
   isVerified: boolean;
+  isAdmin?: boolean;
+  joinedDate?: string;
 }
 
 export interface PropertyListing {

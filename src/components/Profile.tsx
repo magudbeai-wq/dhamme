@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { UserProfile } from '../types';
+import type { UserProfile, ScreenName } from '../types';
 
 interface ProfileProps {
   userProfile: UserProfile | null;
@@ -7,6 +7,7 @@ interface ProfileProps {
   onOpenAuth: () => void;
   onLogout: () => void;
   onOpenAI: () => void;
+  onNavigate?: (screen: ScreenName) => void;
 }
 
 export const Profile: React.FC<ProfileProps> = ({
@@ -14,7 +15,8 @@ export const Profile: React.FC<ProfileProps> = ({
   onUpdateProfile,
   onOpenAuth,
   onLogout,
-  onOpenAI
+  onOpenAI,
+  onNavigate
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showPolicyModal, setShowPolicyModal] = useState(false);
@@ -22,6 +24,8 @@ export const Profile: React.FC<ProfileProps> = ({
   const [phone, setPhone] = useState(userProfile?.phone || '');
   const [bio, setBio] = useState(userProfile?.bio || '');
   const [avatarUrl, setAvatarUrl] = useState(userProfile?.avatarUrl || '');
+
+  const isAdmin = userProfile?.isAdmin || userProfile?.email === 'magudbeai@gmail.com';
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,8 +111,13 @@ export const Profile: React.FC<ProfileProps> = ({
           </div>
 
           <div className="flex-1">
-            <h2 className="font-poppins text-xl font-bold text-[#1b1b1c]">
-              {userProfile.fullName}
+            <h2 className="font-poppins text-xl font-bold text-[#1b1b1c] flex items-center space-x-2">
+              <span>{userProfile.fullName}</span>
+              {isAdmin && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#d4af37] text-[#002821] border border-[#d4af37]">
+                  👑 MASTER ADMIN
+                </span>
+              )}
             </h2>
             <span className="text-xs text-[#005145] font-semibold block">
               {userProfile.email}
@@ -200,9 +209,26 @@ export const Profile: React.FC<ProfileProps> = ({
         )}
       </div>
 
-      {/* Official Support & Anti-Fraud Policy Section */}
+      {/* Settings Options */}
       <div className="bg-[#fcf9f8] rounded-3xl listing-card-shadow overflow-hidden divide-y divide-[#bec9c5]/30 text-xs border border-[#bec9c5]/40">
         
+        {/* Master Admin Panel Direct Access Option */}
+        {isAdmin && onNavigate && (
+          <div 
+            onClick={() => onNavigate('admin_dashboard')}
+            className="p-4 bg-[#d4af37]/15 flex items-center justify-between cursor-pointer hover:bg-[#d4af37]/25 transition border-b border-[#d4af37]/40"
+          >
+            <div className="flex items-center space-x-3">
+              <span className="material-symbols-outlined text-[#00382f]">admin_panel_settings</span>
+              <div>
+                <span className="font-bold text-[#002b24] block text-sm">👑 Master Admin Dashboard</span>
+                <span className="text-[10px] text-[#00382f] font-semibold block">Full App Analytics, User Directory & Property Monitoring</span>
+              </div>
+            </div>
+            <span className="material-symbols-outlined text-[#00382f]">chevron_right</span>
+          </div>
+        )}
+
         <div 
           onClick={onOpenAI}
           className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition"

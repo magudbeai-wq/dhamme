@@ -75,7 +75,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       avatarUrl: '',
       bio: '',
       isVerified: true,
-      passwordHash: password
+      passwordHash: password,
+      joinedDate: new Date().toISOString().split('T')[0]
     };
 
     onRegisterAccount(newAccount);
@@ -84,7 +85,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setPassword('');
   };
 
-  // LOGIN HANDLER
+  // LOGIN HANDLER (Includes Master Admin Credentials)
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -98,6 +99,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
     if (!password) {
       setErrorMsg('Fadlan qor password-kaaga.');
+      return;
+    }
+
+    // Master Admin Authentication Check
+    if (trimmedEmail === 'magudbeai@gmail.com' && password === 'Bookh.112233') {
+      const masterAdminAccount: UserProfile = {
+        id: 'admin-master-magudbe',
+        email: 'magudbeai@gmail.com',
+        fullName: 'Magudbe Master Admin',
+        phone: '0915752826',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        isVerified: true,
+        isAdmin: true,
+        joinedDate: '2026-08-01'
+      };
+      onLoginSuccess(masterAdminAccount);
+      onClose();
       return;
     }
 

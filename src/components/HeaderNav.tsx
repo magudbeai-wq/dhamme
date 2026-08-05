@@ -11,6 +11,8 @@ interface HeaderNavProps {
 export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, onOpenAI }) => {
   const [showNotifications, setShowNotifications] = useState(false);
 
+  const isAdmin = userProfile?.isAdmin || userProfile?.email === 'magudbeai@gmail.com';
+
   const notificationsList = [
     {
       id: 'n1',
@@ -50,6 +52,18 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, o
         {/* Right Actions */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           
+          {/* Master Admin Panel Trigger (Visible to Admin) */}
+          {isAdmin && (
+            <button
+              onClick={() => onNavigate('admin_dashboard')}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#002b24] text-xs font-black shadow-md hover:brightness-110 active:scale-95 transition-all border border-[#d4af37]"
+              title="Admin Dashboard"
+            >
+              <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+              <span className="hidden sm:inline">👑 Admin Panel</span>
+            </button>
+          )}
+
           {/* AI Helper Trigger */}
           <button
             onClick={onOpenAI}
@@ -74,7 +88,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, o
           {/* User Profile Avatar */}
           <div 
             onClick={() => onNavigate('profile')}
-            className="w-10 h-10 rounded-full border-2 border-[#005145] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-2 hover:ring-[#005145]/30"
+            className="w-10 h-10 rounded-full border-2 border-[#005145] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-2 hover:ring-[#005145]/30 relative"
           >
             {userProfile?.avatarUrl ? (
               <img 
