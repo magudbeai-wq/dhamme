@@ -22,7 +22,7 @@ export const INITIAL_PROPERTIES: PropertyListing[] = [
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80'
     ],
-    description: 'Guri iib ah (Sale) oo villa casri ah ee ku yaala Kebele 06 Garab\'ase ee magaalada Jigjiga. Qiimaha rasmiga ah waa 2,000,000 ETB. Wuxuu leeyahay 4 qol oo jiif ah, 3 musqulood, jikada casriga ah, koronto solar ah oo 24 saac shaqaysa, iyo biyaha wakaallada Jigjiga.',
+    description: 'Guri iib ah (Sale) oo villa casri ah ee ku yaala Kebele 06 Garab\'ase ee magaalada Jigjiga. Qiimaha rasmiga ah waa 2,000,000 ETB. Wuxuu leeyahay 4 qol oo jiif ah, 3 musqulood, jikada casriga ah, koronto solar ah oo 24 saac shaqaysa, biyaha wakaallada Jigjiga, iyo dhul cagaaran oo baxad weyn.',
     agentName: 'Cabdiqaadir Xasan',
     agentPhone: '+251 91 555 1234',
     agentAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
