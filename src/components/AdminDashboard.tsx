@@ -15,8 +15,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'properties' | 'kebeles'>('overview');
   const [searchFilter, setSearchFilter] = useState('');
 
-  // Compute Master Analytics
-  const totalUsers = registeredAccounts.length > 0 ? registeredAccounts.length : 12;
+  // Default Master Admin account if directory empty
+  const defaultAdmin: UserProfile = {
+    id: 'admin-master-magudbe',
+    fullName: 'Magudbe Master Admin',
+    email: 'magudbeai@gmail.com',
+    phone: '0915752826',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    isVerified: true,
+    isAdmin: true,
+    joinedDate: '2026-08-01'
+  };
+
+  const allUsers: UserProfile[] = registeredAccounts.length > 0
+    ? registeredAccounts
+    : [defaultAdmin];
+
+  const totalUsers = allUsers.length;
   const totalProperties = properties.length;
   const activeProperties = properties.filter((p) => (p.status || 'active') === 'active').length;
   const soldProperties = properties.filter((p) => p.status === 'sold').length;
@@ -26,39 +41,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const totalViews = properties.reduce((sum, p) => sum + (p.viewsCount || 45), 0);
   const totalInquiries = properties.reduce((sum, p) => sum + (p.inquiriesCount || 6), 0);
 
-  // Default mock user list if no additional signups yet
-  const userDirectory: UserProfile[] = registeredAccounts.length > 0 ? registeredAccounts : [
-    {
-      id: 'admin-1',
-      fullName: 'Magudbe Admin',
-      email: 'magudbeai@gmail.com',
-      phone: '0915752826',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-      isVerified: true,
-      isAdmin: true,
-      joinedDate: '2026-08-01'
-    },
-    {
-      id: 'usr-2',
-      fullName: 'Cabdiqaadir Xasan',
-      email: 'cabdiqaadir@dhamme.app',
-      phone: '+251 91 555 1234',
-      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-      isVerified: true,
-      joinedDate: '2026-08-03'
-    },
-    {
-      id: 'usr-3',
-      fullName: 'Fartuun Axmed',
-      email: 'fartuun@dhamme.app',
-      phone: '+251 92 333 4455',
-      avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-      isVerified: true,
-      joinedDate: '2026-08-04'
-    }
-  ];
-
-  const filteredUsers = userDirectory.filter((u) =>
+  const filteredUsers = allUsers.filter((u) =>
     u.fullName.toLowerCase().includes(searchFilter.toLowerCase()) ||
     u.email.toLowerCase().includes(searchFilter.toLowerCase()) ||
     u.phone.toLowerCase().includes(searchFilter.toLowerCase())
@@ -83,10 +66,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <span className="text-xs font-mono text-[#a2f2de]">magudbeai@gmail.com</span>
           </div>
           <h1 className="font-poppins text-2xl sm:text-3xl font-black tracking-tight">
-            DHAMME App Real-Time Analytics
+            DHAMME Live User & Real Estate Analytics
           </h1>
           <p className="text-xs text-[#a2f2de] font-medium">
-            Dhamaan xogta user-ka, guryaha la soo dhigay, views-ka iyo dhaq-dhaqaaqa Jigjiga.
+            Dhamaan isticmaalayaasha is diwaan galiyay ({totalUsers} Users) & Guryaha Jigjiga.
           </p>
         </div>
 
@@ -94,11 +77,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <span className="text-[10px] uppercase font-bold text-[#d4af37] block">System Status</span>
           <span className="text-xs font-bold text-emerald-400 flex items-center space-x-1 justify-center">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>Real-Time Live Sync</span>
+            <span>On-Time Live User Sync</span>
           </span>
         </div>
 
-        {/* Ambient Gold Glow Background Effect */}
         <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-[#d4af37]/15 blur-3xl pointer-events-none" />
       </div>
 
@@ -113,7 +95,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
           <div className="mt-3">
             <span className="font-poppins font-black text-3xl text-[#1b1b1c]">{totalUsers}</span>
-            <span className="text-[11px] text-emerald-700 font-bold block mt-1">📈 Registered Accounts</span>
+            <span className="text-[11px] text-emerald-700 font-bold block mt-1">📈 Diwaan-Galisay (Live)</span>
           </div>
         </div>
 
@@ -141,7 +123,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <span className="font-poppins font-black text-xl sm:text-2xl text-[#00382f]">
               {totalMarketVolumeEtb > 0 ? `${(totalMarketVolumeEtb / 1000000).toFixed(2)}M ETB` : '0 ETB'}
             </span>
-            <span className="text-[10px] text-[#6f7976] block font-semibold">Total Property Listing Value</span>
+            <span className="text-[10px] text-[#6f7976] block font-semibold">Total Property Value</span>
           </div>
         </div>
 
@@ -181,46 +163,50 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         ))}
       </div>
 
-      {/* TAB 1: OVERVIEW & INSIGHTS */}
+      {/* TAB 1: OVERVIEW & LIVE SIGNUPS FEED */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* Recent App Activity Card */}
+          {/* Live User Signups Feed */}
           <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 space-y-4">
             <div className="flex justify-between items-center pb-3 border-b border-[#bec9c5]/30">
               <div className="flex items-center space-x-2 text-[#005145]">
-                <span className="material-symbols-outlined text-[22px]">pulse</span>
+                <span className="material-symbols-outlined text-[22px]">person_add</span>
                 <h3 className="font-poppins font-bold text-base text-[#1b1b1c]">
-                  Dhaq-dhaqaaqa Ugu Dambeeyay (Live Activity)
+                  Users-ka Is Diwaan Galisay (Live Signups Feed)
                 </h3>
               </div>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">Live</span>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
+                {totalInquiries} Leads Active
+              </span>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="p-3 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/30 flex justify-between items-center">
-                <div>
-                  <span className="font-bold text-[#1b1b1c] block">Macaamiisha Soo Wacay (Client Leads):</span>
-                  <span className="text-[#3f4946]">📞 {totalInquiries} Wacitaan & WhatsApp messages generated</span>
-                </div>
-                <span className="font-mono text-[10px] text-[#005145] font-bold">Today</span>
-              </div>
+            <div className="space-y-3 text-xs max-h-80 overflow-y-auto pr-1">
+              {allUsers.map((u) => (
+                <div key={u.id} className="p-3 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/30 flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    {u.avatarUrl ? (
+                      <img src={u.avatarUrl} alt={u.fullName} className="w-9 h-9 rounded-full object-cover border border-[#005145]" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-[#005145] text-white flex items-center justify-center font-bold text-xs">
+                        {u.fullName.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <span className="font-bold text-[#1b1b1c] block">{u.fullName} {u.isAdmin && '👑'}</span>
+                      <span className="text-[11px] text-[#005145] font-mono block">{u.email}</span>
+                      <span className="text-[10px] text-[#6f7976] block">📞 {u.phone}</span>
+                    </div>
+                  </div>
 
-              <div className="p-3 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/30 flex justify-between items-center">
-                <div>
-                  <span className="font-bold text-[#1b1b1c] block">Guryaha Active-ka ah:</span>
-                  <span className="text-[#3f4946]">🟢 {activeProperties} Homes available for Rent/Sale in Jigjiga</span>
+                  <div className="text-right">
+                    <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md">
+                      Registered
+                    </span>
+                    <span className="text-[10px] text-gray-500 block mt-1 font-mono">{u.joinedDate || 'Today'}</span>
+                  </div>
                 </div>
-                <span className="font-mono text-[10px] text-[#005145] font-bold">Jigjiga</span>
-              </div>
-
-              <div className="p-3 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/30 flex justify-between items-center">
-                <div>
-                  <span className="font-bold text-[#1b1b1c] block">Waala Iibsaday / Kireeyay:</span>
-                  <span className="text-[#3f4946]">🔴 {soldProperties} Sold | 🟡 {rentedProperties} Rented</span>
-                </div>
-                <span className="font-mono text-[10px] text-[#005145] font-bold">Completed</span>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -259,13 +245,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 2: USER DIRECTORY LIST */}
+      {/* TAB 2: COMPLETE USER DIRECTORY */}
       {activeTab === 'users' && (
         <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h3 className="font-poppins font-bold text-lg text-[#1b1b1c]">
-              Dhamaan Isticmaalayaasha App-ka (Registered User Directory)
-            </h3>
+            <div>
+              <h3 className="font-poppins font-bold text-lg text-[#1b1b1c]">
+                Dhamaan Isticmaalayaasha Is Diwaan Galisay ({totalUsers} Registered Users)
+              </h3>
+              <p className="text-xs text-[#3f4946]">
+                Xogta buuxda ee dadka koontada ku samaystay DHAMME App.
+              </p>
+            </div>
 
             <input
               type="text"
@@ -282,7 +273,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <tr className="bg-[#f0eded] text-[#3f4946] border-b border-[#bec9c5]/40">
                   <th className="p-3">User Profile</th>
                   <th className="p-3">Email Address</th>
-                  <th className="p-3">Phone</th>
+                  <th className="p-3">Phone Number</th>
                   <th className="p-3">Joined Date</th>
                   <th className="p-3">Status</th>
                 </tr>
@@ -291,15 +282,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-[#f0eded]/50 transition">
                     <td className="p-3 flex items-center space-x-2.5">
-                      <img src={user.avatarUrl} alt={user.fullName} className="w-8 h-8 rounded-full object-cover border border-[#005145]" />
+                      {user.avatarUrl ? (
+                        <img src={user.avatarUrl} alt={user.fullName} className="w-8 h-8 rounded-full object-cover border border-[#005145]" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-[#005145] text-white font-bold flex items-center justify-center text-xs">
+                          {user.fullName.charAt(0)}
+                        </div>
+                      )}
                       <span className="font-bold text-[#1b1b1c]">{user.fullName} {user.isAdmin && '👑 (Admin)'}</span>
                     </td>
                     <td className="p-3 font-mono text-[#005145]">{user.email}</td>
                     <td className="p-3 font-semibold">{user.phone}</td>
-                    <td className="p-3 text-gray-500">{user.joinedDate || '2026-08-04'}</td>
+                    <td className="p-3 text-gray-500 font-mono">{user.joinedDate || 'Today'}</td>
                     <td className="p-3">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                        Active User
+                        Registered User
                       </span>
                     </td>
                   </tr>
