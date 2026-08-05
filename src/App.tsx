@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { ScreenName, PropertyListing, FilterState, UserProfile } from './types';
+import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus } from './types';
 import { INITIAL_PROPERTIES } from './data/propertiesData';
 import { SplashScreen } from './components/SplashScreen';
 import { Onboarding } from './components/Onboarding';
@@ -21,10 +21,12 @@ interface RegisteredAccount extends UserProfile {
 
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
-  const [properties, setProperties] = useState<PropertyListing[]>(INITIAL_PROPERTIES);
+  const [properties, setProperties] = useState<PropertyListing[]>(() => {
+    const saved = localStorage.getItem('dhamme_properties_v2');
+    return saved ? JSON.parse(saved) : INITIAL_PROPERTIES;
+  });
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [userListings, setUserListings] = useState<PropertyListing[]>([]);
 
   // Registered accounts stored locally
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
@@ -32,7 +34,7 @@ export function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Current logged in profile (starts null)
+  // Current logged in profile
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('dhamme_active_user');
     return saved ? JSON.parse(saved) : null;
@@ -55,6 +57,11 @@ export function App() {
     powerRequired: false
   });
 
+  // Save properties state to LocalStorage
+  useEffect(() => {
+    localStorage.setItem('dhamme_properties_v2', JSON.stringify(properties));
+  }, [properties]);
+
   // Save registered accounts to LocalStorage
   useEffect(() => {
     localStorage.setItem('dhamme_registered_accounts', JSON.stringify(registeredAccounts));
@@ -75,17 +82,44 @@ export function App() {
     );
   };
 
+  // Increment views count whenever a property is selected / viewed
+  const handleSelectProperty = (prop: PropertyListing) => {
+    const updatedProp = {
+      ...prop,
+      viewsCount: (prop.viewsCount || 45) + 1
+    };
+
+    setProperties((prev) =>
+      prev.map((p) => (p.id === prop.id ? updatedProp : p))
+    );
+
+    setSelectedProperty(updatedProp);
+    setCurrentScreen('details');
+  };
+
+  // Handler to update property status ('active' | 'sold' | 'rented')
+  const handleUpdatePropertyStatus = (id: string, newStatus: ListingStatus) => {
+    setProperties((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+    );
+    if (selectedProperty && selectedProperty.id === id) {
+      setSelectedProperty((prev) => (prev ? { ...prev, status: newStatus } : null));
+    }
+  };
+
   const handleAddProperty = (newProp: PropertyListing) => {
     const updatedProp: PropertyListing = {
       ...newProp,
       agentName: userProfile?.fullName || 'Landlord',
-      agentPhone: userProfile?.phone || '+251 91 000 0000',
-      agentAvatar: userProfile?.avatarUrl || '',
-      ownerEmail: userProfile?.email
+      agentPhone: userProfile?.phone || '+251 91 500 0000',
+      agentAvatar: userProfile?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      ownerEmail: userProfile?.email || 'user@dhamme.app',
+      status: 'active',
+      viewsCount: 1,
+      inquiriesCount: 0
     };
 
     setProperties((prev) => [updatedProp, ...prev]);
-    setUserListings((prev) => [updatedProp, ...prev]);
     setSelectedProperty(updatedProp);
     setCurrentScreen('details');
   };
@@ -111,6 +145,14 @@ export function App() {
     setUserProfile(null);
     setCurrentScreen('home');
   };
+
+  // Filter listings belonging to the active user profile or landlord
+  const userListings = properties.filter((p) => 
+    (userProfile?.email && p.ownerEmail === userProfile.email) ||
+    p.agentName === (userProfile?.fullName || 'Landlord') ||
+    p.ownerEmail === 'user@dhamme.app' ||
+    p.id.startsWith('prop-')
+  );
 
   return (
     <div className="min-h-screen bg-[#F2E8DC] text-[#1b1b1c] font-inter">
@@ -142,10 +184,7 @@ export function App() {
           {currentScreen === 'home' && (
             <HomeFeed
               properties={properties}
-              onSelectProperty={(prop) => {
-                setSelectedProperty(prop);
-                setCurrentScreen('details');
-              }}
+              onSelectProperty={handleSelectProperty}
               onOpenFilter={() => setShowFilterModal(true)}
               favorites={favorites}
               onToggleFavorite={handleToggleFavorite}
@@ -177,23 +216,18 @@ export function App() {
             <Favorites
               favoriteIds={favorites}
               allProperties={properties}
-              onSelectProperty={(prop) => {
-                setSelectedProperty(prop);
-                setCurrentScreen('details');
-              }}
+              onSelectProperty={handleSelectProperty}
               onToggleFavorite={handleToggleFavorite}
             />
           )}
 
-          {/* MY LISTINGS */}
+          {/* MY LISTINGS & LANDLORD ANALYTICS DASHBOARD */}
           {currentScreen === 'my_listings' && (
             <MyListings
               userListings={userListings}
-              onSelectProperty={(prop) => {
-                setSelectedProperty(prop);
-                setCurrentScreen('details');
-              }}
+              onSelectProperty={handleSelectProperty}
               onStartNewListing={() => handleNavigateScreen('post_step1')}
+              onUpdateStatus={handleUpdatePropertyStatus}
             />
           )}
 

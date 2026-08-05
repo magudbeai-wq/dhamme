@@ -17,10 +17,13 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
 
-  // Default GPS if not present
   const lat = property.lat || 9.3524;
   const lng = property.lng || 42.7961;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+  const isSold = property.status === 'sold';
+  const isRented = property.status === 'rented';
+  const views = property.viewsCount || 45;
 
   return (
     <div className="min-h-screen bg-[#F2E8DC] pb-28 animate-fade-in">
@@ -30,15 +33,15 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
         <img
           src={property.images[activeImgIndex] || property.images[0]}
           alt={property.title}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover ${isSold || isRented ? 'grayscale-[30%]' : ''}`}
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
 
         {/* Back Button */}
         <button
           onClick={onBack}
-          className="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/70 active:scale-95 transition-all shadow-md"
+          className="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/70 active:scale-95 transition-all shadow-md z-10"
           title="Back"
         >
           <span className="material-symbols-outlined text-[24px]">arrow_back</span>
@@ -47,7 +50,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
         {/* Favorite Button */}
         <button
           onClick={() => onToggleFavorite(property.id)}
-          className="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/70 active:scale-95 transition-all shadow-md"
+          className="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/70 active:scale-95 transition-all shadow-md z-10"
           title={isFav ? 'Remove Favorite' : 'Add Favorite'}
         >
           <span className={`material-symbols-outlined text-[24px] ${isFav ? 'fill-1 text-red-500' : ''}`}>
@@ -55,9 +58,34 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
           </span>
         </button>
 
+        {/* Sold / Rented Banner Overlay on Details Header Image */}
+        {isSold && (
+          <div className="absolute inset-0 bg-red-950/70 backdrop-blur-[2px] flex flex-col items-center justify-center text-white p-4 text-center z-20">
+            <span className="material-symbols-outlined text-[48px] text-red-400 mb-1">lock</span>
+            <span className="font-poppins font-black text-2xl tracking-wider text-red-200 border-2 border-red-400 px-6 py-2 rounded-2xl bg-red-900/90 shadow-2xl">
+              WAALA IIBSADAY (SOLD)
+            </span>
+            <p className="text-xs font-bold text-red-100 mt-2 bg-black/70 px-4 py-1.5 rounded-full border border-red-400/40">
+              Gurigan waa la iibsaday. Fadlan fiiri guryaha kale ee dhaw.
+            </p>
+          </div>
+        )}
+
+        {isRented && (
+          <div className="absolute inset-0 bg-amber-950/70 backdrop-blur-[2px] flex flex-col items-center justify-center text-white p-4 text-center z-20">
+            <span className="material-symbols-outlined text-[48px] text-amber-400 mb-1">key</span>
+            <span className="font-poppins font-black text-2xl tracking-wider text-amber-200 border-2 border-amber-400 px-6 py-2 rounded-2xl bg-amber-900/90 shadow-2xl">
+              WAALA KIREEYAY (RENTED)
+            </span>
+            <p className="text-xs font-bold text-amber-100 mt-2 bg-black/70 px-4 py-1.5 rounded-full border border-amber-400/40">
+              Gurigan waa la kireeyay. Fadlan fiiri guryaha kale ee dhaw.
+            </p>
+          </div>
+        )}
+
         {/* Gallery Thumbnails Indicator */}
         {property.images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/20">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/20 z-10">
             {property.images.map((_, idx) => (
               <button
                 key={idx}
@@ -74,7 +102,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
       {/* Details Container */}
       <div className="max-w-screen-md mx-auto px-4 sm:px-6 pt-6 space-y-5">
         
-        {/* Title, Badges & Price */}
+        {/* Title, Badges & Views Count */}
         <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-3 border border-[#bec9c5]/40">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
             <div>
@@ -87,6 +115,12 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
 
                 <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#0f6b5c]/10 text-[#005145] border border-[#005145]/20">
                   {property.category}
+                </span>
+
+                {/* Views Count Badge */}
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#f0eded] text-[#005145] border border-[#bec9c5]/40 flex items-center space-x-1">
+                  <span className="material-symbols-outlined text-[14px]">visibility</span>
+                  <span>{views} Aragtida (Views)</span>
                 </span>
               </div>
 
@@ -201,10 +235,17 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
 
           <button
             onClick={() => setShowContactModal(true)}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-bold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center space-x-2"
+            disabled={isSold || isRented}
+            className={`w-full sm:w-auto px-6 py-3.5 rounded-2xl font-poppins font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 ${
+              isSold || isRented
+                ? 'bg-gray-400 text-white cursor-not-allowed'
+                : 'bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white active:scale-95'
+            }`}
           >
-            <span className="material-symbols-outlined text-[20px]">call</span>
-            <span>La Xiriir Milkiilaha</span>
+            <span className="material-symbols-outlined text-[20px]">
+              {isSold || isRented ? 'lock' : 'call'}
+            </span>
+            <span>{isSold ? 'Waala Iibsaday (Sold)' : isRented ? 'Waala Kireeyay (Rented)' : 'La Xiriir Milkiilaha'}</span>
           </button>
         </div>
 

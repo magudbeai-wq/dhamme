@@ -19,6 +19,7 @@ export type ScreenName =
   | 'ai';
 
 export type ListingMode = 'kiro' | 'iib'; // Kiro = Rent, Iib = Sale
+export type ListingStatus = 'active' | 'sold' | 'rented';
 
 export type PropertyCategory = 
   | 'All Properties'
@@ -66,6 +67,10 @@ export interface PropertyListing {
   nearDistance?: string; // e.g. "0.8 km from Taiwan Market"
   lat?: number; // e.g. 9.3500
   lng?: number; // e.g. 42.8000
+  // Dashboard Analytics & Status Fields
+  status?: ListingStatus; // 'active' | 'sold' | 'rented'
+  viewsCount?: number; // e.g. 420
+  inquiriesCount?: number; // e.g. 18
 }
 
 export interface FilterState {

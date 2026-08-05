@@ -22,7 +22,7 @@ export const INITIAL_PROPERTIES: PropertyListing[] = [
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80'
     ],
-    description: 'Guri iib ah (Sale) oo villa casri ah ee ku yaala Kebele 06 Garab\'ase ee magaalada Jigjiga. Qiimaha rasmiga ah waa 2,000,000 ETB. Wuxuu leeyahay 4 qol oo jiif ah, 3 musqulood, jikada casriga ah, koronto solar ah oo 24 saac shaqaysa, iyo biyaha wakaallada Jigjiga. Baarkin 3 gaadhi ah iyo dhul cagaaran.',
+    description: 'Guri iib ah (Sale) oo villa casri ah ee ku yaala Kebele 06 Garab\'ase ee magaalada Jigjiga. Qiimaha rasmiga ah waa 2,000,000 ETB. Wuxuu leeyahay 4 qol oo jiif ah, 3 musqulood, jikada casriga ah, koronto solar ah oo 24 saac shaqaysa, iyo biyaha wakaallada Jigjiga.',
     agentName: 'Cabdiqaadir Xasan',
     agentPhone: '+251 91 555 1234',
     agentAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
@@ -30,7 +30,10 @@ export const INITIAL_PROPERTIES: PropertyListing[] = [
     gpsCoords: '9.3524° N, 42.7961° E',
     nearDistance: '1.2 km from Garab\'ase Center (Jigjiga)',
     lat: 9.3524,
-    lng: 42.7961
+    lng: 42.7961,
+    status: 'active',
+    viewsCount: 420,
+    inquiriesCount: 18
   },
   {
     id: 'jigjiga-kiro-25k',
@@ -61,7 +64,10 @@ export const INITIAL_PROPERTIES: PropertyListing[] = [
     gpsCoords: '9.3580° N, 42.7990° E',
     nearDistance: '0.4 km from Taiwan Market (Jigjiga)',
     lat: 9.3580,
-    lng: 42.7990
+    lng: 42.7990,
+    status: 'active',
+    viewsCount: 310,
+    inquiriesCount: 12
   },
   {
     id: 'jigjiga-iib-3m',
@@ -91,7 +97,10 @@ export const INITIAL_PROPERTIES: PropertyListing[] = [
     gpsCoords: '9.3320° N, 42.8120° E',
     nearDistance: '0.9 km from Jigjiga Airport Road',
     lat: 9.3320,
-    lng: 42.8120
+    lng: 42.8120,
+    status: 'sold', // Example Sold Property to showcase "WAALA IIBSADAY" badge!
+    viewsCount: 680,
+    inquiriesCount: 34
   },
   {
     id: 'jigjiga-kiro-15k',
@@ -121,6 +130,9 @@ export const INITIAL_PROPERTIES: PropertyListing[] = [
     gpsCoords: '9.3550° N, 42.7930° E',
     nearDistance: '0.2 km from Jigjiga Central Park',
     lat: 9.3550,
-    lng: 42.7930
+    lng: 42.7930,
+    status: 'active',
+    viewsCount: 195,
+    inquiriesCount: 8
   }
 ];

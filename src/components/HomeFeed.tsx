@@ -9,7 +9,6 @@ interface HomeFeedProps {
   onToggleFavorite: (id: string) => void;
 }
 
-// Haversine formula to compute distance in km between two GPS coordinates
 function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // Radius of Earth in km
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -47,10 +46,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     'Apartment'
   ];
 
-  // Handler to request live GPS coordinates from the user's browser/device
   const handleRequestLiveGps = () => {
     if (userGps) {
-      // Toggle off
       setUserGps(null);
       setGpsError(null);
       return;
@@ -74,7 +71,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       },
       (err) => {
         console.warn('GPS position error:', err);
-        // Fallback default coordinates for Jigjiga center if user denies permission or outdoors
         setUserGps({ lat: 9.3524, lng: 42.7961 });
         setGpsError('GPS Access Granted (Jigjiga Center Reference)');
         setGpsLoading(false);
@@ -83,7 +79,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     );
   };
 
-  // Filter & Sort Properties
   let filteredProperties = properties.filter((prop) => {
     const matchesCity = prop.city.toLowerCase().includes('jigjiga');
     const matchesMode = prop.mode === activeMode;
@@ -96,7 +91,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     return matchesCity && matchesMode && matchesCategory && matchesSearch;
   });
 
-  // If live GPS active, calculate real distances & sort closest first
   if (userGps) {
     filteredProperties = filteredProperties
       .map((prop) => {
@@ -109,12 +103,35 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
   }
 
   return (
-    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in">
+    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-4">
       
-      {/* Top Banner & Mode Toggle Section */}
+      {/* Daily In-App Notification Banner */}
+      <div className="bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-between border border-[#a2f2de]/30">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-[#a2f2de] text-[22px] animate-bounce">notifications_active</span>
+          </div>
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#a2f2de] block">
+              Fariin Maalmoolee (Daily Alert)
+            </span>
+            <p className="text-xs font-bold leading-tight">
+              Si fudud ku hel guri oo kirayso ama iibso hadda ee Jigjiga!
+            </p>
+          </div>
+        </div>
+
+        <button 
+          onClick={handleRequestLiveGps}
+          className="hidden sm:inline-flex px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs shrink-0 transition"
+        >
+          GPS Near Me
+        </button>
+      </div>
+
+      {/* Mode Toggle Section */}
       <section className="space-y-4">
         
-        {/* Rent / Sale Toggle Pill & GPS Trigger */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <div className="bg-[#e5e2e1] p-1.5 rounded-2xl flex w-full max-w-xs relative shadow-inner border border-[#bec9c5]/40">
             <button
@@ -142,7 +159,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
             </button>
           </div>
 
-          {/* Real Live GPS Location Near Me Button */}
           <button
             onClick={handleRequestLiveGps}
             disabled={gpsLoading}
@@ -181,7 +197,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         )}
 
         {gpsError && !userGps && (
-          <div className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-xl text-center border border-amber-200">
+          <div className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-xl text-center border border-amber-200 max-w-xl mx-auto">
             {gpsError}
           </div>
         )}
@@ -278,23 +294,55 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
           filteredProperties.map((property) => {
             const isFav = favorites.includes(property.id);
             const dist = (property as any).calculatedDistKm;
+            const views = property.viewsCount || 45;
+            const isSold = property.status === 'sold';
+            const isRented = property.status === 'rented';
 
             return (
               <article
                 key={property.id}
                 onClick={() => onSelectProperty(property)}
-                className="bg-[#fcf9f8] rounded-3xl overflow-hidden listing-card-shadow transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer border border-[#bec9c5]/40 flex flex-col group"
+                className={`bg-[#fcf9f8] rounded-3xl overflow-hidden listing-card-shadow transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer border flex flex-col group relative ${
+                  isSold || isRented ? 'border-red-400 bg-red-50/20' : 'border-[#bec9c5]/40'
+                }`}
               >
                 {/* Property Image Container */}
                 <div className="relative aspect-[4/3] w-full bg-[#e5e2e1] overflow-hidden">
                   <img
                     src={property.images[0]}
                     alt={property.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+                      isSold || isRented ? 'grayscale-[40%]' : ''
+                    }`}
                     loading="lazy"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+                  {/* PROMINENT SOLD / RENTED STATUS OVERLAY */}
+                  {isSold && (
+                    <div className="absolute inset-0 bg-red-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-white p-4 text-center z-20">
+                      <span className="material-symbols-outlined text-[42px] text-red-400 mb-1">lock</span>
+                      <span className="font-poppins font-black text-xl tracking-wider text-red-200 border-2 border-red-400 px-4 py-1.5 rounded-2xl bg-red-900/80 shadow-2xl">
+                        WAALA IIBSADAY (SOLD)
+                      </span>
+                      <span className="text-[11px] font-bold text-red-200 mt-2 bg-black/60 px-3 py-1 rounded-full">
+                        Gurigan horay ayaa loo iibsaday
+                      </span>
+                    </div>
+                  )}
+
+                  {isRented && (
+                    <div className="absolute inset-0 bg-amber-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-white p-4 text-center z-20">
+                      <span className="material-symbols-outlined text-[42px] text-amber-400 mb-1">key</span>
+                      <span className="font-poppins font-black text-xl tracking-wider text-amber-200 border-2 border-amber-400 px-4 py-1.5 rounded-2xl bg-amber-900/80 shadow-2xl">
+                        WAALA KIREEYAY (RENTED)
+                      </span>
+                      <span className="text-[11px] font-bold text-amber-200 mt-2 bg-black/60 px-3 py-1 rounded-full">
+                        Gurigan horay ayaa loo kireeyay
+                      </span>
+                    </div>
+                  )}
 
                   {/* Badges */}
                   <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
@@ -326,10 +374,16 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                     </span>
                   </button>
 
-                  {/* Floating Price Tag on Image */}
+                  {/* Views Count & Floating Price Tag on Image */}
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-10">
-                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3.5 py-1 rounded-xl backdrop-blur-md border border-white/20">
+                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
                       {property.priceLocalFormatted}
+                    </span>
+
+                    {/* Views Count Indicator */}
+                    <span className="text-[11px] font-bold bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-xl flex items-center space-x-1 text-white border border-white/20">
+                      <span className="material-symbols-outlined text-[14px]">visibility</span>
+                      <span>{views} Views</span>
                     </span>
                   </div>
                 </div>
@@ -374,7 +428,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                     </div>
 
                     <div className="p-1.5 rounded-xl bg-[#f0eded] flex flex-col items-center">
-                      <span className="material-symbols-outlined text-[18px] text-amber-600">bolt</span>
+                      <span className="material-symbols-outlined text-[18px] text-[#0f6b5c]">bolt</span>
                       <span className="font-bold text-[10px] text-[#1b1b1c] truncate max-w-full mt-0.5">{property.electricity}</span>
                     </div>
                   </div>
