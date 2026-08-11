@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SignIn, SignUp, useSignIn } from '@clerk/clerk-react';
+import { SignIn, SignUp, useClerk } from '@clerk/clerk-react';
 import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
@@ -19,28 +19,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLoginSuccess,
   onClose
 }) => {
-  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
+  const clerk = useClerk();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
   const [authMode, setAuthMode] = useState<'clerk' | 'local'>('clerk');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
-    if (!isSignInLoaded || !signIn) {
-      setErrorMsg('Clerk ma uusan diyaar garoobin adha kaga soo gal Clerk UI.');
-      return;
-    }
     try {
       setIsGoogleLoading(true);
       setErrorMsg('');
-      await signIn.authenticateWithRedirect({
-        strategy: 'oauth_google',
-        redirectUrl: window.location.origin,
-        redirectUrlComplete: window.location.origin,
-      });
+
+      if (clerk.client?.signIn) {
+        await clerk.client.signIn.authenticateWithRedirect({
+          strategy: 'oauth_google',
+          redirectUrl: window.location.origin,
+          redirectUrlComplete: window.location.origin,
+        });
+      } else if ((clerk as any).authenticateWithRedirect) {
+        await (clerk as any).authenticateWithRedirect({
+          strategy: 'oauth_google',
+          redirectUrl: window.location.origin,
+          redirectUrlComplete: window.location.origin,
+        });
+      } else {
+        setAuthMode('clerk');
+        setIsGoogleLoading(false);
+      }
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
       setIsGoogleLoading(false);
-      setErrorMsg(err.message || 'Hada ma suurtogalin Google Sign-In. Fadlan isticmaal Clerk ama Form Auth.');
+      setErrorMsg(err.message || 'Fadlan isticmaal Clerk UI ama Form Auth.');
     }
   };
   
