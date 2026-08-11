@@ -3,6 +3,7 @@ import type { UserProfile, ScreenName } from '../types';
 
 interface ProfileProps {
   userProfile: UserProfile | null;
+  userListingsCount?: number;
   onUpdateProfile: (updated: UserProfile) => void;
   onOpenAuth: () => void;
   onLogout: () => void;
@@ -12,6 +13,7 @@ interface ProfileProps {
 
 export const Profile: React.FC<ProfileProps> = ({
   userProfile,
+  userListingsCount = 5,
   onUpdateProfile,
   onOpenAuth,
   onLogout,
@@ -26,6 +28,7 @@ export const Profile: React.FC<ProfileProps> = ({
   const [avatarUrl, setAvatarUrl] = useState(userProfile?.avatarUrl || '');
 
   const isAdmin = userProfile?.isAdmin || userProfile?.email === 'magudbeai@gmail.com';
+  const isVerified = userProfile?.isVerified || userListingsCount >= 5;
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -111,7 +114,7 @@ export const Profile: React.FC<ProfileProps> = ({
           </div>
 
           <div className="flex-1">
-            <h2 className="font-poppins text-xl font-bold text-[#1b1b1c] flex items-center space-x-2">
+            <h2 className="font-poppins text-xl font-bold text-[#1b1b1c] flex items-center space-x-2 flex-wrap gap-1">
               <span>{userProfile.fullName}</span>
               {isAdmin && (
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#d4af37] text-[#002821] border border-[#d4af37]">
@@ -126,11 +129,45 @@ export const Profile: React.FC<ProfileProps> = ({
               {userProfile.phone}
             </span>
             <div className="flex items-center space-x-2 mt-1">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#005145]/10 text-[#005145]">
-                Verified Account
-              </span>
+              {isVerified ? (
+                <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  <span className="material-symbols-outlined text-[14px]">verified</span>
+                  <span>Verified Landlord Profile</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                  <span className="material-symbols-outlined text-[14px]">pending</span>
+                  <span>Pending 5 Homes Verification ({userListingsCount}/5)</span>
+                </span>
+              )}
             </div>
           </div>
+        </div>
+
+        {/* VERIFICATION PROGRESS / BADGE CARD */}
+        <div className="p-3.5 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/40 text-xs space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-[#1b1b1c] flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[18px] text-[#005145]">verified_user</span>
+              <span>Verification Status (5 Guri Requirement)</span>
+            </span>
+            <span className="font-mono font-bold text-[#005145]">
+              {userListingsCount >= 5 ? '5 / 5 (Completed)' : `${userListingsCount} / 5 Homes`}
+            </span>
+          </div>
+
+          <div className="w-full h-2 bg-[#e5e2e1] rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-[#005145] to-[#0f6b5c] rounded-full transition-all duration-500" 
+              style={{ width: `${Math.min(100, (userListingsCount / 5) * 100)}%` }} 
+            />
+          </div>
+
+          <p className="text-[11px] text-[#3f4946] font-medium leading-relaxed">
+            {isVerified 
+              ? '✅ Koontadaada waa la xaqiijiyay! Waxaad soo dhigtay 5+ guri oo sax ah, macaamiishuna waxay si toos ah u aaminayaan profile-kaaga.'
+              : `Akauntigaaga wuxuu noqonayaa Verified mar haddii aad soo dhigto 5 guri oo sax ah (${5 - userListingsCount} guri oo kale ayaa kaa dhiman).`}
+          </p>
         </div>
 
         {bio && (

@@ -16,7 +16,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       desc: 'Discover or post rental houses and apartments across Kebele 01 to Kebele 10, Garab\'ase, and Taiwan Market in Jigjiga.',
       descSo: 'Ka raadi ama soo dhig guryaha Kiro ee Kebele 01 ilaa Kebele 10, Garab\'ase iyo Taiwan Area ee Jigjiga.',
       icon: 'key',
-      image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80'
+      image: '/jigjiga-house-1.jpg'
     },
     {
       id: 2,
@@ -25,7 +25,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       desc: 'Find affordable properties for sale (e.g. 2,000,000 ETB) or sell your property fast in Jigjiga.',
       descSo: 'Ka hel guryaha iibka ah ee qiimaha jaban (e.g. 2,000,000 ETB) ama iibi gurigaaga Jigjiga si degdeg ah.',
       icon: 'sell',
-      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80'
+      image: '/jigjiga-house-2.jpg'
     },
     {
       id: 3,

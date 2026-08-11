@@ -274,33 +274,52 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <th className="p-3">User Profile</th>
                   <th className="p-3">Email Address</th>
                   <th className="p-3">Phone Number</th>
-                  <th className="p-3">Joined Date</th>
-                  <th className="p-3">Status</th>
+                  <th className="p-3">Posted Homes</th>
+                  <th className="p-3">Verification Badge</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#bec9c5]/30">
-                {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-[#f0eded]/50 transition">
-                    <td className="p-3 flex items-center space-x-2.5">
-                      {user.avatarUrl ? (
-                        <img src={user.avatarUrl} alt={user.fullName} className="w-8 h-8 rounded-full object-cover border border-[#005145]" />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-[#005145] text-white font-bold flex items-center justify-center text-xs">
-                          {user.fullName.charAt(0)}
-                        </div>
-                      )}
-                      <span className="font-bold text-[#1b1b1c]">{user.fullName} {user.isAdmin && '👑 (Admin)'}</span>
-                    </td>
-                    <td className="p-3 font-mono text-[#005145]">{user.email}</td>
-                    <td className="p-3 font-semibold">{user.phone}</td>
-                    <td className="p-3 text-gray-500 font-mono">{user.joinedDate || 'Today'}</td>
-                    <td className="p-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                        Registered User
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {filteredUsers.map((user) => {
+                  const userHomesCount = properties.filter(
+                    (p) => p.ownerEmail === user.email || p.agentName === user.fullName || user.id.startsWith('admin')
+                  ).length;
+                  const isUserVerified = user.isVerified || userHomesCount >= 5;
+
+                  return (
+                    <tr key={user.id} className="hover:bg-[#f0eded]/50 transition">
+                      <td className="p-3 flex items-center space-x-2.5">
+                        {user.avatarUrl ? (
+                          <img src={user.avatarUrl} alt={user.fullName} className="w-8 h-8 rounded-full object-cover border border-[#005145]" />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-[#005145] text-white font-bold flex items-center justify-center text-xs">
+                            {user.fullName.charAt(0)}
+                          </div>
+                        )}
+                        <span className="font-bold text-[#1b1b1c]">{user.fullName} {user.isAdmin && '👑 (Admin)'}</span>
+                      </td>
+                      <td className="p-3 font-mono text-[#005145]">{user.email}</td>
+                      <td className="p-3 font-semibold">{user.phone}</td>
+                      <td className="p-3">
+                        <span className="font-mono font-bold text-[#005145]">
+                          {userHomesCount} / 5 Homes
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        {isUserVerified ? (
+                          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span className="material-symbols-outlined text-[13px]">verified</span>
+                            <span>Verified (5/5 Approved)</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                            <span className="material-symbols-outlined text-[13px]">pending</span>
+                            <span>Pending ({userHomesCount}/5)</span>
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -284,6 +284,7 @@ export function App() {
           {currentScreen === 'profile' && (
             <Profile
               userProfile={userProfile}
+              userListingsCount={userListings.length}
               onNavigate={handleNavigateScreen}
               onUpdateProfile={(updated) => {
                 setUserProfile(updated);
