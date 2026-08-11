@@ -25,7 +25,17 @@ export function App() {
   const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn, user: clerkUser } = useUser();
   const { signOut: clerkSignOut } = useClerk();
 
-  const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
+  const [currentScreen, setCurrentScreen] = useState<ScreenName>(() => {
+    const path = window.location.pathname.toLowerCase();
+    const search = new URLSearchParams(window.location.search);
+    const screenParam = search.get('screen');
+
+    if (path.includes('login') || screenParam === 'login') return 'login';
+    if (path.includes('signup') || screenParam === 'signup') return 'signup';
+    if (path.includes('admin') || screenParam === 'admin') return 'admin_dashboard';
+    if (path.includes('profile') || screenParam === 'profile') return 'profile';
+    return 'splash';
+  });
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
     const keys = [
       'dhamme_user_posted_properties_v1',
@@ -302,9 +312,21 @@ export function App() {
   const handleNavigateScreen = (screen: ScreenName) => {
     if ((screen.startsWith('post_step') || screen === 'my_listings') && !userProfile) {
       setCurrentScreen('login');
+      try { window.history.pushState({}, '', '/login'); } catch (e) {}
       return;
     }
     setCurrentScreen(screen);
+
+    try {
+      let targetPath = '/';
+      if (screen === 'login') targetPath = '/login';
+      else if (screen === 'signup') targetPath = '/signup';
+      else if (screen === 'admin_dashboard') targetPath = '/admin';
+      else if (screen === 'profile') targetPath = '/profile';
+      else if (screen === 'favorites') targetPath = '/favorites';
+      else if (screen === 'my_listings') targetPath = '/my_listings';
+      window.history.pushState({}, '', targetPath);
+    } catch (e) {}
   };
 
   const handleRegisterAccount = (newAccount: RegisteredAccount) => {
