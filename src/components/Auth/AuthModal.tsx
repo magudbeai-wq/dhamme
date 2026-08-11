@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SignIn, SignUp, useClerk } from '@clerk/clerk-react';
+import { SignIn, SignUp, useSignIn } from '@clerk/clerk-react';
 import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
@@ -19,7 +19,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLoginSuccess,
   onClose
 }) => {
-  const clerk = useClerk();
+  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
   const [authMode, setAuthMode] = useState<'clerk' | 'local'>('clerk');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -29,26 +29,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsGoogleLoading(true);
       setErrorMsg('');
 
-      if (clerk.client?.signIn) {
-        await clerk.client.signIn.authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: window.location.origin,
-          redirectUrlComplete: window.location.origin,
-        });
-      } else if ((clerk as any).authenticateWithRedirect) {
-        await (clerk as any).authenticateWithRedirect({
+      if (isSignInLoaded && signIn) {
+        await signIn.authenticateWithRedirect({
           strategy: 'oauth_google',
           redirectUrl: window.location.origin,
           redirectUrlComplete: window.location.origin,
         });
       } else {
+        // Fall back to Clerk's native UI
         setAuthMode('clerk');
         setIsGoogleLoading(false);
       }
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
       setIsGoogleLoading(false);
-      setErrorMsg(err.message || 'Fadlan isticmaal Clerk UI ama Form Auth.');
+      setAuthMode('clerk');
     }
   };
   
