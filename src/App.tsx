@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useUser, useClerk } from '@clerk/clerk-react';
 import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus } from './types';
 import { INITIAL_PROPERTIES } from './data/propertiesData';
 import { INITIAL_REGISTERED_ACCOUNTS } from './data/usersData';
@@ -19,6 +20,9 @@ import { AuthModal } from './components/Auth/AuthModal';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 
 export function App() {
+  const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn, user: clerkUser } = useUser();
+  const { signOut: clerkSignOut } = useClerk();
+
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
     const saved = localStorage.getItem('dhamme_user_posted_properties_v1');
@@ -47,6 +51,30 @@ export function App() {
     const saved = localStorage.getItem('dhamme_active_user');
     return saved ? JSON.parse(saved) : null;
   });
+
+  // Sync Clerk User state into userProfile
+  useEffect(() => {
+    if (isClerkLoaded && isClerkSignedIn && clerkUser) {
+      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
+      const fullName = clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'Dhamme User';
+      const avatarUrl = clerkUser.imageUrl || '';
+      const phone = clerkUser.primaryPhoneNumber?.phoneNumber || '';
+      const isAdmin = email === 'magudbeai@gmail.com' || email.includes('admin');
+
+      const updatedProfile: UserProfile = {
+        id: clerkUser.id,
+        fullName,
+        email,
+        phone,
+        avatarUrl,
+        bio: 'Dhamme Verified User (Clerk Auth)',
+        joinedDate: new Date(clerkUser.createdAt || Date.now()).toISOString().split('T')[0],
+        isAdmin,
+        isVerified: true
+      };
+      setUserProfile(updatedProfile);
+    }
+  }, [isClerkLoaded, isClerkSignedIn, clerkUser]);
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -151,6 +179,9 @@ export function App() {
   };
 
   const handleLogout = () => {
+    if (isClerkSignedIn) {
+      clerkSignOut();
+    }
     setUserProfile(null);
     setCurrentScreen('home');
   };

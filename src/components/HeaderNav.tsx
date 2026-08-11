@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 import type { ScreenName, UserProfile } from '../types';
 import { DhammeLogo } from './DhammeLogo';
 
@@ -85,27 +86,43 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, o
             <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#7b2f10] ring-2 ring-white" />
           </button>
 
-          {/* User Profile Avatar */}
-          <div 
-            onClick={() => onNavigate('profile')}
-            className="w-10 h-10 rounded-full border-2 border-[#005145] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-2 hover:ring-[#005145]/30 relative"
-          >
-            {userProfile?.avatarUrl ? (
-              <img 
-                className="w-full h-full object-cover" 
-                src={userProfile.avatarUrl} 
-                alt={userProfile.fullName} 
-              />
-            ) : (
-              <span className="material-symbols-outlined text-[#005145] text-[24px]">
-                person
-              </span>
-            )}
-          </div>
+          {/* Clerk User Button / App Profile Avatar */}
+          <SignedIn>
+            <div className="flex items-center space-x-2">
+              <UserButton afterSignOutUrl="/" />
+              <button
+                onClick={() => onNavigate('profile')}
+                className="hidden sm:flex text-xs font-semibold text-[#005145] hover:underline"
+              >
+                Profile
+              </button>
+            </div>
+          </SignedIn>
+
+          <SignedOut>
+            <div 
+              onClick={() => onNavigate('profile')}
+              className="w-10 h-10 rounded-full border-2 border-[#005145] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-2 hover:ring-[#005145]/30 relative"
+              title="Sign In / Profile"
+            >
+              {userProfile?.avatarUrl ? (
+                <img 
+                  className="w-full h-full object-cover" 
+                  src={userProfile.avatarUrl} 
+                  alt={userProfile.fullName} 
+                />
+              ) : (
+                <span className="material-symbols-outlined text-[#005145] text-[24px]">
+                  person
+                </span>
+              )}
+            </div>
+          </SignedOut>
 
         </div>
 
       </div>
+
 
       {/* Daily Notifications Modal / Dropdown */}
       {showNotifications && (
