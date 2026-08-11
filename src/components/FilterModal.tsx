@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { FilterState, ListingMode, PropertyCategory } from '../types';
+import { ALL_JIGJIGA_LOCATIONS } from '../data/jigjigaLocations';
 
 interface FilterModalProps {
   initialFilter: FilterState;
@@ -20,17 +21,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   const [waterRequired, setWaterRequired] = useState<boolean>(initialFilter.waterRequired);
   const [powerRequired, setPowerRequired] = useState<boolean>(initialFilter.powerRequired);
 
-  const kebeles = [
-    'All',
-    'Kebele 01',
-    'Kebele 02',
-    'Kebele 03',
-    'Kebele 06',
-    'Kebele 08',
-    'Kebele 10',
-    'Garab\'ase',
-    'Taiwan Area'
-  ];
+  const filterLocations = ['All', ...ALL_JIGJIGA_LOCATIONS];
 
   const categories: PropertyCategory[] = ['All Properties', 'Family House', 'Single Room', 'Studio', 'Villa'];
 
@@ -88,26 +79,20 @@ export const FilterModal: React.FC<FilterModalProps> = ({
           </div>
         </div>
 
-        {/* Kebele Selection for Jigjiga */}
+        {/* Kebele & Xaafada Selection for Jigjiga */}
         <div>
           <label className="block text-xs font-bold text-[#3f4946] mb-2 uppercase tracking-wider">
-            Kebele / Xaafada Jigjiga:
+            Doorh Kebele ama Xaafada Jigjiga:
           </label>
-          <div className="flex flex-wrap gap-2">
-            {kebeles.map((k) => (
-              <button
-                key={k}
-                onClick={() => setKebele(k)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${
-                  kebele === k
-                    ? 'bg-[#005145] text-white border-[#005145]'
-                    : 'bg-[#fcf9f8] text-[#3f4946] border-[#bec9c5]'
-                }`}
-              >
-                {k}
-              </button>
+          <select
+            value={kebele}
+            onChange={(e) => setKebele(e.target.value)}
+            className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-bold text-[#1b1b1c] border border-[#bec9c5]/40"
+          >
+            {filterLocations.map((loc) => (
+              <option key={loc} value={loc}>{loc === 'All' ? '🌐 Dhamaan Xaafadaha (All Locations)' : loc}</option>
             ))}
-          </div>
+          </select>
         </div>
 
         {/* Category */}

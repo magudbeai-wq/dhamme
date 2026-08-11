@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { NewListingDraft, PropertyListing, PropertyCategory } from '../types';
+import { JIGJIGA_XAAFADAHA, JIGJIGA_KEBELES } from '../data/jigjigaLocations';
 
 interface PostListingWizardProps {
   currentStep: number;
@@ -20,7 +21,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
     category: 'Family House',
     priceEtb: 25000,
     city: 'Jigjiga',
-    kebele: 'Kebele 06',
+    kebele: JIGJIGA_XAAFADAHA[0],
     beds: 3,
     baths: 2,
     areaSqm: 180,
@@ -34,17 +35,14 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
     nearDistance: 'Jigjiga Center'
   });
 
+  const [isCustomLocation, setIsCustomLocation] = useState<boolean>(false);
+  const [customLocationName, setCustomLocationName] = useState<string>('');
   const [detectingGps, setDetectingGps] = useState<boolean>(false);
   const [gpsStatus, setGpsStatus] = useState<string | null>(null);
   const [urlInput, setUrlInput] = useState<string>('');
   const [agreedToAntiFraud, setAgreedToAntiFraud] = useState<boolean>(true);
 
   const categories: PropertyCategory[] = ['Family House', 'Single Room', 'Studio', 'Villa', 'Apartment'];
-  const kebeles = [
-    'Kebele 01', 'Kebele 02', 'Kebele 03', 'Kebele 04', 'Kebele 05',
-    'Kebele 06', 'Kebele 07', 'Kebele 08', 'Kebele 09', 'Kebele 10',
-    'Garab\'ase Sector', 'Taiwan Market Area'
-  ];
 
   // GPS Capture Handler
   const handleCaptureLiveGps = () => {
@@ -364,17 +362,55 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
           <div>
             <label className="block text-[#3f4946] text-xs font-bold mb-1">
-              Kebele (Kabale / Xaafadda Jigjiga):
+              Doorh Xaafada ama Kabalaha Jigjiga (Select Xaafad or Kebele):
             </label>
             <select
-              value={draft.kebele}
-              onChange={(e) => setDraft({ ...draft, kebele: e.target.value })}
+              value={isCustomLocation ? 'Others (Qor Xaafad Kale)' : draft.kebele}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === 'Others (Qor Xaafad Kale)') {
+                  setIsCustomLocation(true);
+                  setDraft({ ...draft, kebele: customLocationName || 'Xaafad' });
+                } else {
+                  setIsCustomLocation(false);
+                  setDraft({ ...draft, kebele: val });
+                }
+              }}
               className="w-full p-3.5 bg-[#f0eded] rounded-xl text-sm font-bold text-[#1b1b1c] border border-[#bec9c5]/40"
             >
-              {kebeles.map((k) => (
-                <option key={k} value={k}>{k}</option>
-              ))}
+              <optgroup label="🏘️ Xaafadaha Magaalada Jigjiga">
+                {JIGJIGA_XAAFADAHA.map((x, idx) => (
+                  <option key={`x-${idx}`} value={x}>{idx + 1}. {x}</option>
+                ))}
+              </optgroup>
+              <optgroup label="📍 Kebele-yada Jigjiga (Kebele 01 - 20)">
+                {JIGJIGA_KEBELES.map((k) => (
+                  <option key={k} value={k}>{k}</option>
+                ))}
+              </optgroup>
+              <optgroup label="✍️ Doorasho Kale (Custom / Other)">
+                <option value="Others (Qor Xaafad Kale)">Others (Qor Xaafad Kale)</option>
+              </optgroup>
             </select>
+
+            {isCustomLocation && (
+              <div className="mt-3">
+                <label className="block text-[11px] font-bold text-[#005145] uppercase mb-1">
+                  Qor Magaca Xaafadaada (Type Custom Neighborhood):
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Xaafada Cusub, Taiwan Dhadheer..."
+                  value={customLocationName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCustomLocationName(val);
+                    setDraft({ ...draft, kebele: val.trim() || 'Xaafad' });
+                  }}
+                  className="w-full p-3 bg-[#f0eded] rounded-xl text-sm font-bold text-[#1b1b1c] border border-[#005145]"
+                />
+              </div>
+            )}
           </div>
 
           {/* Live Device GPS Capture Section */}
