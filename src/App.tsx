@@ -17,6 +17,7 @@ import { MyListings } from './components/MyListings';
 import { Profile } from './components/Profile';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AuthModal } from './components/Auth/AuthModal';
+import { AuthPage } from './components/Auth/AuthPage';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 import { supabase } from './services/supabaseClient';
 
@@ -130,7 +131,7 @@ export function App() {
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authScreen, setAuthScreen] = useState<'login' | 'signup' | 'forgot_password'>('signup');
+  const [authScreen] = useState<'login' | 'signup' | 'forgot_password'>('signup');
   const [showAIModal, setShowAIModal] = useState(false);
 
   const [activeFilter, setActiveFilter] = useState<FilterState>({
@@ -300,8 +301,7 @@ export function App() {
 
   const handleNavigateScreen = (screen: ScreenName) => {
     if ((screen.startsWith('post_step') || screen === 'my_listings') && !userProfile) {
-      setAuthScreen('signup');
-      setShowAuthModal(true);
+      setCurrentScreen('login');
       return;
     }
     setCurrentScreen(screen);
@@ -315,6 +315,8 @@ export function App() {
     setUserProfile(profile);
     if (profile.isAdmin || profile.email === 'magudbeai@gmail.com') {
       setCurrentScreen('admin_dashboard');
+    } else {
+      setCurrentScreen('home');
     }
   };
 
@@ -333,6 +335,8 @@ export function App() {
     p.id.startsWith('prop-')
   );
 
+  const isAuthScreen = currentScreen === 'login' || currentScreen === 'signup';
+
   return (
     <div className="min-h-screen bg-[#F2E8DC] text-[#1b1b1c] font-inter">
       
@@ -346,8 +350,19 @@ export function App() {
         <Onboarding onComplete={() => setCurrentScreen('home')} />
       )}
 
+      {/* 3. Dedicated Authentication Full Page */}
+      {isAuthScreen && (
+        <AuthPage
+          initialScreen={currentScreen === 'signup' ? 'signup' : 'login'}
+          registeredAccounts={registeredAccounts}
+          onRegisterAccount={handleRegisterAccount}
+          onLoginSuccess={handleLoginSuccess}
+          onBackToHome={() => setCurrentScreen('home')}
+        />
+      )}
+
       {/* Main Layout Header */}
-      {currentScreen !== 'splash' && currentScreen !== 'onboarding' && (
+      {currentScreen !== 'splash' && currentScreen !== 'onboarding' && !isAuthScreen && (
         <HeaderNav 
           userProfile={userProfile}
           onNavigate={handleNavigateScreen} 
@@ -356,7 +371,7 @@ export function App() {
       )}
 
       {/* Main View Area */}
-      {currentScreen !== 'splash' && currentScreen !== 'onboarding' && (
+      {currentScreen !== 'splash' && currentScreen !== 'onboarding' && !isAuthScreen && (
         <main className="w-full">
           
           {/* HOME FEED */}
@@ -432,10 +447,7 @@ export function App() {
                   prev.map((acc) => (acc.email === updated.email ? { ...acc, ...updated } : acc))
                 );
               }}
-              onOpenAuth={() => {
-                setAuthScreen('signup');
-                setShowAuthModal(true);
-              }}
+              onOpenAuth={() => setCurrentScreen('login')}
               onLogout={handleLogout}
               onOpenAI={() => setShowAIModal(true)}
             />
@@ -445,7 +457,7 @@ export function App() {
       )}
 
       {/* Bottom Navigation */}
-      {currentScreen !== 'splash' && currentScreen !== 'onboarding' && (
+      {currentScreen !== 'splash' && currentScreen !== 'onboarding' && !isAuthScreen && (
         <BottomNav
           currentScreen={currentScreen}
           onNavigate={handleNavigateScreen}
@@ -461,7 +473,7 @@ export function App() {
         />
       )}
 
-      {/* Auth Modal */}
+      {/* Auth Modal (Fallback Popup) */}
       {showAuthModal && (
         <AuthModal
           initialScreen={authScreen}
