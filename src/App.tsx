@@ -18,6 +18,7 @@ import { Profile } from './components/Profile';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AuthModal } from './components/Auth/AuthModal';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
+import { supabase } from './services/supabaseClient';
 
 export function App() {
   const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn, user: clerkUser } = useUser();
@@ -25,19 +26,70 @@ export function App() {
 
   const [currentScreen, setCurrentScreen] = useState<ScreenName>('splash');
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
-    const saved = localStorage.getItem('dhamme_user_posted_properties_v1');
-    return saved ? JSON.parse(saved) : INITIAL_PROPERTIES;
+    const keys = [
+      'dhamme_user_posted_properties_v1',
+      'dhamme_properties_archive_v2',
+      'dhamme_all_listings_v3',
+      'dhamme_permanent_backup'
+    ];
+    let loaded: PropertyListing[] = [];
+    keys.forEach((key) => {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((item: PropertyListing) => {
+              if (item && item.id && !loaded.some((existing) => existing.id === item.id)) {
+                loaded.push(item);
+              }
+            });
+          }
+        } catch (e) {
+          console.error(`Error loading properties from ${key}:`, e);
+        }
+      }
+    });
+
+    if (loaded.length === 0) {
+      return INITIAL_PROPERTIES;
+    }
+
+    const merged = [...loaded];
+    INITIAL_PROPERTIES.forEach((initProp) => {
+      if (!merged.some((p) => p.id === initProp.id)) {
+        merged.push(initProp);
+      }
+    });
+    return merged;
   });
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
   // Registered accounts stored locally with full user history
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
-    const saved = localStorage.getItem('dhamme_registered_accounts');
-    if (!saved) return INITIAL_REGISTERED_ACCOUNTS;
-    const parsed: RegisteredAccount[] = JSON.parse(saved);
-    // Merge any missing initial accounts so earlier landlord users are always visible to admin
-    const merged = [...parsed];
+    const savedV1 = localStorage.getItem('dhamme_registered_accounts');
+    const savedV2 = localStorage.getItem('dhamme_accounts_backup');
+    let loadedAccounts: RegisteredAccount[] = [];
+
+    [savedV1, savedV2].forEach((s) => {
+      if (s) {
+        try {
+          const parsed = JSON.parse(s);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((acc: RegisteredAccount) => {
+              if (acc && acc.email && !loadedAccounts.some((existing) => existing.email === acc.email)) {
+                loadedAccounts.push(acc);
+              }
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+
+    const merged = loadedAccounts.length > 0 ? [...loadedAccounts] : [...INITIAL_REGISTERED_ACCOUNTS];
     INITIAL_REGISTERED_ACCOUNTS.forEach((initialAcc) => {
       if (!merged.some((acc) => acc.email === initialAcc.email)) {
         merged.push(initialAcc);
@@ -93,14 +145,77 @@ export function App() {
     powerRequired: false
   });
 
-  // Save user-posted properties state to LocalStorage
+  // Save user-posted properties state across ALL local storage backup keys for indestructible persistence
   useEffect(() => {
-    localStorage.setItem('dhamme_user_posted_properties_v1', JSON.stringify(properties));
+    try {
+      const json = JSON.stringify(properties);
+      const keys = [
+        'dhamme_user_posted_properties_v1',
+        'dhamme_properties_archive_v2',
+        'dhamme_all_listings_v3',
+        'dhamme_permanent_backup'
+      ];
+      keys.forEach((key) => localStorage.setItem(key, json));
+    } catch (e) {
+      console.error('Failed to backup properties to local storage:', e);
+    }
   }, [properties]);
+
+  // Fetch properties from Supabase cloud database on startup
+  useEffect(() => {
+    async function syncSupabaseProperties() {
+      try {
+        const { data, error } = await supabase.from('properties').select('*');
+        if (data && !error && data.length > 0) {
+          setProperties((prev) => {
+            const merged = [...prev];
+            data.forEach((dbProp: any) => {
+              const formatted: PropertyListing = {
+                id: dbProp.id || `prop-db-${Date.now()}`,
+                title: dbProp.title,
+                priceEtb: Number(dbProp.price_etb),
+                priceLocalFormatted: `${Number(dbProp.price_etb).toLocaleString()} ETB`,
+                mode: dbProp.mode || 'kiro',
+                category: dbProp.category || 'Family House',
+                city: dbProp.city || 'Jigjiga',
+                kebele: dbProp.kebele || 'Kebele 06',
+                beds: dbProp.beds || 3,
+                baths: dbProp.baths || 2,
+                areaSqm: dbProp.area_sqm || 180,
+                water: dbProp.water || 'Yes',
+                electricity: dbProp.electricity || '24h',
+                pool: dbProp.pool || 'No',
+                images: dbProp.images?.length > 0 ? dbProp.images : ['/jigjiga-house-1.jpg'],
+                description: dbProp.description || '',
+                agentName: dbProp.agent_name || 'Landlord',
+                agentPhone: dbProp.agent_phone || '+251 91 000 0000',
+                agentAvatar: dbProp.agent_avatar || '',
+                postedDate: dbProp.created_at ? new Date(dbProp.created_at).toISOString().split('T')[0] : '2026-08-01',
+                status: 'active'
+              };
+              if (!merged.some((p) => p.id === formatted.id || p.title === formatted.title)) {
+                merged.unshift(formatted);
+              }
+            });
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.error('Supabase properties sync error:', err);
+      }
+    }
+    syncSupabaseProperties();
+  }, []);
 
   // Save registered accounts to LocalStorage
   useEffect(() => {
-    localStorage.setItem('dhamme_registered_accounts', JSON.stringify(registeredAccounts));
+    try {
+      const json = JSON.stringify(registeredAccounts);
+      localStorage.setItem('dhamme_registered_accounts', json);
+      localStorage.setItem('dhamme_accounts_backup', json);
+    } catch (e) {
+      console.error(e);
+    }
   }, [registeredAccounts]);
 
   // Save active logged-in user to LocalStorage
@@ -141,7 +256,7 @@ export function App() {
     }
   };
 
-  const handleAddProperty = (newProp: PropertyListing) => {
+  const handleAddProperty = async (newProp: PropertyListing) => {
     const updatedProp: PropertyListing = {
       ...newProp,
       agentName: userProfile?.fullName || 'Landlord',
@@ -154,6 +269,31 @@ export function App() {
     };
 
     setProperties((prev) => [updatedProp, ...prev]);
+
+    // Save asynchronously to Supabase cloud DB
+    try {
+      await supabase.from('properties').insert([
+        {
+          title: updatedProp.title,
+          price_etb: updatedProp.priceEtb,
+          mode: updatedProp.mode,
+          category: updatedProp.category,
+          city: updatedProp.city,
+          kebele: updatedProp.kebele,
+          beds: updatedProp.beds,
+          baths: updatedProp.baths,
+          area_sqm: updatedProp.areaSqm,
+          description: updatedProp.description,
+          images: updatedProp.images,
+          agent_name: updatedProp.agentName,
+          agent_phone: updatedProp.agentPhone,
+          agent_avatar: updatedProp.agentAvatar
+        }
+      ]);
+    } catch (err) {
+      console.error('Failed to sync new property to Supabase:', err);
+    }
+
     setSelectedProperty(updatedProp);
     setCurrentScreen('details');
   };
