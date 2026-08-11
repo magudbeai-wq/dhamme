@@ -249,9 +249,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {authMode === 'clerk' && (
           <div className="py-2 flex justify-center overflow-x-auto">
             {screen === 'login' ? (
-              <SignIn routing="virtual" />
+              <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
             ) : (
-              <SignUp routing="virtual" />
+              <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
             )}
           </div>
         )}

@@ -138,3 +138,12 @@ body {
   transform-origin: center;
   animation: starTwinkle 2.5s ease-in-out infinite;
 }
+
+/* Hide Clerk Development Mode Footer & Branding */
+.cl-footer,
+.cl-footerAction,
+.cl-dev-mode,
+[class*="cl-footer"],
+[class*="cl-dev-mode"] {
+  display: none !important;
+}
