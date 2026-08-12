@@ -21,7 +21,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const { signIn, isLoaded: isSignInLoaded } = useSignIn();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
-  const [authMode, setAuthMode] = useState<'clerk' | 'local'>('clerk');
+  const [authMode, setAuthMode] = useState<'local' | 'clerk'>('local');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
@@ -29,21 +29,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsGoogleLoading(true);
       setErrorMsg('');
 
-      if (isSignInLoaded && signIn) {
+      if (isSignInLoaded && signIn && (signIn as any).authenticateWithRedirect) {
         await signIn.authenticateWithRedirect({
           strategy: 'oauth_google',
           redirectUrl: window.location.origin,
           redirectUrlComplete: window.location.origin,
         });
       } else {
-        // Fall back to Clerk's native UI
-        setAuthMode('clerk');
-        setIsGoogleLoading(false);
+        window.location.href = screen === 'signup' 
+          ? 'https://accounts.capilorix.store/sign-up' 
+          : 'https://accounts.capilorix.store/sign-in';
       }
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
-      setIsGoogleLoading(false);
-      setAuthMode('clerk');
+      window.location.href = screen === 'signup' 
+        ? 'https://accounts.capilorix.store/sign-up' 
+        : 'https://accounts.capilorix.store/sign-in';
+    } finally {
+      setTimeout(() => setIsGoogleLoading(false), 3000);
     }
   };
   
@@ -55,12 +58,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-
   const validateEmail = (emailStr: string) => {
     return /\S+@\S+\.\S+/.test(emailStr);
   };
 
-  // SIGN UP HANDLER
+  // SIGN UP HANDLER (With Auto-Login)
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -97,17 +99,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       email: trimmedEmail,
       fullName: fullName.trim(),
       phone: phone.trim(),
-      avatarUrl: '',
-      bio: '',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      bio: 'DHAMME Registered Member',
       isVerified: true,
       passwordHash: password,
       joinedDate: new Date().toISOString().split('T')[0]
     };
 
     onRegisterAccount(newAccount);
-    setSuccessMsg('Koontadaada waa la sameeyay! Hada waad soo geli kartaa.');
-    setScreen('login');
-    setPassword('');
+
+    const newProfile: UserProfile = {
+      id: newAccount.id,
+      email: newAccount.email,
+      fullName: newAccount.fullName,
+      phone: newAccount.phone,
+      avatarUrl: newAccount.avatarUrl,
+      bio: newAccount.bio,
+      isVerified: true,
+      isAdmin: false,
+      joinedDate: newAccount.joinedDate
+    };
+
+    onLoginSuccess(newProfile);
+    onClose();
   };
 
   // LOGIN HANDLER (Includes Master Admin Credentials)
@@ -214,6 +228,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="flex bg-[#f0eded] p-1 rounded-2xl border border-[#bec9c5]/30">
           <button
             type="button"
+            onClick={() => setAuthMode('local')}
+            className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              authMode === 'local'
+                ? 'bg-[#005145] text-white shadow-sm'
+                : 'text-[#3f4946] hover:text-[#1b1b1c]'
+            }`}
+          >
+            📝 Direct Auth
+          </button>
+          <button
+            type="button"
             onClick={() => setAuthMode('clerk')}
             className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
               authMode === 'clerk'
@@ -222,17 +247,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             }`}
           >
             🔒 Clerk Auth
-          </button>
-          <button
-            type="button"
-            onClick={() => setAuthMode('local')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              authMode === 'local'
-                ? 'bg-[#005145] text-white shadow-sm'
-                : 'text-[#3f4946] hover:text-[#1b1b1c]'
-            }`}
-          >
-            📝 Form Auth
           </button>
         </div>
 
@@ -248,17 +262,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
-        {/* CLERK AUTHENTICATION */}
-        {authMode === 'clerk' && (
-          <div className="py-2 flex justify-center overflow-x-auto">
-            {screen === 'login' ? (
-              <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-            ) : (
-              <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-            )}
-          </div>
-        )}
-
         {/* LOCAL FORM AUTHENTICATION */}
         {authMode === 'local' && screen === 'login' && (
           <form onSubmit={handleLogin} className="space-y-3.5 text-left">
@@ -270,7 +273,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 Geli Gmail-ka aad ku sameysatay koontada iyo Password-ka.
               </p>
             </div>
-
 
             <div>
               <label className="block text-[11px] font-bold text-[#3f4946] uppercase mb-1">
@@ -412,6 +414,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
             </div>
           </form>
+        )}
+
+        {/* CLERK AUTHENTICATION */}
+        {authMode === 'clerk' && (
+          <div className="py-2 flex flex-col items-center justify-center space-y-4 w-full">
+            <div className="w-full overflow-x-auto flex justify-center">
+              {screen === 'login' ? (
+                <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
+              ) : (
+                <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
+              )}
+            </div>
+
+            <a
+              href={screen === 'signup' ? 'https://accounts.capilorix.store/sign-up' : 'https://accounts.capilorix.store/sign-in'}
+              target="_self"
+              className="text-xs font-bold text-[#005145] hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-[#f0eded]"
+            >
+              <span>🔗 Open Clerk Hosted Authentication Portal</span>
+              <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+            </a>
+          </div>
         )}
 
       </div>

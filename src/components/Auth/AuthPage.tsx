@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SignIn, SignUp, useSignIn, useClerk } from '@clerk/clerk-react';
+import { SignIn, SignUp, useSignIn } from '@clerk/clerk-react';
 import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
@@ -19,10 +19,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   onLoginSuccess,
   onBackToHome
 }) => {
-  const clerk = useClerk();
   const { signIn, isLoaded: isSignInLoaded } = useSignIn();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
-  const [authMode, setAuthMode] = useState<'clerk' | 'local'>('clerk');
+  const [authMode, setAuthMode] = useState<'local' | 'clerk'>('local');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Form State
@@ -42,33 +41,30 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       setIsGoogleLoading(true);
       setErrorMsg('');
 
-      if (isSignInLoaded && signIn) {
+      if (isSignInLoaded && signIn && (signIn as any).authenticateWithRedirect) {
         await signIn.authenticateWithRedirect({
           strategy: 'oauth_google',
           redirectUrl: window.location.origin,
           redirectUrlComplete: window.location.origin,
         });
-      } else if ((clerk as any).authenticateWithRedirect) {
-        await (clerk as any).authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: window.location.origin,
-          redirectUrlComplete: window.location.origin,
-        });
       } else {
-        clerk.redirectToSignIn({
-          signInForceRedirectUrl: window.location.origin
-        });
+        // Direct redirect to custom Clerk Hosted Account Portal
+        window.location.href = screen === 'signup' 
+          ? 'https://accounts.capilorix.store/sign-up' 
+          : 'https://accounts.capilorix.store/sign-in';
       }
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
-      setIsGoogleLoading(false);
-      clerk.redirectToSignIn({
-        signInForceRedirectUrl: window.location.origin
-      });
+      // Direct fallback to Clerk Portal
+      window.location.href = screen === 'signup' 
+        ? 'https://accounts.capilorix.store/sign-up' 
+        : 'https://accounts.capilorix.store/sign-in';
+    } finally {
+      setTimeout(() => setIsGoogleLoading(false), 3000);
     }
   };
 
-  // SIGN UP HANDLER
+  // SIGN UP HANDLER (With Auto-Login)
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -105,20 +101,33 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       email: trimmedEmail,
       fullName: fullName.trim(),
       phone: phone.trim(),
-      avatarUrl: '',
-      bio: '',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      bio: 'DHAMME Registered Member',
       isVerified: true,
       passwordHash: password,
       joinedDate: new Date().toISOString().split('T')[0]
     };
 
     onRegisterAccount(newAccount);
-    setSuccessMsg('Koontadaada waa la sameeyay! Hada waad soo geli kartaa.');
-    setScreen('login');
-    setPassword('');
+
+    // Instant Auto-Login upon Sign-Up
+    const newProfile: UserProfile = {
+      id: newAccount.id,
+      email: newAccount.email,
+      fullName: newAccount.fullName,
+      phone: newAccount.phone,
+      avatarUrl: newAccount.avatarUrl,
+      bio: newAccount.bio,
+      isVerified: true,
+      isAdmin: false,
+      joinedDate: newAccount.joinedDate
+    };
+
+    onLoginSuccess(newProfile);
+    onBackToHome();
   };
 
-  // LOGIN HANDLER
+  // LOGIN HANDLER (Includes Master Admin Credentials)
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -235,22 +244,22 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         <div className="grid grid-cols-2 gap-2 bg-[#f0eded] p-1.5 rounded-2xl">
           <button
             type="button"
+            onClick={() => setAuthMode('local')}
+            className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1 ${
+              authMode === 'local' ? 'bg-[#005145] text-white shadow' : 'text-[#3f4946]'
+            }`}
+          >
+            <span>📝 Direct Auth</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setAuthMode('clerk')}
             className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1 ${
               authMode === 'clerk' ? 'bg-[#005145] text-white shadow' : 'text-[#3f4946]'
             }`}
           >
             <span>🔒 Clerk Auth</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setAuthMode('local')}
-            className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1 ${
-              authMode === 'local' ? 'bg-[#005145] text-white shadow' : 'text-[#3f4946]'
-            }`}
-          >
-            <span>📝 Form Auth</span>
           </button>
         </div>
 
@@ -264,17 +273,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         {successMsg && (
           <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl text-xs font-semibold">
             {successMsg}
-          </div>
-        )}
-
-        {/* CLERK AUTHENTICATION */}
-        {authMode === 'clerk' && (
-          <div className="py-2 flex justify-center overflow-x-auto w-full">
-            {screen === 'login' ? (
-              <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-            ) : (
-              <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-            )}
           </div>
         )}
 
@@ -430,6 +428,28 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {/* CLERK AUTHENTICATION */}
+        {authMode === 'clerk' && (
+          <div className="py-2 flex flex-col items-center justify-center space-y-4 w-full">
+            <div className="w-full overflow-x-auto flex justify-center">
+              {screen === 'login' ? (
+                <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
+              ) : (
+                <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
+              )}
+            </div>
+
+            <a
+              href={screen === 'signup' ? 'https://accounts.capilorix.store/sign-up' : 'https://accounts.capilorix.store/sign-in'}
+              target="_self"
+              className="text-xs font-bold text-[#005145] hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-[#f0eded]"
+            >
+              <span>🔗 Open Clerk Hosted Authentication Portal</span>
+              <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+            </a>
           </div>
         )}
 
