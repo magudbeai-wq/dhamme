@@ -143,6 +143,50 @@ export function App() {
     }
   }, [isClerkLoaded, isClerkSignedIn, clerkUser]);
 
+  // Sync Supabase Google OAuth callback from URL hash
+  useEffect(() => {
+    try {
+      const hash = window.location.hash;
+      if (hash && hash.includes('access_token')) {
+        const params = new URLSearchParams(hash.replace('#', '?'));
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+          fetch('https://lbmsdvnqtabwwspeobch.supabase.co/auth/v1/user', {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'apikey': 'sb_publishable_tT5p5zHePZae6Ek7COXSyw_AB9KpZRv'
+            }
+          })
+            .then((res) => res.json())
+            .then((userData) => {
+              if (userData && userData.email) {
+                const email = userData.email;
+                const fullName = userData.user_metadata?.full_name || userData.user_metadata?.name || email.split('@')[0];
+                const avatarUrl = userData.user_metadata?.avatar_url || userData.user_metadata?.picture || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
+                const updatedProfile: UserProfile = {
+                  id: userData.id || `user-supa-${Date.now()}`,
+                  fullName,
+                  email,
+                  phone: userData.user_metadata?.phone || '',
+                  avatarUrl,
+                  bio: 'DHAMME Verified User (Supabase Google Auth)',
+                  joinedDate: new Date().toISOString().split('T')[0],
+                  isAdmin: email === 'magudbeai@gmail.com',
+                  isVerified: true
+                };
+                setUserProfile(updatedProfile);
+                setCurrentScreen('home');
+                try { window.history.replaceState({}, document.title, window.location.pathname); } catch (e) {}
+              }
+            })
+            .catch((e) => console.warn('Supabase OAuth notice:', e));
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  }, []);
+
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authScreen] = useState<'login' | 'signup' | 'forgot_password'>('signup');

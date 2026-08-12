@@ -4,6 +4,8 @@ import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
 
+import { supabase } from '../../services/supabaseClient';
+
 interface AuthPageProps {
   initialScreen: 'login' | 'signup' | 'forgot_password';
   registeredAccounts: RegisteredAccount[];
@@ -41,6 +43,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       setIsGoogleLoading(true);
       setErrorMsg('');
 
+      // 1. Try Supabase Google OAuth
+      supabase.auth.signInWithGoogle();
+    } catch (err: any) {
+      console.error('Google Sign In Error:', err);
       if (isSignInLoaded && signIn && (signIn as any).authenticateWithRedirect) {
         await signIn.authenticateWithRedirect({
           strategy: 'oauth_google',
@@ -48,17 +54,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           redirectUrlComplete: window.location.origin,
         });
       } else {
-        // Direct redirect to custom Clerk Hosted Account Portal
         window.location.href = screen === 'signup' 
           ? 'https://accounts.capilorix.store/sign-up' 
           : 'https://accounts.capilorix.store/sign-in';
       }
-    } catch (err: any) {
-      console.error('Google Sign In Error:', err);
-      // Direct fallback to Clerk Portal
-      window.location.href = screen === 'signup' 
-        ? 'https://accounts.capilorix.store/sign-up' 
-        : 'https://accounts.capilorix.store/sign-in';
     } finally {
       setTimeout(() => setIsGoogleLoading(false), 3000);
     }
