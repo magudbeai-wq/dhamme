@@ -58,7 +58,9 @@ export const supabase = {
   // SUPABASE AUTHENTICATION APIS
   auth: {
     signInWithGoogle: () => {
-      const redirectUri = window.location.origin;
+      const redirectUri = (window.location.origin && !window.location.origin.includes('localhost'))
+        ? window.location.origin 
+        : 'https://capilorix.store';
       const googleAuthUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUri)}`;
       window.location.href = googleAuthUrl;
     },
