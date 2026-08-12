@@ -296,6 +296,34 @@ export const Profile: React.FC<ProfileProps> = ({
         </div>
 
         {/* Anti-Fraud Terms & Policy Trigger */}
+        <div
+          onClick={() => onNavigate && onNavigate('privacy')}
+          className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition border-b border-[#bec9c5]/30"
+        >
+          <div className="flex items-center space-x-3">
+            <span className="material-symbols-outlined text-[#005145]">privacy_tip</span>
+            <div>
+              <span className="font-bold text-[#1b1b1c] block">Privacy Policy</span>
+              <span className="text-[10px] text-[#645d54] block font-medium">Siyaasadda Khaaska ah & Ilaalinta Xogta</span>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-[#645d54]">chevron_right</span>
+        </div>
+
+        <div
+          onClick={() => onNavigate && onNavigate('terms')}
+          className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition border-b border-[#bec9c5]/30"
+        >
+          <div className="flex items-center space-x-3">
+            <span className="material-symbols-outlined text-[#005145]">description</span>
+            <div>
+              <span className="font-bold text-[#1b1b1c] block">Terms of Service</span>
+              <span className="text-[10px] text-[#645d54] block font-medium">Shuruudaha Isticmaalka Platform-ka</span>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-[#645d54]">chevron_right</span>
+        </div>
+
         <div 
           onClick={() => setShowPolicyModal(true)}
           className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f0eded] transition"
@@ -303,7 +331,7 @@ export const Profile: React.FC<ProfileProps> = ({
           <div className="flex items-center space-x-3">
             <span className="material-symbols-outlined text-amber-700">gavel</span>
             <div>
-              <span className="font-bold text-[#1b1b1c] block">Sharciyada & Siyaasadda (Terms & Anti-Fraud Policy)</span>
+              <span className="font-bold text-[#1b1b1c] block">Sharciyada & Siyaasadda (Anti-Fraud Policy)</span>
               <span className="text-[10px] text-amber-800 font-semibold block">Mamnuucista Sawirada Been Abuurka ah & Fraud</span>
             </div>
           </div>

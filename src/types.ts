@@ -17,6 +17,8 @@ export type ScreenName =
   | 'my_listings' 
   | 'profile' 
   | 'ai'
+  | 'privacy'
+  | 'terms'
   | 'admin_dashboard';
 
 export type ListingMode = 'kiro' | 'iib'; // Kiro = Rent, Iib = Sale

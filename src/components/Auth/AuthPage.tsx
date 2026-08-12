@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SignIn, SignUp, useClerk } from '@clerk/clerk-react';
+import { SignIn, SignUp, useSignIn, useClerk } from '@clerk/clerk-react';
 import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
@@ -20,6 +20,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   onBackToHome
 }) => {
   const clerk = useClerk();
+  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
   const [authMode, setAuthMode] = useState<'clerk' | 'local'>('clerk');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -41,7 +42,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       setIsGoogleLoading(true);
       setErrorMsg('');
 
-      if ((clerk as any).authenticateWithRedirect) {
+      if (isSignInLoaded && signIn) {
+        await signIn.authenticateWithRedirect({
+          strategy: 'oauth_google',
+          redirectUrl: window.location.origin,
+          redirectUrlComplete: window.location.origin,
+        });
+      } else if ((clerk as any).authenticateWithRedirect) {
         await (clerk as any).authenticateWithRedirect({
           strategy: 'oauth_google',
           redirectUrl: window.location.origin,

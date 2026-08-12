@@ -18,6 +18,8 @@ import { Profile } from './components/Profile';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AuthModal } from './components/Auth/AuthModal';
 import { AuthPage } from './components/Auth/AuthPage';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsOfService } from './components/TermsOfService';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 import { supabase } from './services/supabaseClient';
 
@@ -34,6 +36,8 @@ export function App() {
     if (path.includes('signup') || screenParam === 'signup') return 'signup';
     if (path.includes('admin') || screenParam === 'admin') return 'admin_dashboard';
     if (path.includes('profile') || screenParam === 'profile') return 'profile';
+    if (path.includes('privacy') || screenParam === 'privacy') return 'privacy';
+    if (path.includes('terms') || screenParam === 'terms') return 'terms';
     return 'splash';
   });
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
@@ -325,6 +329,8 @@ export function App() {
       else if (screen === 'profile') targetPath = '/profile';
       else if (screen === 'favorites') targetPath = '/favorites';
       else if (screen === 'my_listings') targetPath = '/my_listings';
+      else if (screen === 'privacy') targetPath = '/privacy';
+      else if (screen === 'terms') targetPath = '/terms';
       window.history.pushState({}, '', targetPath);
     } catch (e) {}
   };
@@ -473,6 +479,16 @@ export function App() {
               onLogout={handleLogout}
               onOpenAI={() => setShowAIModal(true)}
             />
+          )}
+
+          {/* PRIVACY POLICY */}
+          {currentScreen === 'privacy' && (
+            <PrivacyPolicy onBack={() => handleNavigateScreen('home')} />
+          )}
+
+          {/* TERMS OF SERVICE */}
+          {currentScreen === 'terms' && (
+            <TermsOfService onBack={() => handleNavigateScreen('home')} />
           )}
 
         </main>
