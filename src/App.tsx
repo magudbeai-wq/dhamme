@@ -21,6 +21,7 @@ import { AuthPage } from './components/Auth/AuthPage';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
+import { useInactivityLogout } from './hooks/useInactivityLogout';
 import { supabase } from './services/supabaseClient';
 
 export function App() {
@@ -400,6 +401,12 @@ export function App() {
     setCurrentScreen('home');
   };
 
+  // 10-Minute User Inactivity & Background Abandonment Logout Tracker
+  const { isLoggedOutDueToInactivity, clearInactivityNotice } = useInactivityLogout({
+    enabled: Boolean(userProfile || isClerkSignedIn),
+    onLogout: handleLogout
+  });
+
   const userListings = properties.filter((p) => 
     (userProfile?.email && p.ownerEmail === userProfile.email) ||
     p.agentName === (userProfile?.fullName || 'Landlord') ||
@@ -569,6 +576,43 @@ export function App() {
       {/* Real Estate AI Modal */}
       {showAIModal && (
         <DhammeRealEstateAIModal onClose={() => setShowAIModal(false)} />
+      )}
+
+      {/* 10-Minute Session Expiry Notification Modal */}
+      {isLoggedOutDueToInactivity && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[#005145]/10 text-center relative overflow-hidden">
+            <div className="w-16 h-16 bg-[#005145]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#005145]">
+              <span className="material-symbols-outlined text-3xl">timer_off</span>
+            </div>
+            
+            <h3 className="text-xl font-bold font-poppins text-[#1b1b1c] mb-2">
+              Session Auto-Logged Out
+            </h3>
+            
+            <p className="text-sm text-[#645d54] mb-6 leading-relaxed">
+              You were logged out after 10 minutes of inactivity or leaving the app to keep your Dhamme account and property listings secure.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  clearInactivityNotice();
+                  handleNavigateScreen('login');
+                }}
+                className="w-full py-3.5 px-6 bg-[#005145] text-white font-semibold rounded-2xl hover:bg-[#0f6b5c] transition-all shadow-md active:scale-95 text-sm"
+              >
+                Sign Back In
+              </button>
+              <button
+                onClick={() => clearInactivityNotice()}
+                className="w-full py-3 px-6 bg-[#ebe1d5] text-[#1b1b1c] font-medium rounded-2xl hover:bg-[#e5d8c8] transition-all text-sm"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

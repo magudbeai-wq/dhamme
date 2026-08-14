@@ -79,11 +79,34 @@ body {
 }
 
 .listing-card-shadow {
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.06), 0px 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .nav-shadow {
-  box-shadow: 0px -6px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px -10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.glass-card {
+  background: rgba(252, 249, 248, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(190, 201, 197, 0.4);
+}
+
+.glass-dark {
+  background: rgba(0, 43, 36, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(162, 242, 222, 0.15);
+}
+
+/* Luxury Gold & Emerald Gradients */
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #f0cf65 50%, #b8860b 100%);
+}
+
+.bg-gradient-emerald {
+  background: linear-gradient(135deg, #00382f 0%, #005145 50%, #0f6b5c 100%);
 }
 
 /* Animations for Professional Logo & Splash */
@@ -114,7 +137,7 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-logo-float {
@@ -147,3 +170,4 @@ body {
 [class*="cl-dev-mode"] {
   display: none !important;
 }
+
