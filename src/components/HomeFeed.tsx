@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { PropertyListing, ListingMode, PropertyCategory } from '../types';
 import { DhammeLogo } from './DhammeLogo';
+import { MapView } from './MapView';
 
 interface HomeFeedProps {
   properties: PropertyListing[];
@@ -34,6 +35,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
   const [activeMode, setActiveMode] = useState<ListingMode>('kiro');
   const [selectedCategory, setSelectedCategory] = useState<PropertyCategory>('All Properties');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewFormat, setViewFormat] = useState<'list' | 'map'>('list');
   
   // Real Browser GPS Geolocation State
   const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
@@ -338,21 +340,55 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
           })}
         </div>
 
-        {/* Results Header Count */}
+        {/* Results Header Count & List / Map View Toggle */}
         <div className="flex items-center justify-between text-xs text-[#3f4946] px-1 pt-1">
           <span className="font-semibold flex items-center space-x-1">
             <span className="w-2 h-2 rounded-full bg-[#005145]" />
             <span>{filteredProperties.length} {filteredProperties.length === 1 ? 'Guri Loo Helay' : 'Guryo Loo Helay'} Jigjiga ({activeMode === 'kiro' ? 'Kiro' : 'Iib'})</span>
           </span>
-          <span className="text-[11px] text-[#005145] font-bold">
-            Jigjiga City Kebeles
-          </span>
+
+          {/* List vs Map View Toggle Pills */}
+          <div className="flex items-center bg-[#e5e2e1] p-1 rounded-xl border border-[#bec9c5]/40 shadow-xs">
+            <button
+              onClick={() => setViewFormat('list')}
+              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                viewFormat === 'list'
+                  ? 'bg-[#005145] text-white shadow-xs'
+                  : 'text-[#3f4946] hover:text-[#1b1b1c]'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[16px]">view_list</span>
+              <span>Liis</span>
+            </button>
+            <button
+              onClick={() => setViewFormat('map')}
+              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                viewFormat === 'map'
+                  ? 'bg-[#005145] text-white shadow-xs'
+                  : 'text-[#3f4946] hover:text-[#1b1b1c]'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[16px]">map</span>
+              <span>Khariidad</span>
+            </button>
+          </div>
         </div>
 
       </section>
 
-      {/* Property Cards Grid */}
-      <section className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      {/* Render Interactive Map View if selected */}
+      {viewFormat === 'map' ? (
+        <section className="mt-4">
+          <MapView
+            properties={filteredProperties}
+            onSelectProperty={onSelectProperty}
+            favorites={favorites}
+            onToggleFavorite={onToggleFavorite}
+          />
+        </section>
+      ) : (
+        /* Property Cards Grid */
+        <section className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {filteredProperties.length === 0 ? (
           <div className="col-span-full text-center py-16 bg-[#fcf9f8] rounded-3xl border border-[#bec9c5]/40 p-8 space-y-4 shadow-sm">
             <div className="w-16 h-16 rounded-full bg-[#005145]/10 text-[#005145] flex items-center justify-center mx-auto">
@@ -523,6 +559,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
           })
         )}
       </section>
+      )}
 
     </main>
   );

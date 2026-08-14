@@ -2,15 +2,37 @@ import React, { useState } from 'react';
 import { UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 import type { ScreenName, UserProfile } from '../types';
 import { DhammeLogo } from './DhammeLogo';
+import type { Language } from '../i18n/translations';
 
 interface HeaderNavProps {
   userProfile: UserProfile | null;
   onNavigate: (screen: ScreenName) => void;
   onOpenAI: () => void;
+  currentLang?: Language;
+  onChangeLang?: (lang: Language) => void;
 }
 
-export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, onOpenAI }) => {
+export const HeaderNav: React.FC<HeaderNavProps> = ({ 
+  userProfile, 
+  onNavigate, 
+  onOpenAI,
+  currentLang = 'so',
+  onChangeLang
+}) => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
+  const [lang, setLang] = useState<Language>(() => {
+    return (localStorage.getItem('dhamme_language') as Language) || currentLang || 'so';
+  });
+
+  const handleSelectLang = (selected: Language) => {
+    setLang(selected);
+    localStorage.setItem('dhamme_language', selected);
+    if (onChangeLang) onChangeLang(selected);
+    setShowLangMenu(false);
+    // Dispatch custom event for global re-render
+    window.dispatchEvent(new Event('dhamme_language_changed'));
+  };
 
   const isAdmin = userProfile?.isAdmin || userProfile?.email === 'magudbeai@gmail.com';
 
@@ -53,6 +75,50 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ userProfile, onNavigate, o
         {/* Right Actions */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           
+          {/* Multi-Language Switcher Dropdown Pill */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-full bg-white/90 border border-[#bec9c5]/60 text-xs font-bold text-[#005145] hover:bg-[#ebe1d5] active:scale-95 transition-all shadow-xs"
+              title="Change Language"
+            >
+              <span>{lang === 'so' ? '🇸🇴 SO' : lang === 'en' ? '🇬🇧 EN' : '🇪🇹 AM'}</span>
+              <span className="material-symbols-outlined text-[16px]">expand_more</span>
+            </button>
+
+            {showLangMenu && (
+              <div className="absolute right-0 top-10 w-36 bg-white rounded-2xl shadow-xl border border-[#bec9c5]/60 p-1.5 z-50 animate-fade-in space-y-1">
+                <button
+                  onClick={() => handleSelectLang('so')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                    lang === 'so' ? 'bg-[#005145] text-white' : 'text-[#1b1b1c] hover:bg-[#ebe1d5]'
+                  }`}
+                >
+                  <span>🇸🇴 Af-Somali</span>
+                  {lang === 'so' && <span className="material-symbols-outlined text-[16px]">check</span>}
+                </button>
+                <button
+                  onClick={() => handleSelectLang('en')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                    lang === 'en' ? 'bg-[#005145] text-white' : 'text-[#1b1b1c] hover:bg-[#ebe1d5]'
+                  }`}
+                >
+                  <span>🇬🇧 English</span>
+                  {lang === 'en' && <span className="material-symbols-outlined text-[16px]">check</span>}
+                </button>
+                <button
+                  onClick={() => handleSelectLang('am')}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                    lang === 'am' ? 'bg-[#005145] text-white' : 'text-[#1b1b1c] hover:bg-[#ebe1d5]'
+                  }`}
+                >
+                  <span>🇪🇹 አማርኛ</span>
+                  {lang === 'am' && <span className="material-symbols-outlined text-[16px]">check</span>}
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Master Admin Panel Trigger (Visible to Admin) */}
           {isAdmin && (
             <button

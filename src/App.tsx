@@ -512,6 +512,7 @@ export function App() {
           {currentScreen === 'details' && selectedProperty && (
             <ListingDetails
               property={selectedProperty}
+              userProfile={userProfile}
               onBack={() => setCurrentScreen('home')}
               isFav={favorites.includes(selectedProperty.id)}
               onToggleFavorite={handleToggleFavorite}

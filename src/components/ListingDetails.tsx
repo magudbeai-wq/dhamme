@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import type { PropertyListing } from '../types';
+import type { PropertyListing, UserProfile } from '../types';
 import { supabase } from '../services/supabaseClient';
+import { LeaseAgreementModal } from './LeaseAgreementModal';
 
 interface ListingDetailsProps {
   property: PropertyListing;
+  userProfile?: UserProfile | null;
   onBack: () => void;
   isFav: boolean;
   onToggleFavorite: (id: string) => void;
@@ -11,12 +13,14 @@ interface ListingDetailsProps {
 
 export const ListingDetails: React.FC<ListingDetailsProps> = ({
   property,
+  userProfile = null,
   onBack,
   isFav,
   onToggleFavorite
 }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showLeaseModal, setShowLeaseModal] = useState(false);
 
   const lat = property.lat || 9.3524;
   const lng = property.lng || 42.7961;
@@ -234,20 +238,30 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={() => setShowContactModal(true)}
-            disabled={isSold || isRented}
-            className={`w-full sm:w-auto px-6 py-3.5 rounded-2xl font-poppins font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 ${
-              isSold || isRented
-                ? 'bg-gray-400 text-white cursor-not-allowed'
-                : 'bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white active:scale-95'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              {isSold || isRented ? 'lock' : 'call'}
-            </span>
-            <span>{isSold ? 'Waala Iibsaday (Sold)' : isRented ? 'Waala Kireeyay (Rented)' : 'La Xiriir Milkiilaha'}</span>
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3.5 w-full sm:w-auto">
+            <button
+              onClick={() => setShowLeaseModal(true)}
+              className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-[#ebe1d5] text-[#005145] font-poppins font-bold text-xs shadow-sm hover:bg-[#e5d8c8] active:scale-95 transition-all flex items-center justify-center space-x-1.5 border border-[#bec9c5]/60"
+            >
+              <span className="material-symbols-outlined text-[20px]">description</span>
+              <span>Heshiiska Kirada (Lease Contract)</span>
+            </button>
+
+            <button
+              onClick={() => setShowContactModal(true)}
+              disabled={isSold || isRented}
+              className={`w-full sm:w-auto px-6 py-3.5 rounded-2xl font-poppins font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 ${
+                isSold || isRented
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white active:scale-95'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {isSold || isRented ? 'lock' : 'call'}
+              </span>
+              <span>{isSold ? 'Waala Iibsaday (Sold)' : isRented ? 'Waala Kireeyay (Rented)' : 'La Xiriir Milkiilaha'}</span>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -318,6 +332,15 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Printable Lease Agreement Contract Modal */}
+      {showLeaseModal && (
+        <LeaseAgreementModal
+          property={property}
+          userProfile={userProfile}
+          onClose={() => setShowLeaseModal(false)}
+        />
       )}
 
     </div>
