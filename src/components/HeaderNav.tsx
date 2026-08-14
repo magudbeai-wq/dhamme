@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 import type { ScreenName, UserProfile } from '../types';
 import { DhammeLogo } from './DhammeLogo';
 import type { Language } from '../i18n/translations';
+import { requestPushPermission, getPushPermissionStatus, triggerWebPushNotification } from '../utils/pushNotifications';
 
 interface HeaderNavProps {
   userProfile: UserProfile | null;
@@ -24,6 +25,26 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   const [lang, setLang] = useState<Language>(() => {
     return (localStorage.getItem('dhamme_language') as Language) || currentLang || 'so';
   });
+
+  const [pushStatus, setPushStatus] = useState<NotificationPermission>('default');
+
+  useEffect(() => {
+    setPushStatus(getPushPermissionStatus());
+  }, []);
+
+  const handleToggleNotifications = async () => {
+    setShowNotifications(!showNotifications);
+    if (getPushPermissionStatus() !== 'granted') {
+      const granted = await requestPushPermission();
+      if (granted) {
+        setPushStatus('granted');
+        triggerWebPushNotification({
+          title: 'DHAMME Web Push Active 🔔',
+          body: 'Bogaadin! Ogolaanshaha Web Push Notifications-ka waa la shaqaysiiyey.'
+        });
+      }
+    }
+  };
 
   const handleSelectLang = (selected: Language) => {
     setLang(selected);
@@ -141,13 +162,15 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             <span className="hidden sm:inline">AI Helper</span>
           </button>
 
-          {/* Notifications button */}
+          {/* Notifications & Web Push button */}
           <button 
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={handleToggleNotifications}
             className="w-10 h-10 rounded-full bg-[#f0eded] border border-[#bec9c5]/40 flex items-center justify-center hover:bg-[#e5e2e1] active:scale-95 transition-all relative"
-            title="Notifications"
+            title="Notifications & Web Push"
           >
-            <span className="material-symbols-outlined text-[#3f4946] text-[20px]">notifications</span>
+            <span className={`material-symbols-outlined text-[20px] ${pushStatus === 'granted' ? 'text-emerald-700' : 'text-[#3f4946]'}`}>
+              {pushStatus === 'granted' ? 'notifications_active' : 'notifications'}
+            </span>
             <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#7b2f10] ring-2 ring-white animate-ping" />
             <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#7b2f10] ring-2 ring-white" />
           </button>

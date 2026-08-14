@@ -23,10 +23,16 @@ import { TermsOfService } from './components/TermsOfService';
 import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 import { useInactivityLogout } from './hooks/useInactivityLogout';
 import { supabase } from './services/supabaseClient';
+import { registerServiceWorker, triggerWebPushNotification } from './utils/pushNotifications';
 
 export function App() {
   const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn, user: clerkUser } = useUser();
   const { signOut: clerkSignOut } = useClerk();
+
+  // Register Web Push Service Worker on startup
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
 
   const [currentScreen, setCurrentScreen] = useState<ScreenName>(() => {
     const path = window.location.pathname.toLowerCase();
@@ -442,6 +448,12 @@ export function App() {
     }
     setUserProfile(null);
     setCurrentScreen('home');
+
+    // Send System Web Push Notification Alert
+    triggerWebPushNotification({
+      title: 'DHAMME - Kalfadhigii Waa Dhacay (Session Expired)',
+      body: 'Waxaad ka baxday app-ka ka dib 10 daqiiqo oo bilaash ah si loo dhowro amniga koontadaada.'
+    });
   };
 
   // 10-Minute User Inactivity & Background Abandonment Logout Tracker
