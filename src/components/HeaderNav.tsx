@@ -3,28 +3,23 @@ import { UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 import type { ScreenName, UserProfile } from '../types';
 import { DhammeLogo } from './DhammeLogo';
 import type { Language } from '../i18n/translations';
+import { useLanguage } from '../i18n/LanguageContext';
 import { requestPushPermission, getPushPermissionStatus, triggerWebPushNotification } from '../utils/pushNotifications';
 
 interface HeaderNavProps {
   userProfile: UserProfile | null;
   onNavigate: (screen: ScreenName) => void;
   onOpenAI: () => void;
-  currentLang?: Language;
-  onChangeLang?: (lang: Language) => void;
 }
 
 export const HeaderNav: React.FC<HeaderNavProps> = ({ 
   userProfile, 
   onNavigate, 
-  onOpenAI,
-  currentLang = 'so',
-  onChangeLang
+  onOpenAI
 }) => {
+  const { lang, setLang } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
-  const [lang, setLang] = useState<Language>(() => {
-    return (localStorage.getItem('dhamme_language') as Language) || currentLang || 'so';
-  });
 
   const [pushStatus, setPushStatus] = useState<NotificationPermission>('default');
 
@@ -48,11 +43,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
 
   const handleSelectLang = (selected: Language) => {
     setLang(selected);
-    localStorage.setItem('dhamme_language', selected);
-    if (onChangeLang) onChangeLang(selected);
     setShowLangMenu(false);
-    // Dispatch custom event for global re-render
-    window.dispatchEvent(new Event('dhamme_language_changed'));
   };
 
   const isAdmin = userProfile?.isAdmin || userProfile?.email === 'magudbeai@gmail.com';

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScreenName } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface BottomNavProps {
   currentScreen: ScreenName;
@@ -7,12 +8,14 @@ interface BottomNavProps {
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate }) => {
-  const navItems: { id: ScreenName; labelSo: string; icon: string; isPost?: boolean }[] = [
-    { id: 'home', labelSo: 'Guri', icon: 'home' },
-    { id: 'favorites', labelSo: 'Dooro', icon: 'favorite' },
-    { id: 'post_step1', labelSo: 'Soo Dhig', icon: 'add', isPost: true },
-    { id: 'my_listings', labelSo: 'Guryahayga', icon: 'domain' },
-    { id: 'profile', labelSo: 'Koontada', icon: 'person' },
+  const { t } = useLanguage();
+
+  const navItems: { id: ScreenName; label: string; icon: string; isPost?: boolean }[] = [
+    { id: 'home', label: t.home, icon: 'home' },
+    { id: 'favorites', label: t.favorites, icon: 'favorite' },
+    { id: 'post_step1', label: t.postListing, icon: 'add', isPost: true },
+    { id: 'my_listings', label: t.myListings, icon: 'domain' },
+    { id: 'profile', label: t.profile, icon: 'person' },
   ];
 
   return (
@@ -32,7 +35,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
                 <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#00382f] via-[#005145] to-[#0f6b5c] text-white flex items-center justify-center shadow-xl shadow-[#005145]/40 border-2 border-[#a2f2de]/40 group-active:scale-95 transition-all">
                   <span className="material-symbols-outlined text-[32px]">add</span>
                 </div>
-                <span className="text-[10px] font-bold text-[#005145] mt-0.5 tracking-tight">{item.labelSo}</span>
+                <span className="text-[10px] font-bold text-[#005145] mt-0.5 tracking-tight">{item.label}</span>
               </button>
             );
           }
@@ -50,7 +53,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
                   {item.icon}
                 </span>
               </div>
-              <span className="text-[10px] tracking-tight mt-0.5">{item.labelSo}</span>
+              <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
             </button>
           );
         })}
