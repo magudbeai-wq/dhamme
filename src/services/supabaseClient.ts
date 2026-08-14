@@ -52,6 +52,50 @@ export const supabase = {
         console.warn(`Supabase network insert notice on table '${tableName}':`, err);
         return { data: null, error: err };
       }
+    },
+    upsert: async (records: any[], onConflict = 'id') => {
+      try {
+        const url = `${supabaseUrl}/rest/v1/${tableName}?on_conflict=${encodeURIComponent(onConflict)}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'apikey': supabaseAnonKey,
+            'Authorization': `Bearer ${supabaseAnonKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=representation'
+          },
+          body: JSON.stringify(records)
+        });
+        if (!res.ok) {
+          console.warn(`Supabase REST upsert notice (${res.status}) on table '${tableName}'`);
+          return { data: null, error: `HTTP ${res.status}` };
+        }
+        const data = await res.json();
+        return { data, error: null };
+      } catch (err) {
+        console.warn(`Supabase network upsert notice on table '${tableName}':`, err);
+        return { data: null, error: err };
+      }
+    },
+    delete: async (matchFilter: string) => {
+      try {
+        const url = `${supabaseUrl}/rest/v1/${tableName}?${matchFilter}`;
+        const res = await fetch(url, {
+          method: 'DELETE',
+          headers: {
+            'apikey': supabaseAnonKey,
+            'Authorization': `Bearer ${supabaseAnonKey}`
+          }
+        });
+        if (!res.ok) {
+          console.warn(`Supabase REST delete notice (${res.status}) on table '${tableName}'`);
+          return { data: null, error: `HTTP ${res.status}` };
+        }
+        return { data: true, error: null };
+      } catch (err) {
+        console.warn(`Supabase network delete notice on table '${tableName}':`, err);
+        return { data: null, error: err };
+      }
     }
   }),
 
@@ -116,3 +160,4 @@ export const supabase = {
     }
   }
 };
+

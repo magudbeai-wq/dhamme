@@ -278,19 +278,62 @@ export function App() {
     }
   }, [registeredAccounts]);
 
-  // Save active logged-in user to LocalStorage
+  // Save active logged-in user to LocalStorage & Sync with Supabase Database
   useEffect(() => {
     if (userProfile) {
       localStorage.setItem('dhamme_active_user', JSON.stringify(userProfile));
+      
+      // Async sync user profile to Supabase user_profiles table
+      supabase.from('user_profiles').upsert([{
+        id: userProfile.id,
+        full_name: userProfile.fullName,
+        email: userProfile.email,
+        phone: userProfile.phone || '',
+        avatar_url: userProfile.avatarUrl || '',
+        bio: userProfile.bio || 'DHAMME User',
+        role: userProfile.isAdmin ? 'admin' : 'user',
+        is_verified: true
+      }], 'id');
+
+      // Fetch user's saved favorites from Supabase
+      supabase.from('favorites').select('*')
+        .then(({ data }) => {
+          if (data && Array.isArray(data)) {
+            const userFavs = data
+              .filter((f: any) => f.user_email === userProfile.email)
+              .map((f: any) => f.property_id);
+            if (userFavs.length > 0) {
+              setFavorites((prev) => Array.from(new Set([...prev, ...userFavs])));
+            }
+          }
+        })
+        .catch((err) => console.warn('Supabase favorites fetch error:', err));
     } else {
       localStorage.removeItem('dhamme_active_user');
     }
   }, [userProfile]);
 
-  const handleToggleFavorite = (id: string) => {
+  const handleToggleFavorite = async (id: string) => {
+    const isFav = favorites.includes(id);
     setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      isFav ? prev.filter((item) => item !== id) : [...prev, id]
     );
+
+    // Sync to Supabase cloud favorites database if user is logged in
+    if (userProfile?.email) {
+      try {
+        if (isFav) {
+          await supabase.from('favorites').delete(`user_email=eq.${encodeURIComponent(userProfile.email)}&property_id=eq.${encodeURIComponent(id)}`);
+        } else {
+          await supabase.from('favorites').insert([{
+            user_email: userProfile.email,
+            property_id: id
+          }]);
+        }
+      } catch (err) {
+        console.warn('Supabase favorite toggle error:', err);
+      }
+    }
   };
 
   const handleSelectProperty = (prop: PropertyListing) => {

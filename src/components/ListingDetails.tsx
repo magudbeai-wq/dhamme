@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { PropertyListing } from '../types';
+import { supabase } from '../services/supabaseClient';
 
 interface ListingDetailsProps {
   property: PropertyListing;
@@ -273,6 +274,16 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
             <div className="grid grid-cols-2 gap-3 pt-2">
               <a
                 href={`tel:${property.agentPhone}`}
+                onClick={() => {
+                  supabase.from('property_inquiries').insert([{
+                    property_id: property.id,
+                    property_title: property.title,
+                    sender_name: 'DHAMME Tenant',
+                    sender_phone: 'Direct Call Initiated',
+                    agent_email: property.ownerEmail || 'user@dhamme.app',
+                    message: `Initiated direct phone call to ${property.agentPhone}`
+                  }]).catch((err) => console.warn('Inquiry log error:', err));
+                }}
                 className="py-3.5 rounded-2xl bg-[#005145] text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-md hover:bg-[#0f6b5c] transition"
               >
                 <span className="material-symbols-outlined text-[18px]">call</span>
@@ -280,6 +291,15 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
               </a>
               <button
                 onClick={() => {
+                  supabase.from('property_inquiries').insert([{
+                    property_id: property.id,
+                    property_title: property.title,
+                    sender_name: 'DHAMME Tenant',
+                    sender_phone: 'WhatsApp Initiated',
+                    agent_email: property.ownerEmail || 'user@dhamme.app',
+                    message: `Initiated WhatsApp chat with ${property.agentPhone}`
+                  }]).catch((err) => console.warn('Inquiry log error:', err));
+
                   window.open(`https://wa.me/${property.agentPhone.replace(/[^0-9]/g, '')}`, '_blank');
                   setShowContactModal(false);
                 }}
