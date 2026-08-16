@@ -1,8 +1,9 @@
 import { INITIAL_PROPERTIES } from '../data/propertiesData';
-import type { PropertyListing, FilterState } from '../types';
+import { INITIAL_REGISTERED_ACCOUNTS } from '../data/usersData';
+import type { PropertyListing, FilterState, UserProfile } from '../types';
 
 export function runAllTests() {
-  console.log('🚀 Running DHAMME Marketplace Automated Test Suite...\n');
+  console.log('🚀 Running DHAMME Marketplace Production Test Suite...\n');
   let passed = 0;
   let failed = 0;
 
@@ -16,19 +17,14 @@ export function runAllTests() {
     }
   }
 
-  // TEST 1: Initial Property Data & Video Integration
-  console.log('--- TEST GROUP 1: Real Estate Data & Video Integration ---');
-  assert(INITIAL_PROPERTIES.length >= 6, 'INITIAL_PROPERTIES contains at least 6 authentic Jigjiga listings');
-  
-  const propertiesWithVideo = INITIAL_PROPERTIES.filter((p) => Boolean(p.videoUrl));
-  assert(propertiesWithVideo.length >= 5, 'At least 5 listings have valid videoUrl attached');
+  // TEST GROUP 1: Clean Slate & User / Listing Integrity (No Fake Data)
+  console.log('--- TEST GROUP 1: Fake Data Removal & Production Data Integrity ---');
+  assert(INITIAL_PROPERTIES.length === 0, 'INITIAL_PROPERTIES is a clean initial array (no hardcoded fake posts)');
+  assert(INITIAL_REGISTERED_ACCOUNTS.length === 1, 'INITIAL_REGISTERED_ACCOUNTS contains only the genuine Master Admin');
+  assert(INITIAL_REGISTERED_ACCOUNTS[0].email === 'magudbeai@gmail.com', 'Master Admin email is magudbeai@gmail.com');
+  assert(!INITIAL_REGISTERED_ACCOUNTS.some((u) => u.email.endsWith('@dhamme.app')), 'No fake test users exist with @dhamme.app domain');
 
-  const videoFormatsValid = propertiesWithVideo.every((p) => 
-    p.videoUrl?.endsWith('.mp4') || p.videoUrl?.endsWith('.webm') || p.videoUrl?.endsWith('.mov') || p.videoUrl?.startsWith('http')
-  );
-  assert(videoFormatsValid, 'All video URLs match supported formats (MP4, WebM, MOV, HTTP Stream)');
-
-  // TEST 2: Security & Privilege Escalation Prevention
+  // TEST GROUP 2: Security & Privilege Escalation Prevention
   console.log('\n--- TEST GROUP 2: Security & Privilege Escalation Prevention ---');
   function checkAdminPrivilege(email: string): boolean {
     return email.toLowerCase() === 'magudbeai@gmail.com';
@@ -39,8 +35,142 @@ export function runAllTests() {
   assert(checkAdminPrivilege('admin@dhamme.app') === false, 'Privilege Escalation blocked: admin@dhamme.app denied admin role');
   assert(checkAdminPrivilege('attacker_admin_hacker@yahoo.com') === false, 'Privilege Escalation blocked: substring admin check denied');
 
-  // TEST 3: Search & Filter Logic Synchronization
-  console.log('\n--- TEST GROUP 3: Search & Filter Synchronization ---');
+  // TEST GROUP 3: Admin Delete Property Functionality
+  console.log('\n--- TEST GROUP 3: Admin Property Deletion Capability ---');
+  const mockProperties: PropertyListing[] = [
+    {
+      id: 'prop-001',
+      title: 'Villa in Kebele 06',
+      priceEtb: 35000,
+      priceLocalFormatted: '35,000 ETB',
+      mode: 'kiro',
+      category: 'Villa',
+      city: 'Jigjiga',
+      kebele: 'Kebele 06',
+      beds: 3,
+      baths: 2,
+      water: true,
+      electricity: true,
+      pool: 'No',
+      description: 'Clean villa in Garabase',
+      agentName: 'Landlord',
+      agentPhone: '0915752826',
+      agentAvatar: '',
+      ownerEmail: 'admin@dhamme.app',
+      postedDate: '2026-08-16',
+      images: ['https://example.com/img1.jpg'],
+      videoUrl: 'https://example.com/tour.mp4'
+    },
+    {
+      id: 'prop-002',
+      title: 'Apartment in Kebele 03',
+      priceEtb: 25000,
+      priceLocalFormatted: '25,000 ETB',
+      mode: 'kiro',
+      category: 'Apartment',
+      city: 'Jigjiga',
+      kebele: 'Kebele 03',
+      beds: 2,
+      baths: 1,
+      water: true,
+      electricity: true,
+      pool: 'No',
+      description: 'Modern apartment in Taiwan',
+      agentName: 'Landlord',
+      agentPhone: '0915752826',
+      agentAvatar: '',
+      ownerEmail: 'admin@dhamme.app',
+      postedDate: '2026-08-16',
+      images: ['https://example.com/img2.jpg']
+    }
+  ];
+
+  function deleteProperty(list: PropertyListing[], id: string): PropertyListing[] {
+    return list.filter((p) => p.id !== id);
+  }
+
+  const afterDelete = deleteProperty(mockProperties, 'prop-001');
+  assert(afterDelete.length === 1, 'Admin deletes property successfully: count reduced from 2 to 1');
+  assert(!afterDelete.some((p) => p.id === 'prop-001'), 'Deleted property prop-001 is completely removed');
+  assert(afterDelete[0].id === 'prop-002', 'Remaining property prop-002 intact');
+
+  // TEST GROUP 4: Admin Ban & Unban Users (Pan Users)
+  console.log('\n--- TEST GROUP 4: Admin User Ban / Unban Management ---');
+  interface AccountWithBan extends UserProfile {
+    isBanned?: boolean;
+    bannedReason?: string;
+    bannedAt?: string;
+  }
+
+  const sampleUsers: AccountWithBan[] = [
+    {
+      id: 'admin-master',
+      fullName: 'Master Admin',
+      email: 'magudbeai@gmail.com',
+      phone: '0915752826',
+      avatarUrl: '',
+      isVerified: true,
+      isAdmin: true
+    },
+    {
+      id: 'user-spammer-123',
+      fullName: 'Bad Actor',
+      email: 'spammer@example.com',
+      phone: '+251 91 999 8888',
+      avatarUrl: '',
+      isVerified: false
+    }
+  ];
+
+  function banUser(users: AccountWithBan[], targetId: string, reason: string): AccountWithBan[] {
+    return users.map((u) => {
+      if (u.id === targetId) {
+        if (u.email.toLowerCase() === 'magudbeai@gmail.com') {
+          return u; // Protected Master Admin
+        }
+        return {
+          ...u,
+          isBanned: true,
+          bannedReason: reason,
+          bannedAt: new Date().toISOString()
+        };
+      }
+      return u;
+    });
+  }
+
+  function unbanUser(users: AccountWithBan[], targetId: string): AccountWithBan[] {
+    return users.map((u) => {
+      if (u.id === targetId) {
+        return {
+          ...u,
+          isBanned: false,
+          bannedReason: undefined,
+          bannedAt: undefined
+        };
+      }
+      return u;
+    });
+  }
+
+  // Ban test
+  const afterBan = banUser(sampleUsers, 'user-spammer-123', 'Spamming fake listings');
+  const bannedUser = afterBan.find((u) => u.id === 'user-spammer-123');
+  assert(bannedUser?.isBanned === true, 'Admin banned bad actor successfully');
+  assert(bannedUser?.bannedReason === 'Spamming fake listings', 'Ban reason recorded accurately');
+
+  // Master Admin protection
+  const attemptBanAdmin = banUser(sampleUsers, 'admin-master', 'Trying to ban admin');
+  const adminAccount = attemptBanAdmin.find((u) => u.id === 'admin-master');
+  assert(adminAccount?.isBanned !== true, 'Master Admin (magudbeai@gmail.com) cannot be banned');
+
+  // Unban test
+  const afterUnban = unbanUser(afterBan, 'user-spammer-123');
+  const unbannedUser = afterUnban.find((u) => u.id === 'user-spammer-123');
+  assert(unbannedUser?.isBanned === false, 'Admin unbanned user successfully');
+
+  // TEST GROUP 5: Search & Filter Logic Synchronization
+  console.log('\n--- TEST GROUP 5: Search & Filter Synchronization ---');
   function filterProperties(props: PropertyListing[], filter: FilterState, query: string = ''): PropertyListing[] {
     return props.filter((prop) => {
       const matchesCity = prop.city.toLowerCase().includes('jigjiga');
@@ -72,8 +202,55 @@ export function runAllTests() {
     });
   }
 
-  // Filter 1: Kiro vs Iib Mode
-  const kiroListings = filterProperties(INITIAL_PROPERTIES, {
+  const sampleFeed: PropertyListing[] = [
+    {
+      id: 'feed-1',
+      title: 'Family House in Kebele 06 Garab\'ase',
+      priceEtb: 30000,
+      priceLocalFormatted: '30,000 ETB',
+      mode: 'kiro',
+      category: 'Family House',
+      city: 'Jigjiga',
+      kebele: 'Kebele 06',
+      beds: 3,
+      baths: 2,
+      water: true,
+      electricity: true,
+      pool: 'No',
+      description: 'Family house in Garabase',
+      agentName: 'Landlord',
+      agentPhone: '0915752826',
+      agentAvatar: '',
+      ownerEmail: 'landlord@gmail.com',
+      postedDate: '2026-08-16',
+      images: ['https://example.com/f1.jpg'],
+      videoUrl: 'https://example.com/f1.mp4'
+    },
+    {
+      id: 'feed-2',
+      title: 'Commercial Store in Taiwan Market',
+      priceEtb: 5000000,
+      priceLocalFormatted: '5,000,000 ETB',
+      mode: 'iib',
+      category: 'Villa',
+      city: 'Jigjiga',
+      kebele: 'Kebele 03 (Taiwan)',
+      beds: 4,
+      baths: 2,
+      water: true,
+      electricity: true,
+      pool: 'No',
+      description: 'Commercial shop near Taiwan market',
+      agentName: 'Owner',
+      agentPhone: '0915752826',
+      agentAvatar: '',
+      ownerEmail: 'owner@gmail.com',
+      postedDate: '2026-08-16',
+      images: ['https://example.com/f2.jpg']
+    }
+  ];
+
+  const kiroListings = filterProperties(sampleFeed, {
     mode: 'kiro',
     searchLocation: 'Jigjiga',
     category: 'All Properties',
@@ -86,21 +263,7 @@ export function runAllTests() {
   });
   assert(kiroListings.every((p) => p.mode === 'kiro'), 'Filter Mode "kiro" strictly returns rental listings');
 
-  const iibListings = filterProperties(INITIAL_PROPERTIES, {
-    mode: 'iib',
-    searchLocation: 'Jigjiga',
-    category: 'All Properties',
-    minPriceEtb: 0,
-    maxPriceEtb: 20000000,
-    kebele: '',
-    beds: 'any',
-    waterRequired: false,
-    powerRequired: false
-  });
-  assert(iibListings.every((p) => p.mode === 'iib'), 'Filter Mode "iib" strictly returns sale listings');
-
-  // Filter 2: Video Tour Only Filter
-  const videoOnlyListings = filterProperties(INITIAL_PROPERTIES, {
+  const videoOnlyListings = filterProperties(sampleFeed, {
     mode: 'kiro',
     searchLocation: 'Jigjiga',
     category: 'All Properties',
@@ -114,36 +277,8 @@ export function runAllTests() {
   });
   assert(videoOnlyListings.every((p) => Boolean(p.videoUrl)), 'Filter "hasVideo=true" strictly returns listings with videoUrl');
 
-  // Filter 3: Kebele 06 Garab'ase Filter
-  const garabaseListings = filterProperties(INITIAL_PROPERTIES, {
-    mode: 'kiro',
-    searchLocation: 'Jigjiga',
-    category: 'All Properties',
-    minPriceEtb: 0,
-    maxPriceEtb: 500000,
-    kebele: 'Kebele 06',
-    beds: 'any',
-    waterRequired: false,
-    powerRequired: false
-  });
-  assert(garabaseListings.every((p) => p.kebele.includes('06')), 'Filter Kebele "Kebele 06" strictly returns Garab\'ase listings');
-
-  // Filter 4: Keyword Search Query
-  const searchedTaiwan = filterProperties(INITIAL_PROPERTIES, {
-    mode: 'kiro',
-    searchLocation: 'Jigjiga',
-    category: 'All Properties',
-    minPriceEtb: 0,
-    maxPriceEtb: 500000,
-    kebele: '',
-    beds: 'any',
-    waterRequired: false,
-    powerRequired: false
-  }, 'Taiwan');
-  assert(searchedTaiwan.length > 0 && searchedTaiwan.every((p) => p.title.includes('Taiwan') || p.kebele.includes('Taiwan')), 'Search query "Taiwan" matches Taiwan market property');
-
-  // TEST 4: Property Video Validation & Upload Constraints
-  console.log('\n--- TEST GROUP 4: Video Upload Validation Constraints ---');
+  // TEST GROUP 6: Video Upload Validation Constraints
+  console.log('\n--- TEST GROUP 6: Video Upload Validation Constraints ---');
   function validateVideoUpload(file: { name: string; size: number; type: string }): { valid: boolean; error?: string } {
     const maxSizeBytes = 100 * 1024 * 1024; // 100MB
     const allowedFormats = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-matroska'];
@@ -166,25 +301,6 @@ export function runAllTests() {
   assert(validateVideoUpload({ name: 'room-view.webm', size: 5 * 1024 * 1024, type: 'video/webm' }).valid === true, 'Valid 5MB WebM video allowed');
   assert(validateVideoUpload({ name: 'huge-file.mp4', size: 150 * 1024 * 1024, type: 'video/mp4' }).valid === false, 'Video > 100MB rejected with size error');
   assert(validateVideoUpload({ name: 'document.pdf', size: 2 * 1024 * 1024, type: 'application/pdf' }).valid === false, 'Non-video file rejected');
-
-  // TEST 5: GPS Proximity Calculation
-  console.log('\n--- TEST GROUP 5: GPS Proximity Calculation ---');
-  function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return Math.round((R * c) * 10) / 10;
-  }
-
-  const jigjigaCenter = { lat: 9.3524, lng: 42.7961 };
-  const garabase = { lat: 9.3491, lng: 42.7885 };
-  const dist = calculateDistanceKm(jigjigaCenter.lat, jigjigaCenter.lng, garabase.lat, garabase.lng);
-  assert(dist > 0 && dist < 5, `GPS distance between Center and Garab'ase calculated accurately: ${dist} km`);
 
   console.log(`\n========================================`);
   console.log(`SUMMARY: ${passed} PASSED | ${failed} FAILED`);

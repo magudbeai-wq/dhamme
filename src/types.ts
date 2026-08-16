@@ -41,6 +41,9 @@ export interface UserProfile {
   bio?: string;
   isVerified: boolean;
   isAdmin?: boolean;
+  isBanned?: boolean;
+  bannedReason?: string;
+  bannedAt?: string;
   joinedDate?: string;
 }
 

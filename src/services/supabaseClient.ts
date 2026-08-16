@@ -77,25 +77,36 @@ export const supabase = {
         return { data: null, error: err };
       }
     },
-    delete: async (matchFilter: string) => {
-      try {
-        const url = `${supabaseUrl}/rest/v1/${tableName}?${matchFilter}`;
-        const res = await fetch(url, {
-          method: 'DELETE',
-          headers: {
-            'apikey': supabaseAnonKey,
-            'Authorization': `Bearer ${supabaseAnonKey}`
+    delete: (matchFilter?: string) => {
+      const execDelete = async (filterStr: string) => {
+        try {
+          const url = `${supabaseUrl}/rest/v1/${tableName}?${filterStr}`;
+          const res = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            }
+          });
+          if (!res.ok) {
+            console.warn(`Supabase REST delete notice (${res.status}) on table '${tableName}'`);
+            return { data: null, error: `HTTP ${res.status}` };
           }
-        });
-        if (!res.ok) {
-          console.warn(`Supabase REST delete notice (${res.status}) on table '${tableName}'`);
-          return { data: null, error: `HTTP ${res.status}` };
+          return { data: true, error: null };
+        } catch (err) {
+          console.warn(`Supabase network delete notice on table '${tableName}':`, err);
+          return { data: null, error: err };
         }
-        return { data: true, error: null };
-      } catch (err) {
-        console.warn(`Supabase network delete notice on table '${tableName}':`, err);
-        return { data: null, error: err };
+      };
+
+      if (typeof matchFilter === 'string' && matchFilter.length > 0) {
+        return execDelete(matchFilter);
       }
+
+      return {
+        eq: (column: string, value: any) =>
+          execDelete(`${encodeURIComponent(column)}=eq.${encodeURIComponent(String(value))}`)
+      };
     }
   }),
 

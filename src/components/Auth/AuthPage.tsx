@@ -167,12 +167,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       return;
     }
 
+    if (account.isBanned) {
+      setErrorMsg(`Akoonkaaga waa la xannibay (Your account is banned): ${account.bannedReason || 'Ku xad-gudub shuruucda DHAMME'}`);
+      return;
+    }
+
     if (account.passwordHash !== password) {
       setErrorMsg('Password-ka aad gelisay waa ku khaldan yahay.');
       return;
     }
 
-    const { passwordHash, ...userProfile } = account;
+    const { passwordHash: _hash, ...userProfile } = account;
     onLoginSuccess(userProfile);
     onBackToHome();
   };

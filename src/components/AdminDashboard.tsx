@@ -6,15 +6,55 @@ interface AdminDashboardProps {
   properties: PropertyListing[];
   registeredAccounts: UserProfile[];
   onSelectProperty: (property: PropertyListing) => void;
+  onDeleteProperty?: (id: string) => void;
+  onBanUser?: (userId: string, reason?: string) => void;
+  onUnbanUser?: (userId: string) => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   properties,
   registeredAccounts,
-  onSelectProperty
+  onSelectProperty,
+  onDeleteProperty,
+  onBanUser,
+  onUnbanUser
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'properties' | 'videos' | 'kebeles'>('overview');
   const [searchFilter, setSearchFilter] = useState('');
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
+
+  const showNotification = (msg: string) => {
+    setActionNotice(msg);
+    setTimeout(() => setActionNotice(null), 4000);
+  };
+
+  const handleConfirmDelete = (prop: PropertyListing) => {
+    const confirm = window.confirm(`Ma hubtaa inaad gabi ahaanba tirtirto gurigan?\n"${prop.title}" (${prop.kebele})`);
+    if (confirm && onDeleteProperty) {
+      onDeleteProperty(prop.id);
+      showNotification(`✅ Guriga "${prop.title}" si guul leh ayaa loo tirtiray.`);
+    }
+  };
+
+  const handleConfirmBan = (user: UserProfile) => {
+    if (user.email.toLowerCase() === 'magudbeai@gmail.com') {
+      alert('Ma xannibi kartid Master Admin-ka!');
+      return;
+    }
+    const reason = window.prompt(`Geli sababta aad u xannibayso ${user.fullName}:`, 'Ku xad-gudub shuruucda DHAMME (Violation of terms)');
+    if (reason !== null && onBanUser) {
+      onBanUser(user.id, reason);
+      showNotification(`🚫 Isticmaalaha ${user.fullName} waa la xannibay.`);
+    }
+  };
+
+  const handleConfirmUnban = (user: UserProfile) => {
+    const confirm = window.confirm(`Ma hubtaa inaad xannibaadda ka qaaddo ${user.fullName}?`);
+    if (confirm && onUnbanUser) {
+      onUnbanUser(user.id);
+      showNotification(`✅ Xannibaaddii waa laga qaaday ${user.fullName}.`);
+    }
+  };
 
   // Default Master Admin account if directory empty
   const defaultAdmin: UserProfile = {
@@ -33,6 +73,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     : [defaultAdmin];
 
   const totalUsers = allUsers.length;
+  const bannedUsersCount = allUsers.filter((u) => u.isBanned).length;
   const totalProperties = properties.length;
   const activeProperties = properties.filter((p) => (p.status || 'active') === 'active').length;
   const soldProperties = properties.filter((p) => p.status === 'sold').length;
@@ -55,9 +96,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     p.agentName.toLowerCase().includes(searchFilter.toLowerCase())
   );
 
+
   return (
     <main className="max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 space-y-6 animate-fade-in">
       
+      {/* Action Notification Toast Banner */}
+      {actionNotice && (
+        <div className="bg-emerald-800 text-white p-3.5 rounded-2xl border-2 border-emerald-400 font-poppins font-bold text-xs flex items-center justify-between shadow-xl animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <span className="material-symbols-outlined text-[20px] text-emerald-300">check_circle</span>
+            <span>{actionNotice}</span>
+          </div>
+          <button onClick={() => setActionNotice(null)} className="text-white/80 hover:text-white">
+            <span className="material-symbols-outlined text-[16px]">close</span>
+          </button>
+        </div>
+      )}
+
       {/* Admin Executive Header Banner */}
       <div className="bg-gradient-to-r from-[#00382f] via-[#005145] to-[#0f6b5c] p-6 sm:p-8 rounded-3xl text-white shadow-2xl border-2 border-[#d4af37]/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative overflow-hidden">
         <div className="space-y-1 z-10">
@@ -92,12 +147,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* User Growth */}
         <div className="bg-[#fcf9f8] p-5 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#005145]">
-            <span className="text-[11px] font-bold uppercase text-[#3f4946]">Users Growing</span>
+            <span className="text-[11px] font-bold uppercase text-[#3f4946]">Users Directory</span>
             <span className="material-symbols-outlined text-[24px]">group_add</span>
           </div>
           <div className="mt-3">
             <span className="font-poppins font-black text-3xl text-[#1b1b1c]">{totalUsers}</span>
-            <span className="text-[11px] text-emerald-700 font-bold block mt-1">📈 Diwaan-Galisay (Live)</span>
+            <span className="text-[11px] text-emerald-700 font-bold block mt-1">
+              Active: {totalUsers - bannedUsersCount} {bannedUsersCount > 0 && <span className="text-red-600 font-black">| 🚫 {bannedUsersCount} Banned</span>}
+            </span>
           </div>
         </div>
 
@@ -278,8 +335,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <th className="p-3">User Profile</th>
                   <th className="p-3">Email Address</th>
                   <th className="p-3">Phone Number</th>
-                  <th className="p-3">Posted Homes</th>
-                  <th className="p-3">Verification Badge</th>
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Verification</th>
+                  <th className="p-3 text-right">Maamulka (Actions)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#bec9c5]/30">
@@ -288,9 +346,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     (p) => p.ownerEmail === user.email || p.agentName === user.fullName || user.id.startsWith('admin')
                   ).length;
                   const isUserVerified = user.isVerified || userHomesCount >= 5;
+                  const isMasterAdmin = user.email.toLowerCase() === 'magudbeai@gmail.com';
 
                   return (
-                    <tr key={user.id} className="hover:bg-[#f0eded]/50 transition">
+                    <tr key={user.id} className={`hover:bg-[#f0eded]/50 transition ${user.isBanned ? 'bg-red-50/40' : ''}`}>
                       <td className="p-3 flex items-center space-x-2.5">
                         {user.avatarUrl ? (
                           <img src={user.avatarUrl} alt={user.fullName} className="w-8 h-8 rounded-full object-cover border border-[#005145]" />
@@ -299,26 +358,60 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             {user.fullName.charAt(0)}
                           </div>
                         )}
-                        <span className="font-bold text-[#1b1b1c]">{user.fullName} {user.isAdmin && '👑 (Admin)'}</span>
+                        <div>
+                          <span className="font-bold text-[#1b1b1c] block">{user.fullName} {isMasterAdmin && '👑 (Master Admin)'}</span>
+                          <span className="text-[10px] text-[#6f7976]">{user.joinedDate || '2026-08-01'}</span>
+                        </div>
                       </td>
                       <td className="p-3 font-mono text-[#005145]">{user.email}</td>
                       <td className="p-3 font-semibold">{user.phone}</td>
                       <td className="p-3">
-                        <span className="font-mono font-bold text-[#005145]">
-                          {userHomesCount} / 5 Homes
-                        </span>
+                        {user.isBanned ? (
+                          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-red-600 text-white shadow-xs">
+                            <span className="material-symbols-outlined text-[13px]">block</span>
+                            <span>BANNED</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                            <span>Active</span>
+                          </span>
+                        )}
                       </td>
                       <td className="p-3">
                         {isUserVerified ? (
                           <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                             <span className="material-symbols-outlined text-[13px]">verified</span>
-                            <span>Verified (5/5 Approved)</span>
+                            <span>Verified</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
                             <span className="material-symbols-outlined text-[13px]">pending</span>
-                            <span>Pending ({userHomesCount}/5)</span>
+                            <span>Pending</span>
                           </span>
+                        )}
+                      </td>
+                      <td className="p-3 text-right">
+                        {isMasterAdmin ? (
+                          <span className="text-[10px] font-bold text-[#d4af37] bg-[#00382f] px-2.5 py-1 rounded-lg">
+                            👑 Master Admin
+                          </span>
+                        ) : user.isBanned ? (
+                          <button
+                            onClick={() => handleConfirmUnban(user)}
+                            className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] rounded-xl shadow-xs active:scale-95 transition"
+                            title="Unban this user"
+                          >
+                            ✅ Ka Qaad Xannibaadda (Unban)
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleConfirmBan(user)}
+                            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] rounded-xl shadow-xs active:scale-95 transition"
+                            title="Ban this user from using Dhamme"
+                          >
+                            🚫 Xannib (Ban User)
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -373,6 +466,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       }`}>
                         {prop.status ? prop.status.toUpperCase() : 'ACTIVE'}
                       </span>
+                    </div>
+
+                    {/* Admin Delete and View Action Row */}
+                    <div className="flex gap-2 pt-2 border-t border-[#bec9c5]/30">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onSelectProperty(prop); }}
+                        className="flex-1 py-1.5 px-2 bg-[#005145] hover:bg-[#0f6b5c] text-white text-[11px] font-bold rounded-xl text-center"
+                      >
+                        Fiiri (View)
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleConfirmDelete(prop); }}
+                        className="py-1.5 px-3 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold rounded-xl flex items-center space-x-1"
+                        title="Delete listing permanently"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">delete</span>
+                        <span>Tirtir (Delete)</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -445,12 +556,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       )}
                     </div>
 
-                    <button
-                      onClick={() => onSelectProperty(prop)}
-                      className="px-3 py-1.5 bg-[#005145] text-white text-[11px] font-bold rounded-xl hover:bg-[#0f6b5c]"
-                    >
-                      View Details
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => onSelectProperty(prop)}
+                        className="px-3 py-1.5 bg-[#005145] text-white text-[11px] font-bold rounded-xl hover:bg-[#0f6b5c]"
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleConfirmDelete(prop)}
+                        className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold rounded-xl flex items-center space-x-1"
+                        title="Delete video post"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">delete</span>
+                        <span>Tirtir (Delete)</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

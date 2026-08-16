@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus } from './types';
-import { INITIAL_PROPERTIES } from './data/propertiesData';
 import { INITIAL_REGISTERED_ACCOUNTS } from './data/usersData';
 import type { RegisteredAccount } from './data/usersData';
 import { SplashScreen } from './components/SplashScreen';
@@ -47,7 +46,16 @@ export function App() {
     if (path.includes('terms') || screenParam === 'terms') return 'terms';
     return 'splash';
   });
+  // Real Properties inventory (filter out any legacy mock placeholder IDs)
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
+    const fakePropertyIds = [
+      'jigjiga-villa-garabase-01',
+      'jigjiga-house-taiwan-02',
+      'jigjiga-sale-villa-airport-03',
+      'jigjiga-studio-univ-04',
+      'jigjiga-house-citycenter-05',
+      'jigjiga-sale-plot-garabase-06'
+    ];
     const keys = [
       'dhamme_user_posted_properties_v1',
       'dhamme_properties_archive_v2',
@@ -62,7 +70,12 @@ export function App() {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed)) {
             parsed.forEach((item: PropertyListing) => {
-              if (item && item.id && !loaded.some((existing) => existing.id === item.id)) {
+              if (
+                item &&
+                item.id &&
+                !fakePropertyIds.includes(item.id) &&
+                !loaded.some((existing) => existing.id === item.id)
+              ) {
                 loaded.push(item);
               }
             });
@@ -73,23 +86,21 @@ export function App() {
       }
     });
 
-    if (loaded.length === 0) {
-      return INITIAL_PROPERTIES;
-    }
-
-    const merged = [...loaded];
-    INITIAL_PROPERTIES.forEach((initProp) => {
-      if (!merged.some((p) => p.id === initProp.id)) {
-        merged.push(initProp);
-      }
-    });
-    return merged;
+    return loaded;
   });
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  // Registered accounts stored locally with full user history
+  // Registered accounts (purges any legacy fake placeholder test accounts)
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
+    const fakeEmails = [
+      'cabdiqaadir.xasan@dhamme.app',
+      'fartuun.axmed@dhamme.app',
+      'khadar.jaamac@dhamme.app',
+      'nimco.cumar@dhamme.app',
+      'mustafe.cali@gmail.com',
+      'hamda.xassan@gmail.com'
+    ];
     const savedV1 = localStorage.getItem('dhamme_registered_accounts');
     const savedV2 = localStorage.getItem('dhamme_accounts_backup');
     let loadedAccounts: RegisteredAccount[] = [];
@@ -100,7 +111,13 @@ export function App() {
           const parsed = JSON.parse(s);
           if (Array.isArray(parsed)) {
             parsed.forEach((acc: RegisteredAccount) => {
-              if (acc && acc.email && !loadedAccounts.some((existing) => existing.email === acc.email)) {
+              if (
+                acc &&
+                acc.email &&
+                !fakeEmails.includes(acc.email) &&
+                !acc.email.endsWith('@dhamme.app') &&
+                !loadedAccounts.some((existing) => existing.email === acc.email)
+              ) {
                 loadedAccounts.push(acc);
               }
             });
@@ -111,7 +128,7 @@ export function App() {
       }
     });
 
-    const merged = loadedAccounts.length > 0 ? [...loadedAccounts] : [...INITIAL_REGISTERED_ACCOUNTS];
+    const merged = [...loadedAccounts];
     INITIAL_REGISTERED_ACCOUNTS.forEach((initialAcc) => {
       if (!merged.some((acc) => acc.email === initialAcc.email)) {
         merged.push(initialAcc);
@@ -419,10 +436,71 @@ export function App() {
     setCurrentScreen('details');
   };
 
+  const handleDeleteProperty = async (id: string) => {
+    setProperties((prev) => prev.filter((p) => p.id !== id));
+    if (selectedProperty && selectedProperty.id === id) {
+      setSelectedProperty(null);
+    }
+    // Delete from Supabase cloud database
+    try {
+      await supabase.from('properties').delete(`id=eq.${encodeURIComponent(id)}`);
+    } catch (err) {
+      console.error('Failed to delete property from Supabase:', err);
+    }
+  };
+
+  const handleBanUser = (userId: string, reason?: string) => {
+    setRegisteredAccounts((prev) =>
+      prev.map((acc) =>
+        acc.id === userId
+          ? {
+              ...acc,
+              isBanned: true,
+              bannedReason: reason || 'Banned by Administrator',
+              bannedAt: new Date().toISOString()
+            }
+          : acc
+      )
+    );
+    if (userProfile && userProfile.id === userId) {
+      setUserProfile((prev) =>
+        prev
+          ? { ...prev, isBanned: true, bannedReason: reason || 'Banned by Administrator' }
+          : null
+      );
+    }
+  };
+
+  const handleUnbanUser = (userId: string) => {
+    setRegisteredAccounts((prev) =>
+      prev.map((acc) =>
+        acc.id === userId
+          ? {
+              ...acc,
+              isBanned: false,
+              bannedReason: undefined,
+              bannedAt: undefined
+            }
+          : acc
+      )
+    );
+    if (userProfile && userProfile.id === userId) {
+      setUserProfile((prev) =>
+        prev ? { ...prev, isBanned: false, bannedReason: undefined } : null
+      );
+    }
+  };
+
   const handleNavigateScreen = (screen: ScreenName) => {
     if ((screen.startsWith('post_step') || screen === 'my_listings') && !userProfile) {
       setCurrentScreen('login');
       try { window.history.pushState({}, '', '/login'); } catch (e) {}
+      return;
+    }
+
+    // Banned user blocking
+    if (screen.startsWith('post_step') && userProfile?.isBanned) {
+      alert(`Akoonkaaga waa la xannibay: ${userProfile.bannedReason || 'Ma soo gelin kartid guryo cusub.'}`);
       return;
     }
 
@@ -455,6 +533,10 @@ export function App() {
   };
 
   const handleLoginSuccess = (profile: UserProfile) => {
+    if (profile.isBanned) {
+      alert(`Akoonkaaga waa la xannibay: ${profile.bannedReason || 'La xiriir Maamulka.'}`);
+      return;
+    }
     setUserProfile(profile);
     if (profile.isAdmin || profile.email === 'magudbeai@gmail.com') {
       setCurrentScreen('admin_dashboard');
@@ -598,6 +680,9 @@ export function App() {
               properties={properties}
               registeredAccounts={registeredAccounts}
               onSelectProperty={handleSelectProperty}
+              onDeleteProperty={handleDeleteProperty}
+              onBanUser={handleBanUser}
+              onUnbanUser={handleUnbanUser}
             />
           )}
 
