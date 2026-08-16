@@ -61,6 +61,11 @@ export interface PropertyListing {
   pool: boolean | string;
   isFeatured?: boolean;
   images: string[];
+  // Property Video Tour Fields
+  videoUrl?: string; // e.g. MP4/WebM URL or blob/data URI
+  videoThumbnail?: string;
+  videoDuration?: number; // duration in seconds
+  videoStatus?: 'ready' | 'active' | 'pending' | 'flagged';
   description: string;
   agentName: string;
   agentPhone: string;
@@ -88,6 +93,7 @@ export interface FilterState {
   beds: string;
   waterRequired: boolean;
   powerRequired: boolean;
+  hasVideo?: boolean;
 }
 
 export interface NewListingDraft {
@@ -104,6 +110,10 @@ export interface NewListingDraft {
   water: boolean;
   electricity: boolean;
   images: string[];
+  videoUrl?: string;
+  videoThumbnail?: string;
+  videoDuration?: number;
   gpsCoords?: string;
   nearDistance?: string;
 }
+

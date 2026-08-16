@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { PropertyListing, ListingMode, PropertyCategory } from '../types';
+import type { PropertyListing, FilterState, ListingMode, PropertyCategory } from '../types';
 import { DhammeLogo } from './DhammeLogo';
 import { MapView } from './MapView';
 
@@ -10,6 +10,8 @@ interface HomeFeedProps {
   favorites: string[];
   onToggleFavorite: (id: string) => void;
   onStartPostListing?: () => void;
+  activeFilter?: FilterState;
+  onUpdateFilter?: (filter: FilterState) => void;
 }
 
 function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -30,10 +32,21 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
   onOpenFilter,
   favorites,
   onToggleFavorite,
-  onStartPostListing
+  onStartPostListing,
+  activeFilter = {
+    mode: 'kiro',
+    searchLocation: 'Jigjiga',
+    category: 'All Properties',
+    minPriceEtb: 0,
+    maxPriceEtb: 500000,
+    kebele: '',
+    beds: 'any',
+    waterRequired: false,
+    powerRequired: false,
+    hasVideo: false
+  },
+  onUpdateFilter
 }) => {
-  const [activeMode, setActiveMode] = useState<ListingMode>('kiro');
-  const [selectedCategory, setSelectedCategory] = useState<PropertyCategory>('All Properties');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewFormat, setViewFormat] = useState<'list' | 'map'>('list');
   
@@ -50,6 +63,18 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     'Villa',
     'Apartment'
   ];
+
+  const handleModeChange = (newMode: ListingMode) => {
+    if (onUpdateFilter) {
+      onUpdateFilter({ ...activeFilter, mode: newMode });
+    }
+  };
+
+  const handleCategoryChange = (newCat: PropertyCategory) => {
+    if (onUpdateFilter) {
+      onUpdateFilter({ ...activeFilter, category: newCat });
+    }
+  };
 
   const handleRequestLiveGps = () => {
     if (userGps) {
@@ -86,14 +111,47 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
   let filteredProperties = properties.filter((prop) => {
     const matchesCity = prop.city.toLowerCase().includes('jigjiga');
-    const matchesMode = prop.mode === activeMode;
-    const matchesCategory = selectedCategory === 'All Properties' || prop.category === selectedCategory;
+    const matchesMode = prop.mode === activeFilter.mode;
+    const matchesCategory = activeFilter.category === 'All Properties' || prop.category === activeFilter.category;
+    
+    // Kebele filtering
+    const matchesKebele = !activeFilter.kebele || prop.kebele.toLowerCase().includes(activeFilter.kebele.toLowerCase());
+
+    // Price range filtering
+    const matchesPrice = (prop.priceEtb >= (activeFilter.minPriceEtb || 0)) &&
+      (!activeFilter.maxPriceEtb || prop.priceEtb <= activeFilter.maxPriceEtb);
+
+    // Bedrooms filtering
+    const matchesBeds = !activeFilter.beds || activeFilter.beds === 'any' ||
+      (activeFilter.beds === '4+' ? prop.beds >= 4 : prop.beds === Number(activeFilter.beds));
+
+    // Water connection requirement
+    const matchesWater = !activeFilter.waterRequired || (
+      typeof prop.water === 'boolean' ? prop.water :
+      String(prop.water).toLowerCase() === 'yes' ||
+      String(prop.water).toLowerCase().includes('24h') ||
+      String(prop.water).toLowerCase().includes('wakaalad')
+    );
+
+    // Power requirement
+    const matchesPower = !activeFilter.powerRequired || (
+      typeof prop.electricity === 'boolean' ? prop.electricity :
+      String(prop.electricity).toLowerCase().includes('24') ||
+      String(prop.electricity).toLowerCase().includes('solar') ||
+      String(prop.electricity).toLowerCase().includes('mains')
+    );
+
+    // Video Tour filtering
+    const matchesVideo = !activeFilter.hasVideo || Boolean(prop.videoUrl);
+
+    // Keyword search
     const matchesSearch = searchQuery === '' || 
       prop.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       prop.kebele.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (prop.description && prop.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (prop.nearDistance && prop.nearDistance.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    return matchesCity && matchesMode && matchesCategory && matchesSearch;
+    return matchesCity && matchesMode && matchesCategory && matchesKebele && matchesPrice && matchesBeds && matchesWater && matchesPower && matchesVideo && matchesSearch;
   });
 
   if (userGps) {
@@ -106,6 +164,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       })
       .sort((a, b) => (a.calculatedDistKm ?? 999) - (b.calculatedDistKm ?? 999));
   }
+
 
   return (
     <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-6">
@@ -221,9 +280,9 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <div className="bg-[#e5e2e1] p-1.5 rounded-2xl flex w-full max-w-xs relative shadow-inner border border-[#bec9c5]/40">
             <button
-              onClick={() => setActiveMode('kiro')}
+              onClick={() => handleModeChange('kiro')}
               className={`flex-1 py-2.5 px-4 rounded-xl font-poppins font-bold text-xs transition-all duration-300 z-10 flex items-center justify-center space-x-1.5 ${
-                activeMode === 'kiro'
+                activeFilter.mode === 'kiro'
                   ? 'bg-[#005145] text-white shadow-md'
                   : 'text-[#3f4946] hover:text-[#1b1b1c]'
               }`}
@@ -233,9 +292,9 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
             </button>
 
             <button
-              onClick={() => setActiveMode('iib')}
+              onClick={() => handleModeChange('iib')}
               className={`flex-1 py-2.5 px-4 rounded-xl font-poppins font-bold text-xs transition-all duration-300 z-10 flex items-center justify-center space-x-1.5 ${
-                activeMode === 'iib'
+                activeFilter.mode === 'iib'
                   ? 'bg-[#005145] text-white shadow-md'
                   : 'text-[#3f4946] hover:text-[#1b1b1c]'
               }`}
@@ -312,7 +371,11 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
             )}
             <button
               onClick={onOpenFilter}
-              className="bg-[#005145] hover:bg-[#0f6b5c] text-white p-2.5 rounded-xl active:scale-95 transition-all shadow-sm flex items-center justify-center"
+              className={`p-2.5 rounded-xl active:scale-95 transition-all shadow-sm flex items-center justify-center ${
+                activeFilter.kebele || activeFilter.hasVideo || activeFilter.waterRequired || activeFilter.powerRequired || (activeFilter.beds && activeFilter.beds !== 'any')
+                  ? 'bg-amber-600 text-white ring-2 ring-amber-400'
+                  : 'bg-[#005145] hover:bg-[#0f6b5c] text-white'
+              }`}
               title="Filters"
             >
               <span className="material-symbols-outlined text-[20px]">tune</span>
@@ -320,14 +383,65 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
           </div>
         </div>
 
+        {/* Active Applied Filters Bar */}
+        {(activeFilter.kebele || activeFilter.hasVideo || activeFilter.waterRequired || activeFilter.powerRequired || (activeFilter.beds && activeFilter.beds !== 'any') || (activeFilter.maxPriceEtb && activeFilter.maxPriceEtb < 500000)) && (
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 max-w-2xl mx-auto animate-fade-in">
+            <span className="text-[11px] font-bold text-[#3f4946]">Filters Active:</span>
+            {activeFilter.kebele && (
+              <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold border border-emerald-300 flex items-center gap-1">
+                📍 {activeFilter.kebele}
+              </span>
+            )}
+            {activeFilter.hasVideo && (
+              <span className="px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-bold border border-red-300 flex items-center gap-1">
+                🎥 Video Tour Only
+              </span>
+            )}
+            {activeFilter.beds && activeFilter.beds !== 'any' && (
+              <span className="px-2.5 py-1 bg-[#005145]/10 text-[#005145] rounded-full text-[10px] font-bold border border-[#005145]/20">
+                🛏️ {activeFilter.beds} Beds
+              </span>
+            )}
+            {activeFilter.waterRequired && (
+              <span className="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-[10px] font-bold border border-blue-200">
+                💧 Water Required
+              </span>
+            )}
+            {activeFilter.powerRequired && (
+              <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold border border-amber-200">
+                ⚡ 24h Solar/Power
+              </span>
+            )}
+            {onUpdateFilter && (
+              <button
+                onClick={() => onUpdateFilter({
+                  mode: activeFilter.mode,
+                  searchLocation: 'Jigjiga',
+                  category: 'All Properties',
+                  minPriceEtb: 0,
+                  maxPriceEtb: 500000,
+                  kebele: '',
+                  beds: 'any',
+                  waterRequired: false,
+                  powerRequired: false,
+                  hasVideo: false
+                })}
+                className="text-[10px] font-bold text-red-600 hover:underline ml-1"
+              >
+                Reset All Filters
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Filter Chips Horizontal Scroll */}
         <div className="flex gap-2.5 overflow-x-auto hide-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
           {categories.map((cat) => {
-            const isSelected = selectedCategory === cat;
+            const isSelected = activeFilter.category === cat;
             return (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`flex-none px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all duration-200 ${
                   isSelected
                     ? 'bg-[#005145] text-white font-bold ring-2 ring-[#005145]/30'
@@ -344,7 +458,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         <div className="flex items-center justify-between text-xs text-[#3f4946] px-1 pt-1">
           <span className="font-semibold flex items-center space-x-1">
             <span className="w-2 h-2 rounded-full bg-[#005145]" />
-            <span>{filteredProperties.length} {filteredProperties.length === 1 ? 'Guri Loo Helay' : 'Guryo Loo Helay'} Jigjiga ({activeMode === 'kiro' ? 'Kiro' : 'Iib'})</span>
+            <span>{filteredProperties.length} {filteredProperties.length === 1 ? 'Guri Loo Helay' : 'Guryo Loo Helay'} Jigjiga ({activeFilter.mode === 'kiro' ? 'Kiro' : 'Iib'})</span>
           </span>
 
           {/* List vs Map View Toggle Pills */}
@@ -472,6 +586,14 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                       {property.mode === 'kiro' ? 'Kiro (Rent)' : 'Iib (Sale)'}
                     </span>
 
+                    {/* Video Tour Badge on HomeFeed Card */}
+                    {property.videoUrl && (
+                      <span className="px-2.5 py-1 bg-red-600/90 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1 border border-red-400/40">
+                        <span className="material-symbols-outlined text-[13px]">videocam</span>
+                        <span>Video Tour</span>
+                      </span>
+                    )}
+
                     {property.isFeatured && (
                       <span className="px-3 py-1 bg-[#7b2f10] text-white rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1">
                         <span className="material-symbols-outlined text-[12px]">star</span>
@@ -479,6 +601,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                       </span>
                     )}
                   </div>
+
 
                   {/* Favorite Heart Button */}
                   <button

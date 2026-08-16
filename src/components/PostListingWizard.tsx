@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { NewListingDraft, PropertyListing, PropertyCategory } from '../types';
 import { JIGJIGA_XAAFADAHA, JIGJIGA_KEBELES } from '../data/jigjigaLocations';
+import { VideoUploadField } from './VideoUploadField';
 
 interface PostListingWizardProps {
   currentStep: number;
@@ -31,6 +32,8 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
     images: [
       'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80'
     ],
+    videoUrl: undefined,
+    videoDuration: undefined,
     gpsCoords: '9.3524° N, 42.7961° E',
     nearDistance: 'Jigjiga Center'
   });
@@ -135,6 +138,9 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
       images: draft.images.length > 0 ? draft.images : [
         'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80'
       ],
+      videoUrl: draft.videoUrl,
+      videoDuration: draft.videoDuration,
+      videoStatus: 'active',
       description: draft.description || 'DHAMME Real Estate listing created in Jigjiga, Somali Region, Ethiopia.',
       agentName: 'You (Owner)',
       agentPhone: '0915752826',
@@ -146,6 +152,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
     onAddProperty(newProperty);
   };
+
 
   return (
     <div className="min-h-screen bg-[#F2E8DC] pb-24 p-4 sm:p-6 max-w-screen-md mx-auto animate-fade-in space-y-6">
@@ -468,70 +475,87 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
         </div>
       )}
 
-      {/* STEP 4: Working Photo Upload */}
+      {/* STEP 4: Photos & Mandatory Property Video Upload */}
       {currentStep === 4 && (
-        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40 text-center">
+        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-6 border border-[#bec9c5]/40 text-center">
           
-          <div className="border-2 border-dashed border-[#005145] rounded-3xl p-6 bg-[#f0eded] space-y-3 relative group hover:bg-[#e5e2e1] transition">
-            <span className="material-symbols-outlined text-[48px] text-[#005145]">add_a_photo</span>
-            <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
-              Soo Geli Sawirada Guriga (Upload Photos)
-            </h4>
-            <p className="text-xs text-[#3f4946]">
-              Taabo halkan si aad sawiro dhab ah oo guri ah uga soo doorato telefoonkaaga.
-            </p>
+          {/* Section 1: Photos */}
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-[#005145] rounded-3xl p-6 bg-[#f0eded] space-y-3 relative group hover:bg-[#e5e2e1] transition">
+              <span className="material-symbols-outlined text-[48px] text-[#005145]">add_a_photo</span>
+              <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
+                1. Soo Geli Sawirada Guriga (Upload Photos)
+              </h4>
+              <p className="text-xs text-[#3f4946]">
+                Taabo halkan si aad sawiro dhab ah oo guri ah uga soo doorato telefoonkaaga.
+              </p>
 
-            <label className="inline-block px-5 py-2.5 rounded-xl bg-[#005145] text-white text-xs font-bold cursor-pointer shadow-md hover:bg-[#0f6b5c]">
-              <span>Soo Dooro Sawiro (Choose Files)</span>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </label>
-          </div>
-
-          <div className="flex gap-2 pt-1">
-            <input
-              type="url"
-              placeholder="Ama geli Image URL link..."
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              className="flex-1 p-3 bg-[#f0eded] rounded-xl text-xs border border-[#bec9c5]/40"
-            />
-            <button
-              type="button"
-              onClick={handleAddUrlImage}
-              className="px-4 py-3 bg-[#005145] text-white rounded-xl text-xs font-bold"
-            >
-              Add URL
-            </button>
-          </div>
-
-          {draft.images.length > 0 && (
-            <div className="space-y-2 text-left">
-              <span className="text-xs font-bold text-[#3f4946] block">
-                Sawirada la soo galiyay ({draft.images.length}):
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {draft.images.map((img, i) => (
-                  <div key={i} className="aspect-video rounded-2xl overflow-hidden relative border border-[#bec9c5]/40 shadow-xs group">
-                    <img src={img} alt={`Uploaded ${i}`} className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(i)}
-                      className="absolute top-1.5 right-1.5 bg-black/60 text-white p-1 rounded-full hover:bg-red-600 transition"
-                      title="Remove image"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">close</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
+              <label className="inline-block px-5 py-2.5 rounded-xl bg-[#005145] text-white text-xs font-bold cursor-pointer shadow-md hover:bg-[#0f6b5c]">
+                <span>Soo Dooro Sawiro (Choose Photos)</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
             </div>
-          )}
+
+            <div className="flex gap-2 pt-1">
+              <input
+                type="url"
+                placeholder="Ama geli Image URL link..."
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                className="flex-1 p-3 bg-[#f0eded] rounded-xl text-xs border border-[#bec9c5]/40"
+              />
+              <button
+                type="button"
+                onClick={handleAddUrlImage}
+                className="px-4 py-3 bg-[#005145] text-white rounded-xl text-xs font-bold"
+              >
+                Add URL
+              </button>
+            </div>
+
+            {draft.images.length > 0 && (
+              <div className="space-y-2 text-left">
+                <span className="text-xs font-bold text-[#3f4946] block">
+                  Sawirada la soo galiyay ({draft.images.length}):
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {draft.images.map((img, i) => (
+                    <div key={i} className="aspect-video rounded-2xl overflow-hidden relative border border-[#bec9c5]/40 shadow-xs group">
+                      <img src={img} alt={`Uploaded ${i}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(i)}
+                        className="absolute top-1.5 right-1.5 bg-black/60 text-white p-1 rounded-full hover:bg-red-600 transition"
+                        title="Remove image"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Section 2: Mandatory Property Video Upload Field */}
+          <div className="pt-4 border-t border-[#bec9c5]/40 text-left">
+            <VideoUploadField
+              currentVideoUrl={draft.videoUrl}
+              onVideoChange={(url, duration) => {
+                setDraft((prev) => ({
+                  ...prev,
+                  videoUrl: url,
+                  videoDuration: duration
+                }));
+              }}
+            />
+          </div>
 
           <div className="flex space-x-3 pt-4">
             <button
@@ -588,6 +612,10 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
               <span>Sawirada:</span>
               <span>{draft.images.length} Photos</span>
             </div>
+            <div className="flex justify-between font-bold text-[#005145]">
+              <span>Muuqaalka (Video Tour):</span>
+              <span>{draft.videoUrl ? '✅ Video Tour Included' : '❌ No Video Attached'}</span>
+            </div>
           </div>
 
           {/* Anti-Fraud Explicit Agreement Checkbox */}
@@ -614,6 +642,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           </button>
         </div>
       )}
+
 
     </div>
   );

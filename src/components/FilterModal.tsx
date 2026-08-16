@@ -16,14 +16,15 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   const [mode, setMode] = useState<ListingMode>(initialFilter.mode);
   const [kebele, setKebele] = useState<string>(initialFilter.kebele || 'All');
   const [category, setCategory] = useState<PropertyCategory>(initialFilter.category);
-  const [maxPriceEtb, setMaxPriceEtb] = useState<number>(initialFilter.maxPriceEtb || 100000);
+  const [maxPriceEtb, setMaxPriceEtb] = useState<number>(initialFilter.maxPriceEtb || 500000);
   const [beds, setBeds] = useState<string>(initialFilter.beds || 'any');
   const [waterRequired, setWaterRequired] = useState<boolean>(initialFilter.waterRequired);
   const [powerRequired, setPowerRequired] = useState<boolean>(initialFilter.powerRequired);
+  const [hasVideo, setHasVideo] = useState<boolean>(Boolean(initialFilter.hasVideo));
 
   const filterLocations = ['All', ...ALL_JIGJIGA_LOCATIONS];
 
-  const categories: PropertyCategory[] = ['All Properties', 'Family House', 'Single Room', 'Studio', 'Villa'];
+  const categories: PropertyCategory[] = ['All Properties', 'Family House', 'Single Room', 'Studio', 'Villa', 'Apartment'];
 
   const handleApply = () => {
     onApply({
@@ -35,7 +36,8 @@ export const FilterModal: React.FC<FilterModalProps> = ({
       maxPriceEtb,
       beds,
       waterRequired,
-      powerRequired
+      powerRequired,
+      hasVideo
     });
     onClose();
   };
@@ -82,7 +84,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         {/* Kebele & Xaafada Selection for Jigjiga */}
         <div>
           <label className="block text-xs font-bold text-[#3f4946] mb-2 uppercase tracking-wider">
-            Doorh Kebele ama Xaafada Jigjiga:
+            Dooro Kebele ama Xaafada Jigjiga:
           </label>
           <select
             value={kebele}
@@ -126,7 +128,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
           <input
             type="range"
             min="5000"
-            max="500000"
+            max="10000000"
             step="5000"
             value={maxPriceEtb}
             onChange={(e) => setMaxPriceEtb(Number(e.target.value))}
@@ -154,8 +156,21 @@ export const FilterModal: React.FC<FilterModalProps> = ({
           </div>
         </div>
 
-        {/* Amenities Checkboxes */}
+        {/* Amenities & Video Tour Checkboxes */}
         <div className="space-y-3 pt-2 border-t border-[#bec9c5]/40">
+          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
+            <input
+              type="checkbox"
+              checked={hasVideo}
+              onChange={(e) => setHasVideo(e.target.checked)}
+              className="w-4 h-4 rounded text-[#005145] focus:ring-[#005145]"
+            />
+            <span className="flex items-center space-x-1 text-[#005145] font-bold">
+              <span className="material-symbols-outlined text-[18px]">videocam</span>
+              <span>Keliya Guryaha Muuqaalka Leh (Video Tour Available)</span>
+            </span>
+          </label>
+
           <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
             <input
               type="checkbox"
@@ -190,10 +205,11 @@ export const FilterModal: React.FC<FilterModalProps> = ({
               setMode('kiro');
               setKebele('All');
               setCategory('All Properties');
-              setMaxPriceEtb(100000);
+              setMaxPriceEtb(500000);
               setBeds('any');
               setWaterRequired(false);
               setPowerRequired(false);
+              setHasVideo(false);
             }}
             className="flex-1 py-3 rounded-2xl bg-[#e5e2e1] text-[#3f4946] font-bold text-xs hover:bg-[#eae7e7]"
           >
@@ -212,3 +228,4 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     </div>
   );
 };
+

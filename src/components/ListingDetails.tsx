@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { PropertyListing, UserProfile } from '../types';
 import { supabase } from '../services/supabaseClient';
 import { LeaseAgreementModal } from './LeaseAgreementModal';
+import { PropertyVideoPlayer } from './PropertyVideoPlayer';
 
 interface ListingDetailsProps {
   property: PropertyListing;
@@ -122,6 +123,14 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
                   {property.category}
                 </span>
 
+                {/* Video Tour Badge */}
+                {property.videoUrl && (
+                  <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700 border border-red-300 flex items-center space-x-1">
+                    <span className="material-symbols-outlined text-[14px] text-red-600">videocam</span>
+                    <span>Video Tour Ready</span>
+                  </span>
+                )}
+
                 {/* Views Count Badge */}
                 <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#f0eded] text-[#005145] border border-[#bec9c5]/40 flex items-center space-x-1">
                   <span className="material-symbols-outlined text-[14px]">visibility</span>
@@ -149,6 +158,26 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
             <span className="font-semibold">{property.city}, {property.kebele}</span>
           </div>
         </div>
+
+        {/* PROPERTY VIDEO TOUR SECTION (MANDATORY FEATURE) */}
+        {property.videoUrl && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="font-poppins font-bold text-base text-[#1b1b1c] flex items-center space-x-2">
+                <span className="material-symbols-outlined text-[#005145]">videocam</span>
+                <span>Muuqaalka Tooska ah ee Guriga (Live Video Tour)</span>
+              </h3>
+              <span className="text-[11px] font-semibold text-[#005145]">HD Video</span>
+            </div>
+
+            <PropertyVideoPlayer
+              videoUrl={property.videoUrl}
+              posterUrl={property.videoThumbnail || property.images[0]}
+              title={property.title}
+            />
+          </div>
+        )}
+
 
         {/* GPS Location & Map Card */}
         <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-3 border border-[#bec9c5]/40">

@@ -181,7 +181,7 @@ export const MyListings: React.FC<MyListingsProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
                   {/* Status Badge Over Image */}
-                  <div className="absolute top-3 left-3 flex gap-1.5">
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                     {currentStatus === 'sold' && (
                       <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-600 text-white shadow-md">
                         WAALA IIBSADAY (SOLD)
@@ -197,6 +197,13 @@ export const MyListings: React.FC<MyListingsProps> = ({
                     {currentStatus === 'active' && (
                       <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-md">
                         ACTIVE
+                      </span>
+                    )}
+
+                    {property.videoUrl && (
+                      <span className="px-2.5 py-1 bg-red-600/90 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1 border border-red-400/40">
+                        <span className="material-symbols-outlined text-[13px]">videocam</span>
+                        <span>Video Tour</span>
                       </span>
                     )}
                   </div>

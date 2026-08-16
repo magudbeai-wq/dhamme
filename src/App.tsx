@@ -133,7 +133,7 @@ export function App() {
       const fullName = clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'Dhamme User';
       const avatarUrl = clerkUser.imageUrl || '';
       const phone = clerkUser.primaryPhoneNumber?.phoneNumber || '';
-      const isAdmin = email === 'magudbeai@gmail.com' || email.includes('admin');
+      const isAdmin = email.toLowerCase() === 'magudbeai@gmail.com';
 
       const updatedProfile: UserProfile = {
         id: clerkUser.id,
@@ -149,6 +149,7 @@ export function App() {
       setUserProfile(updatedProfile);
     }
   }, [isClerkLoaded, isClerkSignedIn, clerkUser]);
+
 
   // Sync Supabase Google OAuth callback from URL hash
   useEffect(() => {
@@ -252,6 +253,10 @@ export function App() {
                 electricity: dbProp.electricity || '24h',
                 pool: dbProp.pool || 'No',
                 images: dbProp.images?.length > 0 ? dbProp.images : ['/jigjiga-house-1.jpg'],
+                videoUrl: dbProp.video_url || undefined,
+                videoThumbnail: dbProp.video_thumbnail || undefined,
+                videoDuration: dbProp.video_duration ? Number(dbProp.video_duration) : undefined,
+                videoStatus: dbProp.video_status || (dbProp.video_url ? 'ready' : undefined),
                 description: dbProp.description || '',
                 agentName: dbProp.agent_name || 'Landlord',
                 agentPhone: dbProp.agent_phone || '+251 91 000 0000',
@@ -272,6 +277,7 @@ export function App() {
     }
     syncSupabaseProperties();
   }, []);
+
 
   // Save registered accounts to LocalStorage
   useEffect(() => {
@@ -372,6 +378,9 @@ export function App() {
       agentPhone: userProfile?.phone || '+251 91 500 0000',
       agentAvatar: userProfile?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
       ownerEmail: userProfile?.email || 'user@dhamme.app',
+      videoUrl: newProp.videoUrl,
+      videoDuration: newProp.videoDuration,
+      videoStatus: newProp.videoUrl ? 'ready' : undefined,
       status: 'active',
       viewsCount: 1,
       inquiriesCount: 0
@@ -394,6 +403,9 @@ export function App() {
           area_sqm: updatedProp.areaSqm,
           description: updatedProp.description,
           images: updatedProp.images,
+          video_url: updatedProp.videoUrl,
+          video_duration: updatedProp.videoDuration,
+          video_status: updatedProp.videoStatus,
           agent_name: updatedProp.agentName,
           agent_phone: updatedProp.agentPhone,
           agent_avatar: updatedProp.agentAvatar
@@ -413,6 +425,14 @@ export function App() {
       try { window.history.pushState({}, '', '/login'); } catch (e) {}
       return;
     }
+
+    // Strict Admin route protection
+    if (screen === 'admin_dashboard' && (!userProfile?.isAdmin && userProfile?.email?.toLowerCase() !== 'magudbeai@gmail.com')) {
+      setCurrentScreen('login');
+      try { window.history.pushState({}, '', '/login'); } catch (e) {}
+      return;
+    }
+
     setCurrentScreen(screen);
 
     try {
@@ -428,6 +448,7 @@ export function App() {
       window.history.pushState({}, '', targetPath);
     } catch (e) {}
   };
+
 
   const handleRegisterAccount = (newAccount: RegisteredAccount) => {
     setRegisteredAccounts((prev) => [...prev, newAccount]);
@@ -448,18 +469,26 @@ export function App() {
     }
     setUserProfile(null);
     setCurrentScreen('home');
+  };
+
+  const handleIdleLogout = () => {
+    if (isClerkSignedIn) {
+      clerkSignOut();
+    }
+    setUserProfile(null);
+    setCurrentScreen('login'); // Direct navigation to Login page on Idle timeout
 
     // Send System Web Push Notification Alert
     triggerWebPushNotification({
-      title: 'DHAMME - Kalfadhigii Waa Dhacay (Session Expired)',
-      body: 'Waxaad ka baxday app-ka ka dib 10 daqiiqo oo bilaash ah si loo dhowro amniga koontadaada.'
+      title: 'DHAMME - Idle Session Expired ⏱️',
+      body: 'Waxaad ka baxday app-ka ka dib 10 daqiiqo oo bilaash ah. Fadlan dib ugu soo gal koontadaada.'
     });
   };
 
   // 10-Minute User Inactivity & Background Abandonment Logout Tracker
   const { isLoggedOutDueToInactivity, clearInactivityNotice } = useInactivityLogout({
     enabled: Boolean(userProfile || isClerkSignedIn),
-    onLogout: handleLogout
+    onLogout: handleIdleLogout
   });
 
   const userListings = properties.filter((p) => 
@@ -517,6 +546,8 @@ export function App() {
               favorites={favorites}
               onToggleFavorite={handleToggleFavorite}
               onStartPostListing={() => handleNavigateScreen('post_step1')}
+              activeFilter={activeFilter}
+              onUpdateFilter={(newFilter) => setActiveFilter(newFilter)}
             />
           )}
 

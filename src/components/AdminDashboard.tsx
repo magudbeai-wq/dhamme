@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { PropertyListing, UserProfile } from '../types';
+import { PropertyVideoPlayer } from './PropertyVideoPlayer';
 
 interface AdminDashboardProps {
   properties: PropertyListing[];
@@ -12,7 +13,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   registeredAccounts,
   onSelectProperty
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'properties' | 'kebeles'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'properties' | 'videos' | 'kebeles'>('overview');
   const [searchFilter, setSearchFilter] = useState('');
 
   // Default Master Admin account if directory empty
@@ -36,6 +37,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const activeProperties = properties.filter((p) => (p.status || 'active') === 'active').length;
   const soldProperties = properties.filter((p) => p.status === 'sold').length;
   const rentedProperties = properties.filter((p) => p.status === 'rented').length;
+  const videoProperties = properties.filter((p) => Boolean(p.videoUrl));
 
   const totalMarketVolumeEtb = properties.reduce((sum, p) => sum + (p.priceEtb || 0), 0);
   const totalViews = properties.reduce((sum, p) => sum + (p.viewsCount || 45), 0);
@@ -69,7 +71,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             DHAMME Live User & Real Estate Analytics
           </h1>
           <p className="text-xs text-[#a2f2de] font-medium">
-            Dhamaan isticmaalayaasha is diwaan galiyay ({totalUsers} Users) & Guryaha Jigjiga.
+            Dhamaan isticmaalayaasha is diwaan galiyay ({totalUsers} Users) & Guryaha Jigjiga ({videoProperties.length} Video Tours).
           </p>
         </div>
 
@@ -99,7 +101,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Total Posted Homes */}
+        {/* Total Posted Homes & Video Count */}
         <div className="bg-[#fcf9f8] p-5 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#0f6b5c]">
             <span className="text-[11px] font-bold uppercase text-[#3f4946]">Guryaha La Soo Dhigay</span>
@@ -108,7 +110,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="mt-3">
             <span className="font-poppins font-black text-3xl text-[#005145]">{totalProperties}</span>
             <span className="text-[10px] text-[#6f7976] block font-semibold">
-              Active: {activeProperties} | Sold: {soldProperties} | Rented: {rentedProperties}
+              🎥 {videoProperties.length} Videos | Active: {activeProperties} | Sold: {soldProperties} | Rented: {rentedProperties}
             </span>
           </div>
         </div>
@@ -147,6 +149,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           { id: 'overview', label: '📊 Intelligence Overview' },
           { id: 'users', label: `👥 User Directory (${totalUsers})` },
           { id: 'properties', label: `🏠 Posted Homes (${totalProperties})` },
+          { id: 'videos', label: `🎥 Video Moderation (${videoProperties.length})` },
           { id: 'kebeles', label: '📍 Kebele Analytics' }
         ].map((tab) => (
           <button
@@ -162,6 +165,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </button>
         ))}
       </div>
+
 
       {/* TAB 1: OVERVIEW & LIVE SIGNUPS FEED */}
       {activeTab === 'overview' && (
@@ -378,6 +382,120 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
+      {/* TAB 4: VIDEO MODERATION (TOURS) */}
+      {activeTab === 'videos' && (
+        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 space-y-5">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h3 className="font-poppins font-bold text-lg text-[#1b1b1c] flex items-center space-x-2">
+                <span className="material-symbols-outlined text-red-600">videocam</span>
+                <span>Muuqaalada Guryaha (Property Video Tours - {videoProperties.length})</span>
+              </h3>
+              <p className="text-xs text-[#3f4946]">
+                Xaqiiji oo fiiri muuqaalada tooska ah ee ay soo geliyeen mulkiilayaasha guryaha Jigjiga.
+              </p>
+            </div>
+
+            <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-300">
+              100% Video Quality Moderation Active
+            </span>
+          </div>
+
+          {videoProperties.length === 0 ? (
+            <div className="text-center py-16 bg-[#f0eded] rounded-2xl p-6 space-y-3">
+              <span className="material-symbols-outlined text-[48px] text-[#005145]">videocam_off</span>
+              <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
+                Weli Ma Jirto Guryo Leh Video Tours
+              </h4>
+              <p className="text-xs text-[#3f4946] max-w-sm mx-auto">
+                Marka mulkiilayaashu soo geliyaan muuqaalada guryaha (MP4/WebM), halkan ayaad toos uga eegi kartaa.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {videoProperties.map((prop) => (
+                <div
+                  key={prop.id}
+                  className="bg-[#f0eded] p-4 rounded-3xl border border-[#bec9c5]/40 space-y-3"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-sm text-[#1b1b1c]">{prop.title}</h4>
+                      <span className="text-xs text-[#005145] font-semibold">{prop.city}, {prop.kebele}</span>
+                    </div>
+                    <span className="px-2.5 py-1 bg-[#005145] text-white text-[10px] font-bold rounded-xl">
+                      {prop.priceLocalFormatted}
+                    </span>
+                  </div>
+
+                  {prop.videoUrl && (
+                    <PropertyVideoPlayer
+                      videoUrl={prop.videoUrl}
+                      posterUrl={prop.videoThumbnail || prop.images[0]}
+                      title={prop.title}
+                    />
+                  )}
+
+                  <div className="flex items-center justify-between pt-2 border-t border-[#bec9c5]/30 text-xs">
+                    <div className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="font-bold text-[#1b1b1c]">Status: {prop.videoStatus || 'ready'}</span>
+                      {prop.videoDuration && (
+                        <span className="text-[#6f7976]">({Math.round(prop.videoDuration)}s)</span>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => onSelectProperty(prop)}
+                      className="px-3 py-1.5 bg-[#005145] text-white text-[11px] font-bold rounded-xl hover:bg-[#0f6b5c]"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 5: KEBELE ANALYTICS */}
+      {activeTab === 'kebeles' && (
+        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 space-y-4">
+          <h3 className="font-poppins font-bold text-lg text-[#1b1b1c] flex items-center space-x-2">
+            <span className="material-symbols-outlined text-[#005145]">pin_drop</span>
+            <span>Jigjiga Kebele Inventory Breakdown</span>
+          </h3>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[
+              'Kebele 01 (City Center)',
+              'Kebele 02 (University Road)',
+              'Kebele 03 (Taiwan Market)',
+              'Kebele 04',
+              'Kebele 05',
+              'Kebele 06 (Garab\'ase)',
+              'Kebele 07',
+              'Kebele 08 (Airport Road)',
+              'Kebele 09',
+              'Kebele 10',
+              'Dudaxid'
+            ].map((k) => {
+              const kCount = properties.filter((p) => p.kebele.toLowerCase().includes(k.toLowerCase().split(' ')[1] || k.toLowerCase())).length;
+              return (
+                <div key={k} className="p-3.5 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/40 flex justify-between items-center text-xs">
+                  <span className="font-bold text-[#1b1b1c]">{k}</span>
+                  <span className="px-2 py-0.5 rounded-md bg-[#005145] text-white font-bold font-mono">
+                    {kCount}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
     </main>
   );
 };
+

@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS properties (
   pool TEXT DEFAULT 'No',
   is_featured BOOLEAN DEFAULT false,
   images TEXT[] DEFAULT '{}',
+  video_url TEXT,
+  video_thumbnail TEXT,
+  video_duration INT DEFAULT 0,
+  video_status TEXT DEFAULT 'active', -- 'active', 'pending', 'flagged'
   description TEXT,
   agent_name TEXT DEFAULT 'Landlord',
   agent_phone TEXT DEFAULT '+251 91 000 0000',
@@ -32,6 +36,17 @@ CREATE TABLE IF NOT EXISTS properties (
 ALTER TABLE properties ADD COLUMN IF NOT EXISTS owner_email TEXT;
 ALTER TABLE properties ADD COLUMN IF NOT EXISTS owner_id TEXT;
 ALTER TABLE properties ADD COLUMN IF NOT EXISTS views_count INT DEFAULT 1;
+ALTER TABLE properties ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE properties ADD COLUMN IF NOT EXISTS video_thumbnail TEXT;
+ALTER TABLE properties ADD COLUMN IF NOT EXISTS video_duration INT DEFAULT 0;
+ALTER TABLE properties ADD COLUMN IF NOT EXISTS video_status TEXT DEFAULT 'active';
+
+-- Indexes for lightning-fast search & filtering
+CREATE INDEX IF NOT EXISTS idx_properties_mode_city ON properties(mode, city);
+CREATE INDEX IF NOT EXISTS idx_properties_kebele ON properties(kebele);
+CREATE INDEX IF NOT EXISTS idx_properties_price ON properties(price_etb);
+CREATE INDEX IF NOT EXISTS idx_properties_has_video ON properties(video_url) WHERE video_url IS NOT NULL;
+
 
 -- 2. Create User Profiles Table
 CREATE TABLE IF NOT EXISTS user_profiles (
