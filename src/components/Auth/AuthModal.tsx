@@ -182,11 +182,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
-      <div className="bg-white max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-4 text-center relative border border-slate-200 my-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111315]/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
+      <div className="bg-white max-w-sm w-full p-6 rounded-3xl shadow-xl space-y-4 text-center relative border border-[#E8E5DF] my-auto">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-1 rounded-full"
+          className="absolute right-4 top-4 text-[#74777B] hover:text-[#17191C] p-1 rounded-full"
         >
           <span className="material-symbols-outlined">close</span>
         </button>
@@ -201,7 +201,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isGoogleLoading}
-          className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-poppins font-bold text-xs flex items-center justify-center gap-3 shadow-xs hover:shadow transition-all active:scale-95 disabled:opacity-50"
+          className="w-full py-3 px-4 rounded-xl bg-white hover:bg-[#FAF9F6] border border-[#E8E5DF] text-[#17191C] font-sans font-semibold text-xs flex items-center justify-center gap-3 shadow-xs hover:border-[#111315] transition-all active:scale-95 disabled:opacity-50"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -225,20 +225,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </button>
 
         <div className="flex items-center gap-2 my-1">
-          <div className="flex-1 h-px bg-slate-200" />
-          <span className="text-[10px] text-slate-400 uppercase font-bold">ama (or)</span>
-          <div className="flex-1 h-px bg-slate-200" />
+          <div className="flex-1 h-px bg-[#E8E5DF]" />
+          <span className="text-[10px] text-[#74777B] uppercase font-medium">ama (or)</span>
+          <div className="flex-1 h-px bg-[#E8E5DF]" />
         </div>
 
         {/* Auth Mode Toggle */}
-        <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+        <div className="flex bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF]">
           <button
             type="button"
             onClick={() => setAuthMode('local')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               authMode === 'local'
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#111315] text-white shadow-xs'
+                : 'text-[#74777B] hover:text-[#17191C]'
             }`}
           >
             📝 Direct Auth
@@ -246,10 +246,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <button
             type="button"
             onClick={() => setAuthMode('clerk')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               authMode === 'clerk'
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#111315] text-white shadow-xs'
+                : 'text-[#74777B] hover:text-[#17191C]'
             }`}
           >
             🔒 Clerk Auth
@@ -257,13 +257,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {errorMsg && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-2xl text-xs font-semibold border border-red-200">
+          <div className="p-3 bg-[#A8453F]/10 text-[#A8453F] rounded-xl text-xs font-medium border border-[#A8453F]/30">
             {errorMsg}
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 bg-emerald-50 text-emerald-800 rounded-2xl text-xs font-bold border border-emerald-200">
+          <div className="p-3 bg-[#4A7A63]/10 text-[#4A7A63] rounded-xl text-xs font-semibold border border-[#4A7A63]/30">
             {successMsg}
           </div>
         )}
@@ -272,16 +272,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {authMode === 'local' && screen === 'login' && (
           <form onSubmit={handleLogin} className="space-y-3.5 text-left">
             <div className="text-center pt-1">
-              <h3 className="font-poppins font-bold text-xl text-slate-900">
+              <h3 className="font-serif font-bold text-xl text-[#17191C]">
                 Soo Gal (Login)
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[#74777B]">
                 Geli Gmail-ka aad ku sameysatay koontada iyo Password-ka.
               </p>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
                 Gmail / Email:
               </label>
               <input
@@ -290,12 +290,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="magacaaga@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3.5 bg-slate-50 rounded-xl text-xs font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                className="w-full p-3 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
                 Password:
               </label>
               <input
@@ -304,18 +304,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3.5 bg-slate-50 rounded-xl text-xs font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                className="w-full p-3 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:shadow-rose-600/30 text-white font-poppins font-bold text-xs uppercase shadow-md transition-all active:scale-95"
+              className="w-full py-3.5 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95"
             >
               Soo Gal (Login)
             </button>
 
-            <div className="text-center text-xs text-slate-500 pt-2">
+            <div className="text-center text-xs text-[#74777B] pt-2">
               Ma lehid koonto?{' '}
               <button 
                 type="button"
@@ -323,7 +323,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setErrorMsg('');
                   setScreen('signup');
                 }} 
-                className="text-rose-600 font-bold underline"
+                className="text-[#111315] font-semibold underline"
               >
                 Sameey Koonto (Sign Up)
               </button>
@@ -335,16 +335,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {authMode === 'local' && screen === 'signup' && (
           <form onSubmit={handleSignUp} className="space-y-3 text-left">
             <div className="text-center pt-1">
-              <h3 className="font-poppins font-bold text-xl text-slate-900">
+              <h3 className="font-serif font-bold text-xl text-[#17191C]">
                 Sameey Koonto Cusub
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[#74777B]">
                 Geli macluumaadkaaga saxda ah si aad koonto u abuurto.
               </p>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
                 Magacaaga Buuxa (Full Name):
               </label>
               <input
@@ -353,12 +353,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="Qor magacaaga Buuxa"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                className="w-full p-3 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
                 Gmail / Email Address:
               </label>
               <input
@@ -367,12 +367,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="magacaaga@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                className="w-full p-3 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
                 Phone Number (Ethiopia):
               </label>
               <input
@@ -381,12 +381,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="+251 9..."
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                className="w-full p-3 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
                 Password (Min 6 chars):
               </label>
               <input
@@ -395,18 +395,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                className="w-full p-3 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:shadow-rose-600/30 text-white font-poppins font-bold text-xs uppercase shadow-md transition-all active:scale-95"
+              className="w-full py-3.5 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95"
             >
               Abuur Koonto (Sign Up)
             </button>
 
-            <div className="text-center text-xs text-slate-500 pt-2">
+            <div className="text-center text-xs text-[#74777B] pt-2">
               Hadaad leedahay koonto?{' '}
               <button 
                 type="button"
@@ -414,7 +414,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setErrorMsg('');
                   setScreen('login');
                 }} 
-                className="text-rose-600 font-bold underline"
+                className="text-[#111315] font-semibold underline"
               >
                 Soo Gal (Login)
               </button>
@@ -436,7 +436,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <a
               href={screen === 'signup' ? 'https://accounts.capilorix.store/sign-up' : 'https://accounts.capilorix.store/sign-in'}
               target="_self"
-              className="text-xs font-bold text-rose-600 hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-slate-100"
+              className="text-xs font-semibold text-[#111315] hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF]"
             >
               <span>🔗 Open Clerk Hosted Authentication Portal</span>
               <span className="material-symbols-outlined text-[16px]">open_in_new</span>

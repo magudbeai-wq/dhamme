@@ -1,32 +1,22 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 :root {
-  --font-poppins: 'Poppins', sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-inter: 'Inter', sans-serif;
-  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Award-Winning Design Token Colors: White, Crimson Red, Luxury Gold, Midnight Slate */
-  --color-brand-sand: #F8FAFC;
-  --color-primary: #E11D48;
-  --color-primary-dark: #BE123C;
-  --color-primary-container: #FFF1F2;
-  --color-on-primary: #ffffff;
-  --color-on-primary-container: #9F1239;
-  --color-secondary: #0F172A;
-  --color-secondary-container: #F1F5F9;
-  --color-tertiary: #F59E0B;
-  --color-tertiary-hover: #D97706;
-  --color-on-tertiary: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-container: #F8FAFC;
-  --color-surface-container-high: #F1F5F9;
-  --color-surface-container-highest: #E2E8F0;
-  --color-on-surface: #0F172A;
-  --color-on-surface-variant: #475569;
-  --color-outline: #CBD5E1;
-  --color-outline-variant: #E2E8F0;
+  /* Luxury Real Estate Design System Palette */
+  --color-bg-canvas: #FAF9F6;       /* Warm Off-White Main Canvas */
+  --color-surface: #FFFFFF;         /* Crisp White Card Surface */
+  --color-charcoal: #111315;        /* Primary Charcoal / Near-Black */
+  --color-text-primary: #17191C;    /* Main Body & Header Text */
+  --color-text-muted: #74777B;      /* Subtitles & Muted Metadata */
+  --color-stone: #E8E5DF;           /* Soft Stone Borders & Dividers */
+  --color-gold: #C8A96B;            /* Champagne Gold Accent */
+  --color-emerald-muted: #4A7A63;   /* Verified Status & Success Indicator */
+  --color-red-alert: #A8453F;       /* Muted Red - Exclusive for Urgent Alerts/Errors */
 }
 
 * {
@@ -36,25 +26,21 @@
 }
 
 body {
-  background-color: var(--color-brand-sand);
-  color: var(--color-on-surface);
-  font-family: var(--font-jakarta), var(--font-inter), sans-serif;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
   min-height: 100vh;
   line-height: 1.5;
   letter-spacing: -0.01em;
 }
 
-.font-poppins {
-  font-family: var(--font-poppins);
+.font-serif {
+  font-family: var(--font-serif);
 }
 
-.font-inter {
-  font-family: var(--font-inter);
-}
-
-.font-jakarta {
-  font-family: var(--font-jakarta);
+.font-sans {
+  font-family: var(--font-sans);
 }
 
 .material-symbols-outlined {
@@ -86,123 +72,35 @@ body {
   scrollbar-width: none;
 }
 
-/* Premium Shadows & Glassmorphism */
+/* Subtle Premium Elevation Shadows */
 .listing-card-shadow {
-  box-shadow: 0px 12px 32px rgba(15, 23, 42, 0.06), 0px 2px 8px rgba(225, 29, 72, 0.04);
+  box-shadow: 0px 4px 20px rgba(17, 19, 21, 0.04), 0px 1px 3px rgba(17, 19, 21, 0.02);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .listing-card-shadow:hover {
-  box-shadow: 0px 20px 40px rgba(225, 29, 72, 0.12), 0px 4px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: 0px 12px 32px rgba(17, 19, 21, 0.08), 0px 2px 6px rgba(17, 19, 21, 0.04);
 }
 
 .nav-shadow {
-  box-shadow: 0px -10px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0px -4px 20px rgba(17, 19, 21, 0.04);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.glass-card-red {
-  background: rgba(255, 241, 242, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(254, 205, 211, 0.8);
-}
-
-.glass-dark {
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* Luxury Color Gradients */
-.bg-gradient-red {
-  background: linear-gradient(135deg, #E11D48 0%, #BE123C 50%, #9F1239 100%);
-}
-
-.bg-gradient-red-vibrant {
-  background: linear-gradient(135deg, #FF2A54 0%, #E11D48 50%, #BE123C 100%);
-}
-
-.bg-gradient-gold {
-  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #D97706 100%);
-}
-
-.bg-gradient-gold-red {
-  background: linear-gradient(135deg, #E11D48 0%, #F59E0B 100%);
-}
-
-.bg-gradient-dark {
-  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-}
-
-.text-gradient-red {
-  background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-stone);
 }
 
 /* Keyframes & Animation Utilities */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes logoFloat {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-6px) scale(1.02); }
-}
-
-@keyframes ringExpand {
-  0% { transform: scale(0.85); opacity: 0.8; }
-  50% { transform: scale(1.2); opacity: 0.2; }
-  100% { transform: scale(0.85); opacity: 0.8; }
-}
-
-@keyframes redPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
-}
-
-@keyframes goldShimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
 }
 
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-logo-float {
-  animation: logoFloat 4s ease-in-out infinite;
-}
-
-.animate-ring-expand {
-  animation: ringExpand 3s ease-in-out infinite;
-}
-
-.animate-red-pulse {
-  animation: redPulse 2.5s infinite;
-}
-
-.animate-gold-shimmer {
-  background: linear-gradient(90deg, #F59E0B 0%, #FFFFFF 50%, #F59E0B 100%);
-  background-size: 200% auto;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: goldShimmer 3.5s linear infinite;
 }
 
 /* Hide Clerk Development Mode Footer & Branding */

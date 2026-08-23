@@ -11,83 +11,52 @@ interface DhammeLogoProps {
 
 export const DhammeLogo: React.FC<DhammeLogoProps> = ({
   variant = 'md',
-  animated = true,
+  animated = false,
   showSubtitle = true,
   lightMode = false,
   onClick,
   className = ''
 }) => {
-  // Sizing configurations - Compact mobile subtitle text
   const sizeMap = {
-    sm: { icon: 'w-7 h-7', title: 'text-lg', subtitle: 'text-[8px] px-1.5 py-0.5', gap: 'space-x-2' },
-    md: { icon: 'w-10 h-10 sm:w-11 sm:h-11', title: 'text-xl sm:text-2xl', subtitle: 'text-[8px] sm:text-[9px] px-1.5 py-0.5', gap: 'space-x-2' },
-    lg: { icon: 'w-16 h-16', title: 'text-3xl', subtitle: 'text-[9px] sm:text-xs px-2 py-0.5', gap: 'space-x-3' },
-    xl: { icon: 'w-20 h-20 sm:w-24 sm:h-24', title: 'text-4xl sm:text-5xl', subtitle: 'text-[9px] sm:text-xs px-2.5 py-0.5', gap: 'space-x-3 sm:space-x-4' }
+    sm: { icon: 'w-6 h-6', title: 'text-base', subtitle: 'text-[7px]', gap: 'space-x-2' },
+    md: { icon: 'w-8 h-8 sm:w-9 sm:h-9', title: 'text-lg sm:text-xl', subtitle: 'text-[8px] sm:text-[9px]', gap: 'space-x-2.5' },
+    lg: { icon: 'w-12 h-12', title: 'text-2xl sm:text-3xl', subtitle: 'text-[9px] sm:text-xs', gap: 'space-x-3' },
+    xl: { icon: 'w-16 h-16 sm:w-20 sm:h-20', title: 'text-3xl sm:text-4xl', subtitle: 'text-[10px] sm:text-xs', gap: 'space-x-3 sm:space-x-4' }
   };
 
   const currentSize = sizeMap[variant];
-
-  // Theme colors - Crisp White & Vibrant Crimson Red
-  const titleColor = lightMode ? 'text-white drop-shadow-md' : 'text-slate-900';
-  const subtitleBg = lightMode 
-    ? 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 text-slate-950 border-white/40 shadow-sm font-black' 
-    : 'bg-rose-600 text-white border-rose-700 shadow-xs font-bold';
+  const titleColor = lightMode ? 'text-white' : 'text-[#111315]';
+  const subtitleColor = lightMode ? 'text-[#C8A96B]' : 'text-[#74777B]';
 
   return (
     <div 
       onClick={onClick}
       className={`inline-flex items-center ${currentSize.gap} ${onClick ? 'cursor-pointer select-none group' : ''} ${className}`}
     >
-      {/* Animated SVG Icon Mark Emblem */}
-      <div className={`relative ${currentSize.icon} shrink-0 flex items-center justify-center ${animated ? 'animate-logo-float' : ''}`}>
-        
-        {/* Expanding Ring Halo Pulse behind emblem */}
-        {animated && (
-          <div className="absolute -inset-2 rounded-2xl bg-gradient-to-tr from-rose-500/40 via-amber-400/30 to-rose-600/30 animate-ring-expand blur-md pointer-events-none" />
-        )}
-        
-        {/* SVG Container */}
-        <div className={`relative w-full h-full rounded-2xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 p-1.5 shadow-xl border-2 border-amber-400/80 flex items-center justify-center overflow-hidden transition-all duration-300 ${
-          animated ? 'group-hover:scale-105 group-hover:border-amber-300' : ''
-        }`}>
-          
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent pointer-events-none" />
-
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-md">
-            {/* Outer Arch */}
-            <path 
-              d="M15 55 L50 18 L85 55" 
-              stroke="#FBBF24" 
+      {/* Minimal Geometric Mark Emblem */}
+      <div className={`relative ${currentSize.icon} shrink-0 flex items-center justify-center ${animated ? 'animate-pulse' : ''}`}>
+        <div className={`w-full h-full rounded-xl ${lightMode ? 'bg-white/10 border border-white/20' : 'bg-[#111315]'} flex items-center justify-center p-1.5 transition-transform duration-300 ${onClick ? 'group-hover:scale-105' : ''}`}>
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            {/* Outer Minimal Diamond Frame */}
+            <rect 
+              x="50" 
+              y="12" 
+              width="53" 
+              height="53" 
+              rx="6" 
+              transform="rotate(45 50 12)" 
+              stroke="#C8A96B" 
               strokeWidth="7" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
             />
-
-            {/* Inner Wall & "D" Curve */}
-            <path 
-              d="M26 52 V78 C26 81.5 28.5 84 32 84 H52 C65 84 74 76 74 65 C74 54 65 46 52 46 H26" 
-              stroke="#FFFFFF" 
-              strokeWidth="6" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
-
-            {/* Somali Star in Peak Roof */}
-            <g className={animated ? "animate-star-twinkle" : ""}>
-              <path 
-                d="M50 24 L51.8 29.5 L57.5 29.5 L52.9 32.8 L54.7 38.3 L50 34.9 L45.3 38.3 L47.1 32.8 L42.5 29.5 L48.2 29.5 Z" 
-                fill="#FBBF24" 
-                stroke="#FFFFFF"
-                strokeWidth="0.8"
-              />
-            </g>
-
-            {/* Doorway Arch */}
-            <path 
-              d="M41 84 V68 C41 65.2 43.2 63 46 63 H54 C56.8 63 59 65.2 59 68 V84" 
-              fill="#4C0519" 
-              stroke="#FBBF24" 
-              strokeWidth="3.5" 
+            {/* Inner Architectural Diamond */}
+            <rect 
+              x="50" 
+              y="32" 
+              width="25" 
+              height="25" 
+              rx="3" 
+              transform="rotate(45 50 32)" 
+              fill={lightMode ? '#C8A96B' : '#FFFFFF'} 
             />
           </svg>
         </div>
@@ -95,17 +64,15 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
 
       {/* Brand Name Typography */}
       <div className="flex flex-col justify-center text-left">
-        <div className="flex items-center space-x-1">
-          <h1 className={`font-poppins font-black ${currentSize.title} ${titleColor} tracking-tight leading-none ${
-            animated && lightMode ? 'animate-gold-shimmer' : ''
-          }`}>
-            DHAMME<span className="text-rose-600">.</span>
+        <div className="flex items-center">
+          <h1 className={`font-serif font-semibold ${currentSize.title} ${titleColor} tracking-tight leading-none`}>
+            DHAMME
           </h1>
         </div>
 
         {showSubtitle && (
-          <span className={`mt-0.5 inline-block font-poppins uppercase tracking-wider rounded-md border ${subtitleBg} ${currentSize.subtitle} self-start shadow-xs transition-all duration-300`}>
-            REAL ESTATE • JIGJIGA
+          <span className={`mt-0.5 block font-sans uppercase font-bold tracking-[0.18em] ${subtitleColor} ${currentSize.subtitle} leading-none`}>
+            REAL ESTATE · MARKETPLACE
           </span>
         )}
       </div>

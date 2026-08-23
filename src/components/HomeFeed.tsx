@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { PropertyListing, FilterState, ListingMode, PropertyCategory } from '../types';
-import { DhammeLogo } from './DhammeLogo';
 import { MapView } from './MapView';
 
 interface HomeFeedProps {
@@ -167,82 +166,92 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
 
   return (
-    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-6">
+    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-8">
       
-      {/* AWARD WINNER DESIGNER LUXURY HERO BACKDROP BANNER */}
-      <section className="relative w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-rose-500/30 group transition-all duration-500 hover:border-rose-500 hover:shadow-rose-500/20">
+      {/* LUXURY PHOTOGRAPHY-FIRST HERO BANNER */}
+      <section className="relative w-full rounded-3xl overflow-hidden shadow-sm border border-[#E8E5DF] group">
         
-        {/* Aspect Ratio Container */}
-        <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-slate-950">
-          
-          {/* Image 1: Primary Default Background */}
+        {/* Full-bleed Photography Container */}
+        <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-[#111315]">
           <img
             src="/jigjiga-aerial.jpg"
             alt="Jigjiga City Aerial Boulevard"
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000 ease-out"
           />
 
-          {/* Image 2: Hover Transition Background */}
-          <img
-            src="/jigjiga-landmark.jpg"
-            alt="Jigjiga Horse Statue Landmark"
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-          />
+          {/* Dark Gradient Overlay for Text Legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111315]/90 via-[#111315]/50 to-[#111315]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#111315]/80 via-transparent to-transparent" />
 
-          {/* Multi-layer Crimson & Dark Slate Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-rose-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-transparent to-rose-950/60" />
-
-          {/* Luxury Floating Content Container */}
-          <div className="absolute inset-0 p-5 sm:p-8 flex flex-col justify-between z-10">
+          {/* Hero Content Overlay */}
+          <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-between z-10">
             
-            {/* Top Row: Logo & Location Tag */}
+            {/* Top Row: Subtitle pill */}
             <div className="flex items-center justify-between">
-              <div className="bg-slate-900/85 backdrop-blur-xl border border-rose-500/50 p-2.5 sm:p-3 rounded-2xl shadow-2xl flex items-center space-x-2 group-hover:border-rose-500 transition-all">
-                <DhammeLogo 
-                  variant="sm" 
-                  animated={true} 
-                  showSubtitle={true} 
-                  lightMode={true} 
-                />
-              </div>
-
-              <span className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-slate-950/70 text-amber-400 border border-amber-400/40 backdrop-blur-md shadow-lg flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                <span>📍 JIGJIGA CITY MARKETPLACE</span>
+              <span className="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] bg-white/10 text-[#C8A96B] border border-white/20 backdrop-blur-md">
+                📍 JIGJIGA REAL ESTATE MARKETPLACE
               </span>
+
+              <button
+                onClick={handleRequestLiveGps}
+                disabled={gpsLoading}
+                className="hidden sm:flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-md hover:bg-white/20 transition"
+              >
+                <span className={`material-symbols-outlined text-[16px] text-[#C8A96B] ${gpsLoading ? 'animate-spin' : ''}`}>
+                  {gpsLoading ? 'sync' : 'my_location'}
+                </span>
+                <span>{gpsLoading ? 'Navigating GPS...' : userGps ? '📍 Live GPS Active' : gpsError ? '📍 GPS Offline' : '📍 GPS Near Me'}</span>
+              </button>
             </div>
 
-            {/* Middle/Bottom Main Typography Slogan */}
-            <div className="space-y-2 sm:space-y-3 max-w-2xl text-left">
-              <span className="inline-block px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-widest bg-amber-400 text-slate-950 shadow-md">
-                SOMALI REGION REAL ESTATE PLATFORM
-              </span>
-
-              {/* Slogan */}
-              <h1 className="font-poppins font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight drop-shadow-xl group-hover:translate-x-1 transition-transform duration-300">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-400 animate-gold-shimmer">
-                  DHamme ayaa kuu dhamaystiraya
-                </span>
+            {/* Middle Serif Headline */}
+            <div className="space-y-2 max-w-2xl text-left">
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight">
+                DHamme ayaa kuu dhamaystiraya
               </h1>
-
-              <p className="text-xs sm:text-sm text-slate-200 font-medium max-w-lg leading-relaxed drop-shadow-md">
-                Kirayso ama Iibso guryaha ugu casrisan ee Jigjiga. Si professional ah oo degdeg ah!
+              <p className="text-xs sm:text-sm text-[#FAF9F6]/80 font-sans max-w-lg leading-relaxed font-normal">
+                Kirayso ama Iibso guryaha ugu casrisan ee Jigjiga. Discover extraordinary homes in the Somali Region.
               </p>
             </div>
 
-            {/* Bottom Controls inside Banner */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
-              <button
-                onClick={handleRequestLiveGps}
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 text-white font-poppins font-black text-xs shadow-xl hover:shadow-rose-600/50 active:scale-95 transition-all flex items-center space-x-1.5 border border-rose-400/30"
-              >
-                <span className="material-symbols-outlined text-[18px]">my_location</span>
-                <span>{userGps ? '📍 Live GPS Active' : '📍 Hel GPS Location Near Me'}</span>
-              </button>
+            {/* Single Elegant Unified Search Card */}
+            <div className="pt-2 w-full max-w-3xl">
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl p-2 sm:p-2.5 border border-[#E8E5DF] shadow-xl flex flex-col sm:flex-row items-center gap-2">
+                
+                {/* Search Query Input */}
+                <div className="flex-1 w-full flex items-center space-x-2 px-3 py-2 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF]">
+                  <span className="material-symbols-outlined text-[#74777B] text-[20px]">search</span>
+                  <input
+                    type="text"
+                    placeholder="Raadi Kebele (Kebele 06 Garab'ase, Kebele 03 Taiwan, Kebele 08)..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent text-xs font-sans text-[#17191C] placeholder-[#74777B] focus:outline-none"
+                  />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} className="text-[#74777B] hover:text-[#111315]">
+                      <span className="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  )}
+                </div>
 
-              <div className="text-[11px] text-white/90 font-bold bg-slate-900/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/20">
-                ⭐ Rated #1 Real Estate App in Jigjiga
+                {/* Filter Trigger */}
+                <button
+                  onClick={onOpenFilter}
+                  className="px-4 py-2.5 bg-white border border-[#E8E5DF] text-[#17191C] rounded-xl text-xs font-semibold hover:border-[#111315] transition flex items-center space-x-1.5 shrink-0"
+                >
+                  <span className="material-symbols-outlined text-[18px] text-[#74777B]">tune</span>
+                  <span>Filters</span>
+                </button>
+
+                {/* Main Unified Search Action CTA Button */}
+                <button
+                  onClick={() => {}}
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#111315] hover:bg-[#17191C] text-white rounded-xl text-xs font-semibold transition shrink-0 flex items-center justify-center space-x-1.5 shadow-xs"
+                >
+                  <span>Raadi (Search)</span>
+                </button>
+
               </div>
             </div>
 
@@ -250,247 +259,81 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         </div>
       </section>
 
-      {/* Daily In-App Notification Banner */}
-      <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-rose-800 text-white p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-between border border-rose-400/40">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-amber-300 text-[22px] animate-bounce">notifications_active</span>
-          </div>
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
-              Fariin Maalmoolee (Daily Alert)
-            </span>
-            <p className="text-xs font-bold leading-tight">
-              Si fudud ku hel guri oo kirayso ama iibso hadda ee Jigjiga!
-            </p>
-          </div>
-        </div>
-
-        <button 
-          onClick={handleRequestLiveGps}
-          className="hidden sm:inline-flex px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs shrink-0 transition"
-        >
-          GPS Near Me
-        </button>
-      </div>
-
-      {/* Mode Toggle Section */}
+      {/* Mode Toggle & Filter Bar */}
       <section className="space-y-4">
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <div className="bg-slate-200/80 p-1.5 rounded-2xl flex w-full max-w-xs relative shadow-inner border border-slate-300/60">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-[#E8E5DF] pb-4">
+          
+          {/* Mode Tabs (Rent/Sale) */}
+          <div className="bg-[#FAF9F6] p-1 rounded-xl flex border border-[#E8E5DF] w-full sm:w-auto">
             <button
               onClick={() => handleModeChange('kiro')}
-              className={`flex-1 py-2.5 px-4 rounded-xl font-poppins font-bold text-xs transition-all duration-300 z-10 flex items-center justify-center space-x-1.5 ${
+              className={`py-2 px-5 rounded-lg font-sans font-semibold text-xs transition-all ${
                 activeFilter.mode === 'kiro'
-                  ? 'bg-rose-600 text-white shadow-md'
-                  : 'text-slate-700 hover:text-slate-900'
+                  ? 'bg-[#111315] text-white shadow-xs'
+                  : 'text-[#74777B] hover:text-[#17191C]'
               }`}
             >
-              <span className="material-symbols-outlined text-[16px]">key</span>
-              <span>Kiro (Rent)</span>
+              Kiro (Rent)
             </button>
 
             <button
               onClick={() => handleModeChange('iib')}
-              className={`flex-1 py-2.5 px-4 rounded-xl font-poppins font-bold text-xs transition-all duration-300 z-10 flex items-center justify-center space-x-1.5 ${
+              className={`py-2 px-5 rounded-lg font-sans font-semibold text-xs transition-all ${
                 activeFilter.mode === 'iib'
-                  ? 'bg-rose-600 text-white shadow-md'
-                  : 'text-slate-700 hover:text-slate-900'
+                  ? 'bg-[#111315] text-white shadow-xs'
+                  : 'text-[#74777B] hover:text-[#17191C]'
               }`}
             >
-              <span className="material-symbols-outlined text-[16px]">sell</span>
-              <span>Iib (Sale)</span>
+              Iib (Sale)
             </button>
           </div>
 
-          <button
-            onClick={handleRequestLiveGps}
-            disabled={gpsLoading}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm border active:scale-95 ${
-              userGps 
-                ? 'bg-rose-700 text-white border-rose-600 ring-2 ring-rose-500/30' 
-                : 'bg-white text-rose-600 border-rose-200 hover:bg-rose-50'
-            }`}
-            title="Hel Location-kaaga GPS Near Me"
-          >
-            <span className={`material-symbols-outlined text-[18px] ${gpsLoading ? 'animate-spin' : 'animate-pulse'}`}>
-              {gpsLoading ? 'sync' : 'my_location'}
-            </span>
-            <span>
-              {gpsLoading 
-                ? 'Navigating GPS...' 
-                : userGps 
-                ? 'GPS Location Active' 
-                : '📍 Hel GPS Location Near Me'}
-            </span>
-          </button>
-        </div>
-
-        {/* GPS Live Coordinates Status Bar */}
-        {userGps && (
-          <div className="bg-rose-50 border border-rose-200 p-2.5 rounded-2xl text-xs text-rose-950 flex items-center justify-between shadow-xs max-w-xl mx-auto">
-            <div className="flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-rose-600 animate-ping" />
-              <span className="font-bold">Live Device GPS:</span>
-              <span className="font-mono">{userGps.lat.toFixed(4)}° N, {userGps.lng.toFixed(4)}° E</span>
-            </div>
-            <span className="text-[10px] font-extrabold uppercase bg-rose-200 px-2 py-0.5 rounded-md text-rose-900">
-              Closest Sorted
-            </span>
+          {/* Category Chips */}
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto">
+            {categories.map((cat) => {
+              const isSelected = activeFilter.category === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryChange(cat)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                    isSelected
+                      ? 'bg-[#111315] text-white font-semibold'
+                      : 'bg-white text-[#74777B] border border-[#E8E5DF] hover:border-[#111315] hover:text-[#17191C]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
           </div>
-        )}
 
-        {gpsError && !userGps && (
-          <div className="text-[11px] text-amber-900 bg-amber-50 p-2 rounded-xl text-center border border-amber-200 max-w-xl mx-auto">
-            {gpsError}
-          </div>
-        )}
-
-        {/* Search Bar */}
-        <div className="relative group max-w-2xl mx-auto">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-rose-600">search</span>
-          </div>
-          <input
-            type="text"
-            placeholder="Raadi Kebele (Kebele 06 Garab'ase, Kebele 03 Taiwan, Kebele 08)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-24 py-3.5 bg-white rounded-2xl border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-600 focus:border-transparent transition-all font-inter text-sm placeholder:text-slate-400"
-          />
-          
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
-              >
-                <span className="material-symbols-outlined text-[18px]">close</span>
-              </button>
-            )}
-            <button
-              onClick={onOpenFilter}
-              className={`p-2.5 rounded-xl active:scale-95 transition-all shadow-sm flex items-center justify-center ${
-                activeFilter.kebele || activeFilter.hasVideo || activeFilter.waterRequired || activeFilter.powerRequired || (activeFilter.beds && activeFilter.beds !== 'any')
-                  ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-300 font-bold'
-                  : 'bg-rose-600 hover:bg-rose-700 text-white'
-              }`}
-              title="Filters"
-            >
-              <span className="material-symbols-outlined text-[20px]">tune</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Active Applied Filters Bar */}
-        {(activeFilter.kebele || activeFilter.hasVideo || activeFilter.waterRequired || activeFilter.powerRequired || (activeFilter.beds && activeFilter.beds !== 'any') || (activeFilter.maxPriceEtb && activeFilter.maxPriceEtb < 500000)) && (
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 max-w-2xl mx-auto animate-fade-in">
-            <span className="text-[11px] font-bold text-slate-600">Filters Active:</span>
-            {activeFilter.kebele && (
-              <span className="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-bold border border-rose-200 flex items-center gap-1">
-                📍 {activeFilter.kebele}
-              </span>
-            )}
-            {activeFilter.hasVideo && (
-              <span className="px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-bold border border-red-300 flex items-center gap-1">
-                🎥 Video Tour Only
-              </span>
-            )}
-            {activeFilter.beds && activeFilter.beds !== 'any' && (
-              <span className="px-2.5 py-1 bg-rose-50 text-rose-700 rounded-full text-[10px] font-bold border border-rose-200">
-                🛏️ {activeFilter.beds} Beds
-              </span>
-            )}
-            {activeFilter.waterRequired && (
-              <span className="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-[10px] font-bold border border-blue-200">
-                💧 Water Required
-              </span>
-            )}
-            {activeFilter.powerRequired && (
-              <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold border border-amber-200">
-                ⚡ 24h Solar/Power
-              </span>
-            )}
-            {onUpdateFilter && (
-              <button
-                onClick={() => onUpdateFilter({
-                  mode: activeFilter.mode,
-                  searchLocation: 'Jigjiga',
-                  category: 'All Properties',
-                  minPriceEtb: 0,
-                  maxPriceEtb: 500000,
-                  kebele: '',
-                  beds: 'any',
-                  waterRequired: false,
-                  powerRequired: false,
-                  hasVideo: false
-                })}
-                className="text-[10px] font-bold text-rose-600 hover:underline ml-1"
-              >
-                Reset All Filters
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Filter Chips Horizontal Scroll */}
-        <div className="flex gap-2.5 overflow-x-auto hide-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-          {categories.map((cat) => {
-            const isSelected = activeFilter.category === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(cat)}
-                className={`flex-none px-4 py-2 rounded-full text-xs font-semibold shadow-xs transition-all duration-200 ${
-                  isSelected
-                    ? 'bg-rose-600 text-white font-bold ring-2 ring-rose-500/30'
-                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Results Header Count & List / Map View Toggle */}
-        <div className="flex items-center justify-between text-xs text-slate-600 px-1 pt-1">
-          <span className="font-semibold flex items-center space-x-1">
-            <span className="w-2 h-2 rounded-full bg-rose-600" />
-            <span>{filteredProperties.length} {filteredProperties.length === 1 ? 'Guri Loo Helay' : 'Guryo Loo Helay'} Jigjiga ({activeFilter.mode === 'kiro' ? 'Kiro' : 'Iib'})</span>
-          </span>
-
-          {/* List vs Map View Toggle Pills */}
-          <div className="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300/50 shadow-xs">
+          {/* Format Toggle (List / Map) */}
+          <div className="flex items-center bg-white p-1 rounded-xl border border-[#E8E5DF]">
             <button
               onClick={() => setViewFormat('list')}
-              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                viewFormat === 'list'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'text-slate-700 hover:text-slate-900'
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewFormat === 'list' ? 'bg-[#111315] text-white' : 'text-[#74777B]'
               }`}
             >
-              <span className="material-symbols-outlined text-[16px]">view_list</span>
-              <span>Liis</span>
+              Liis
             </button>
             <button
               onClick={() => setViewFormat('map')}
-              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                viewFormat === 'map'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'text-slate-700 hover:text-slate-900'
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewFormat === 'map' ? 'bg-[#111315] text-white' : 'text-[#74777B]'
               }`}
             >
-              <span className="material-symbols-outlined text-[16px]">map</span>
-              <span>Khariidad</span>
+              Khariidad
             </button>
           </div>
+
         </div>
 
       </section>
 
-      {/* Render Interactive Map View if selected */}
+      {/* Render Map View or Clean Property Cards Grid */}
       {viewFormat === 'map' ? (
         <section className="mt-4">
           <MapView
@@ -502,22 +345,22 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         </section>
       ) : (
         /* Property Cards Grid */
-        <section className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        <section className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         {filteredProperties.length === 0 ? (
-          <div className="col-span-full text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-4 shadow-sm">
-            <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
-              <span className="material-symbols-outlined text-[36px]">add_home</span>
+          <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-[#E8E5DF] p-8 space-y-4 shadow-xs">
+            <div className="w-16 h-16 rounded-full bg-[#FAF9F6] text-[#74777B] flex items-center justify-center mx-auto border border-[#E8E5DF]">
+              <span className="material-symbols-outlined text-[32px]">domain_disabled</span>
             </div>
-            <h3 className="font-poppins font-bold text-lg text-slate-900">
+            <h3 className="font-serif text-xl text-[#17191C]">
               Weli Ma Jirtay Guryo La Soo Dhigay Jigjiga
             </h3>
-            <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-[#74777B] max-w-md mx-auto leading-relaxed">
               Noqo qofka ugu horeeya ee gurigiisa ama dabaq kiro/iib ah Jigjiga ugu soo dhiga DHAMME Real Estate!
             </p>
             {onStartPostListing && (
               <button
                 onClick={onStartPostListing}
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-poppins font-bold text-xs shadow-md hover:shadow-rose-600/30 active:scale-95 transition-all inline-flex items-center space-x-2"
+                className="px-6 py-3 rounded-xl bg-[#111315] text-white font-sans font-semibold text-xs shadow-xs hover:bg-[#17191C] transition inline-flex items-center space-x-2"
               >
                 <span className="material-symbols-outlined text-[18px]">add</span>
                 <span>📍 Soo Dhig Gurigii Ugu Horeeyay (Post First Home)</span>
@@ -528,152 +371,85 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
           filteredProperties.map((property) => {
             const isFav = favorites.includes(property.id);
             const dist = (property as any).calculatedDistKm;
-            const views = property.viewsCount || 45;
-            const isSold = property.status === 'sold';
-            const isRented = property.status === 'rented';
 
             return (
               <article
                 key={property.id}
                 onClick={() => onSelectProperty(property)}
-                className={`bg-white rounded-3xl overflow-hidden listing-card-shadow transition-all duration-300 hover:-translate-y-1 cursor-pointer border flex flex-col group relative ${
-                  isSold || isRented ? 'border-red-400 bg-red-50/20' : 'border-slate-200'
-                }`}
+                className="bg-white rounded-3xl overflow-hidden listing-card-shadow border border-[#E8E5DF] flex flex-col group cursor-pointer"
               >
-                {/* Property Image Container */}
-                <div className="relative aspect-[4/3] w-full bg-slate-100 overflow-hidden">
+                {/* 4:3 Ratio Dominant Image */}
+                <div className="relative aspect-[4/3] w-full bg-[#FAF9F6] overflow-hidden">
                   <img
                     src={property.images[0]}
                     alt={property.title}
-                    className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
-                      isSold || isRented ? 'grayscale-[40%]' : ''
-                    }`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-
-                  {/* PROMINENT SOLD / RENTED STATUS OVERLAY */}
-                  {isSold && (
-                    <div className="absolute inset-0 bg-red-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-white p-4 text-center z-20">
-                      <span className="material-symbols-outlined text-[42px] text-red-400 mb-1">lock</span>
-                      <span className="font-poppins font-black text-xl tracking-wider text-red-200 border-2 border-red-400 px-4 py-1.5 rounded-2xl bg-red-900/80 shadow-2xl">
-                        WAALA IIBSADAY (SOLD)
-                      </span>
-                      <span className="text-[11px] font-bold text-red-200 mt-2 bg-black/60 px-3 py-1 rounded-full">
-                        Gurigan horay ayaa loo iibsaday
-                      </span>
-                    </div>
-                  )}
-
-                  {isRented && (
-                    <div className="absolute inset-0 bg-amber-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center text-white p-4 text-center z-20">
-                      <span className="material-symbols-outlined text-[42px] text-amber-400 mb-1">key</span>
-                      <span className="font-poppins font-black text-xl tracking-wider text-amber-200 border-2 border-amber-400 px-4 py-1.5 rounded-2xl bg-amber-900/80 shadow-2xl">
-                        WAALA KIREEYAY (RENTED)
-                      </span>
-                      <span className="text-[11px] font-bold text-amber-200 mt-2 bg-black/60 px-3 py-1 rounded-full">
-                        Gurigan horay ayaa loo kireeyay
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Badges */}
-                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md ${
-                      property.mode === 'kiro' ? 'bg-rose-600 text-white' : 'bg-amber-400 text-slate-950'
-                    }`}>
-                      {property.mode === 'kiro' ? 'Kiro (Rent)' : 'Iib (Sale)'}
+                  {/* Subtle Top-Left Verified Badge */}
+                  <div className="absolute top-3 left-3 z-10 flex items-center space-x-1.5">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#4A7A63] text-white shadow-xs backdrop-blur-md flex items-center space-x-1">
+                      <span className="material-symbols-outlined text-[12px]">verified</span>
+                      <span>Verified</span>
                     </span>
 
-                    {/* Video Tour Badge on HomeFeed Card */}
                     {property.videoUrl && (
-                      <span className="px-2.5 py-1 bg-red-600/90 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1 border border-red-400/40">
-                        <span className="material-symbols-outlined text-[13px]">videocam</span>
-                        <span>Video Tour</span>
-                      </span>
-                    )}
-
-                    {property.isFeatured && (
-                      <span className="px-3 py-1 bg-slate-900 text-amber-400 border border-amber-400/50 rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1">
-                        <span className="material-symbols-outlined text-[12px]">star</span>
-                        <span>Featured</span>
+                      <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-white rounded-full text-[10px] font-medium flex items-center space-x-1">
+                        <span className="material-symbols-outlined text-[12px]">videocam</span>
+                        <span>Tour</span>
                       </span>
                     )}
                   </div>
 
-
-                  {/* Favorite Heart Button */}
+                  {/* Subtle Circular Favorite Icon Top-Right */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onToggleFavorite(property.id);
                     }}
-                    className="absolute top-3 right-3 bg-black/40 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 active:scale-90 transition-all z-10"
+                    className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xs hover:scale-110 active:scale-95 transition z-10"
                     title={isFav ? 'Remove Favorite' : 'Add Favorite'}
                   >
-                    <span className={`material-symbols-outlined text-[20px] ${isFav ? 'fill-1 text-rose-500' : 'text-white'}`}>
+                    <span className={`material-symbols-outlined text-[18px] ${isFav ? 'fill-1 text-[#111315]' : 'text-[#74777B]'}`}>
                       favorite
                     </span>
                   </button>
 
-                  {/* Views Count & Floating Price Tag on Image */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-10">
-                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-rose-600/90 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
-                      {property.priceLocalFormatted}
-                    </span>
-
-                    {/* Views Count Indicator */}
-                    <span className="text-[11px] font-bold bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-xl flex items-center space-x-1 text-white border border-white/20">
-                      <span className="material-symbols-outlined text-[14px]">visibility</span>
-                      <span>{views} Views</span>
-                    </span>
-                  </div>
                 </div>
 
-                {/* Listing Details Content */}
-                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+                {/* Clean Text Block Below */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    <h3 className="font-poppins text-base font-bold text-slate-900 leading-snug group-hover:text-rose-600 transition-colors line-clamp-2">
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-[11px] font-semibold text-[#74777B] uppercase tracking-wider">
+                        {property.city}, {property.kebele}
+                      </span>
+                      <span className="font-serif font-bold text-lg text-[#17191C]">
+                        {property.priceLocalFormatted}
+                      </span>
+                    </div>
+
+                    <h3 className="font-sans text-sm font-semibold text-[#17191C] leading-snug group-hover:text-[#C8A96B] transition-colors line-clamp-1 mt-1">
                       {property.title}
                     </h3>
-
-                    {/* Location Pin & Kebele */}
-                    <div className="flex items-center gap-1 text-slate-600 text-xs mt-1.5">
-                      <span className="material-symbols-outlined text-[18px] text-rose-600">location_on</span>
-                      <span className="font-semibold text-slate-900">{property.city}, {property.kebele}</span>
-                    </div>
-
-                    {/* Live Calculated GPS Distance Badge */}
-                    {dist !== undefined ? (
-                      <div className="flex items-center gap-1 text-[11px] text-rose-800 font-bold mt-1 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 self-start inline-flex">
-                        <span className="material-symbols-outlined text-[14px] text-rose-600 animate-pulse">my_location</span>
-                        <span>{dist} km from your device</span>
-                      </div>
-                    ) : property.nearDistance ? (
-                      <div className="flex items-center gap-1 text-[11px] text-slate-700 font-medium mt-1 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 self-start inline-flex">
-                        <span className="material-symbols-outlined text-[14px] text-rose-600">near_me</span>
-                        <span>{property.nearDistance}</span>
-                      </div>
-                    ) : null}
                   </div>
 
-                  {/* Specs Row */}
-                  <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-1.5 rounded-xl bg-slate-50 flex flex-col items-center border border-slate-100">
-                      <span className="material-symbols-outlined text-[18px] text-rose-600">bed</span>
-                      <span className="font-bold text-[11px] text-slate-900 mt-0.5">{property.beds} Qol</span>
+                  {/* Clean Spec Line */}
+                  <div className="pt-2 border-t border-[#E8E5DF] flex items-center justify-between text-xs text-[#74777B]">
+                    <div className="flex items-center space-x-3">
+                      <span>{property.beds} Beds</span>
+                      <span>•</span>
+                      <span>{property.baths} Baths</span>
+                      <span>•</span>
+                      <span>{property.areaSqm} m²</span>
                     </div>
 
-                    <div className="p-1.5 rounded-xl bg-slate-50 flex flex-col items-center border border-slate-100">
-                      <span className="material-symbols-outlined text-[18px] text-blue-600">water_drop</span>
-                      <span className="font-bold text-[10px] text-slate-900 truncate max-w-full mt-0.5">{property.water}</span>
-                    </div>
-
-                    <div className="p-1.5 rounded-xl bg-slate-50 flex flex-col items-center border border-slate-100">
-                      <span className="material-symbols-outlined text-[18px] text-amber-500">bolt</span>
-                      <span className="font-bold text-[10px] text-slate-900 truncate max-w-full mt-0.5">{property.electricity}</span>
-                    </div>
+                    {dist !== undefined && (
+                      <span className="text-[10px] font-medium text-[#4A7A63]">
+                        {dist} km
+                      </span>
+                    )}
                   </div>
 
                 </div>

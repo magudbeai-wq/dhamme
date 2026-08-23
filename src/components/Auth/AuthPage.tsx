@@ -183,13 +183,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16 pt-4 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#FAF9F6] pb-16 pt-4 px-4 sm:px-6">
       
       {/* TOP BAR */}
-      <div className="max-w-lg mx-auto flex items-center justify-between py-4 mb-4 border-b border-slate-200">
+      <div className="max-w-lg mx-auto flex items-center justify-between py-4 mb-4 border-b border-[#E8E5DF]">
         <button
           onClick={onBackToHome}
-          className="flex items-center space-x-2 text-sm font-bold text-rose-600 hover:text-rose-700 transition"
+          className="flex items-center space-x-2 text-sm font-semibold text-[#111315] hover:text-[#17191C] transition"
         >
           <span className="material-symbols-outlined">arrow_back</span>
           <span>U noqo Guriga (Home)</span>
@@ -199,13 +199,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       </div>
 
       {/* DEDICATED AUTH CARD */}
-      <div className="max-w-md mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 space-y-6 text-center">
+      <div className="max-w-md mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-[#E8E5DF] space-y-6 text-center">
         
         <div className="space-y-1">
-          <h1 className="font-poppins text-2xl font-bold text-slate-900">
+          <h1 className="font-serif text-2xl font-bold text-[#17191C]">
             {screen === 'login' ? 'Soo Gal Koontadaada' : screen === 'signup' ? 'Sameey Koonto Cusub' : 'Dib u hel Password-ka'}
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#74777B]">
             DHAMME Real Estate • Jigjiga Somali Region
           </p>
         </div>
@@ -215,7 +215,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isGoogleLoading}
-          className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-poppins font-bold text-sm flex items-center justify-center gap-3 shadow-xs hover:shadow transition-all active:scale-95 disabled:opacity-50"
+          className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-[#FAF9F6] border border-[#E8E5DF] text-[#17191C] font-sans font-semibold text-sm flex items-center justify-center gap-3 shadow-xs hover:border-[#111315] transition-all active:scale-95 disabled:opacity-50"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -239,18 +239,18 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </button>
 
         <div className="relative flex py-1 items-center">
-          <div className="flex-grow border-t border-slate-200"></div>
-          <span className="flex-shrink mx-4 text-xs font-bold text-slate-400 uppercase tracking-wider">AMA (OR)</span>
-          <div className="flex-grow border-t border-slate-200"></div>
+          <div className="flex-grow border-t border-[#E8E5DF]"></div>
+          <span className="flex-shrink mx-4 text-xs font-semibold text-[#74777B] uppercase tracking-wider">AMA (OR)</span>
+          <div className="flex-grow border-t border-[#E8E5DF]"></div>
         </div>
 
         {/* Mode Selector */}
-        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl">
+        <div className="grid grid-cols-2 gap-2 bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF]">
           <button
             type="button"
             onClick={() => setAuthMode('local')}
-            className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1 ${
-              authMode === 'local' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600'
+            className={`py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1 ${
+              authMode === 'local' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#74777B]'
             }`}
           >
             <span>📝 Direct Auth</span>
@@ -259,8 +259,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           <button
             type="button"
             onClick={() => setAuthMode('clerk')}
-            className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1 ${
-              authMode === 'clerk' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600'
+            className={`py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1 ${
+              authMode === 'clerk' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#74777B]'
             }`}
           >
             <span>🔒 Clerk Auth</span>
@@ -269,13 +269,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
         {/* Error / Success Alerts */}
         {errorMsg && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-xs font-semibold">
+          <div className="p-3 bg-[#A8453F]/10 border border-[#A8453F]/30 text-[#A8453F] rounded-xl text-xs font-semibold">
             {errorMsg}
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl text-xs font-semibold">
+          <div className="p-3 bg-[#4A7A63]/10 border border-[#4A7A63]/30 text-[#4A7A63] rounded-xl text-xs font-semibold">
             {successMsg}
           </div>
         )}
@@ -286,7 +286,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             {screen === 'login' && (
               <form onSubmit={handleLogin} className="space-y-4 text-left">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Gmail / Email:
                   </label>
                   <input
@@ -295,12 +295,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="magacaaga@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Password-ka:
                   </label>
                   <input
@@ -309,7 +309,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
@@ -317,7 +317,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setScreen('forgot_password')}
-                    className="text-xs text-rose-600 font-semibold hover:underline"
+                    className="text-xs text-[#111315] font-semibold hover:underline"
                   >
                     Ma harawday Password-ka?
                   </button>
@@ -325,7 +325,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-2xl bg-rose-600 text-white font-bold text-sm shadow-md hover:bg-rose-700 transition"
+                  className="w-full py-3.5 rounded-xl bg-[#111315] text-white font-semibold text-sm shadow-xs hover:bg-[#17191C] transition"
                 >
                   Soo Gal (Login)
                 </button>
@@ -335,7 +335,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             {screen === 'signup' && (
               <form onSubmit={handleSignUp} className="space-y-4 text-left">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Magacaaga Buuxa:
                   </label>
                   <input
@@ -344,12 +344,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="e.g. Axmed Cali Maxamed"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Gmail / Email:
                   </label>
                   <input
@@ -358,12 +358,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="magacaaga@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Telefoonka:
                   </label>
                   <input
@@ -372,12 +372,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="e.g. +251 91 500 0000"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Password Cusub:
                   </label>
                   <input
@@ -386,13 +386,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-2xl bg-rose-600 text-white font-bold text-sm shadow-md hover:bg-rose-700 transition"
+                  className="w-full py-3.5 rounded-xl bg-[#111315] text-white font-semibold text-sm shadow-xs hover:bg-[#17191C] transition"
                 >
                   Sameey Koonto (Sign Up)
                 </button>
@@ -401,11 +401,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
             {screen === 'forgot_password' && (
               <div className="space-y-4 text-left">
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-[#74777B]">
                   Soo gali Gmail-kaaga si aan kuugu soo dirno nambar ama link aad ku badasho password-ka.
                 </p>
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
                     Gmail / Email:
                   </label>
                   <input
@@ -413,7 +413,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     placeholder="magacaaga@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-semibold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
+                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
                   />
                 </div>
 
@@ -426,7 +426,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     }
                     setSuccessMsg('Fariin waa loo diray Gmail-kaaga. Fadlan eeg inbox-kaaga.');
                   }}
-                  className="w-full py-3.5 rounded-2xl bg-rose-600 text-white font-bold text-sm shadow-md hover:bg-rose-700 transition"
+                  className="w-full py-3.5 rounded-xl bg-[#111315] text-white font-semibold text-sm shadow-xs hover:bg-[#17191C] transition"
                 >
                   Soo Dir Link-ga (Reset Password)
                 </button>
@@ -449,7 +449,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             <a
               href={screen === 'signup' ? 'https://accounts.capilorix.store/sign-up' : 'https://accounts.capilorix.store/sign-in'}
               target="_self"
-              className="text-xs font-bold text-rose-600 hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-slate-100"
+              className="text-xs font-semibold text-[#111315] hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF]"
             >
               <span>🔗 Open Clerk Hosted Authentication Portal</span>
               <span className="material-symbols-outlined text-[16px]">open_in_new</span>
@@ -458,7 +458,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         )}
 
         {/* Footer Toggle links */}
-        <div className="pt-2 border-t border-slate-200 text-xs text-slate-600">
+        <div className="pt-2 border-t border-[#E8E5DF] text-xs text-[#74777B]">
           {screen === 'login' ? (
             <p>
               Miyaanad lahayn koonto?{' '}
@@ -469,7 +469,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className="font-bold text-rose-600 hover:underline"
+                className="font-semibold text-[#111315] hover:underline"
               >
                 Sameey Koonto (Sign Up)
               </button>
@@ -484,7 +484,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className="font-bold text-rose-600 hover:underline"
+                className="font-semibold text-[#111315] hover:underline"
               >
                 Soo Gal (Login)
               </button>

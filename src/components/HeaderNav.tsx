@@ -73,13 +73,13 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-200/80 transition-all duration-300">
+    <header className="sticky top-0 z-40 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#E8E5DF] transition-all duration-300">
       <div className="flex items-center justify-between px-4 sm:px-6 h-16 w-full max-w-screen-xl mx-auto">
         
         {/* Animated Brand Logo */}
         <DhammeLogo 
           variant="sm"
-          animated={true}
+          animated={false}
           showSubtitle={true}
           onClick={() => onNavigate('home')}
         />
@@ -91,19 +91,19 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowLangMenu(!showLangMenu)}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 transition-all shadow-xs"
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-full bg-white border border-[#E8E5DF] text-xs font-semibold text-[#17191C] hover:border-[#111315] active:scale-95 transition-all shadow-xs"
               title="Change Language"
             >
               <span>{lang === 'so' ? '🇸🇴 SO' : lang === 'en' ? '🇬🇧 EN' : '🇪🇹 AM'}</span>
-              <span className="material-symbols-outlined text-[16px]">expand_more</span>
+              <span className="material-symbols-outlined text-[16px] text-[#74777B]">expand_more</span>
             </button>
 
             {showLangMenu && (
-              <div className="absolute right-0 top-10 w-36 bg-white rounded-2xl shadow-xl border border-slate-200 p-1.5 z-50 animate-fade-in space-y-1">
+              <div className="absolute right-0 top-10 w-36 bg-white rounded-2xl shadow-xl border border-[#E8E5DF] p-1.5 z-50 animate-fade-in space-y-1">
                 <button
                   onClick={() => handleSelectLang('so')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                    lang === 'so' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    lang === 'so' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#17191C] hover:bg-[#FAF9F6]'
                   }`}
                 >
                   <span>🇸🇴 Af-Somali</span>
@@ -111,8 +111,8 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 </button>
                 <button
                   onClick={() => handleSelectLang('en')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                    lang === 'en' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    lang === 'en' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#17191C] hover:bg-[#FAF9F6]'
                   }`}
                 >
                   <span>🇬🇧 English</span>
@@ -120,8 +120,8 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 </button>
                 <button
                   onClick={() => handleSelectLang('am')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                    lang === 'am' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    lang === 'am' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#17191C] hover:bg-[#FAF9F6]'
                   }`}
                 >
                   <span>🇪🇹 አማርኛ</span>
@@ -135,7 +135,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           {isAdmin && (
             <button
               onClick={() => onNavigate('admin_dashboard')}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-slate-950 text-xs font-black shadow-md hover:brightness-105 active:scale-95 transition-all border border-amber-300"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#C8A96B] text-[#111315] text-xs font-bold shadow-xs hover:brightness-105 active:scale-95 transition-all"
               title="Admin Dashboard"
             >
               <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
@@ -146,24 +146,23 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           {/* AI Helper Trigger */}
           <button
             onClick={onOpenAI}
-            className="flex items-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 text-white text-xs font-bold shadow-md hover:shadow-rose-500/20 active:scale-95 transition-all"
+            className="flex items-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-white border border-[#E8E5DF] text-[#111315] text-xs font-semibold hover:border-[#111315] active:scale-95 transition-all shadow-xs"
             title="Dhamme AI Helper"
           >
-            <span className="material-symbols-outlined text-[18px] text-amber-300 animate-pulse">auto_awesome</span>
+            <span className="material-symbols-outlined text-[18px] text-[#C8A96B]">auto_awesome</span>
             <span className="hidden sm:inline">AI Helper</span>
           </button>
 
           {/* Notifications & Web Push button */}
           <button 
             onClick={handleToggleNotifications}
-            className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all relative"
+            className="w-9 h-9 rounded-full bg-white border border-[#E8E5DF] flex items-center justify-center hover:border-[#111315] active:scale-95 transition-all relative"
             title="Notifications & Web Push"
           >
-            <span className={`material-symbols-outlined text-[20px] ${pushStatus === 'granted' ? 'text-rose-600' : 'text-slate-600'}`}>
+            <span className={`material-symbols-outlined text-[20px] ${pushStatus === 'granted' ? 'text-[#111315]' : 'text-[#74777B]'}`}>
               {pushStatus === 'granted' ? 'notifications_active' : 'notifications'}
             </span>
-            <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-600 ring-2 ring-white animate-ping" />
-            <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-600 ring-2 ring-white" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#C8A96B]" />
           </button>
 
           {/* Clerk User Button / App Profile Avatar */}
@@ -172,7 +171,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               <UserButton afterSignOutUrl="/" />
               <button
                 onClick={() => onNavigate('profile')}
-                className="hidden sm:flex text-xs font-bold text-rose-600 hover:text-rose-700"
+                className="hidden sm:flex text-xs font-semibold text-[#111315] hover:underline"
               >
                 Profile
               </button>
@@ -182,7 +181,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           <SignedOut>
             <div 
               onClick={() => onNavigate('profile')}
-              className="w-10 h-10 rounded-full border-2 border-rose-600 bg-rose-50 flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-4 hover:ring-rose-500/20 relative"
+              className="w-9 h-9 rounded-full border border-[#E8E5DF] bg-white flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-xs hover:border-[#111315] relative"
               title="Sign In / Profile"
             >
               {userProfile?.avatarUrl ? (
@@ -192,7 +191,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                   alt={userProfile.fullName} 
                 />
               ) : (
-                <span className="material-symbols-outlined text-rose-600 text-[24px]">
+                <span className="material-symbols-outlined text-[#111315] text-[22px]">
                   person
                 </span>
               )}
@@ -205,17 +204,17 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
 
       {/* Daily Notifications Modal / Dropdown */}
       {showNotifications && (
-        <div className="absolute right-4 top-16 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 p-4 space-y-3 z-50 animate-fade-in">
-          <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-            <div className="flex items-center space-x-1.5 text-rose-600">
-              <span className="material-symbols-outlined text-[20px]">notifications_active</span>
-              <h3 className="font-poppins font-bold text-sm text-slate-900">
+        <div className="absolute right-4 top-16 w-80 sm:w-96 bg-white rounded-3xl shadow-xl border border-[#E8E5DF] p-4 space-y-3 z-50 animate-fade-in">
+          <div className="flex justify-between items-center pb-2 border-b border-[#E8E5DF]">
+            <div className="flex items-center space-x-1.5 text-[#111315]">
+              <span className="material-symbols-outlined text-[20px] text-[#C8A96B]">notifications_active</span>
+              <h3 className="font-serif font-bold text-sm text-[#17191C]">
                 Fariimaha Maalmoolee (Notifications)
               </h3>
             </div>
             <button 
               onClick={() => setShowNotifications(false)}
-              className="text-slate-400 hover:text-slate-600 p-1"
+              className="text-[#74777B] hover:text-[#17191C] p-1"
             >
               <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
@@ -225,15 +224,15 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             {notificationsList.map((notif) => (
               <div 
                 key={notif.id}
-                className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1 relative"
+                className="p-3 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] space-y-1 relative"
               >
                 <div className="flex justify-between items-start">
-                  <h4 className="font-poppins font-bold text-xs text-slate-900">{notif.title}</h4>
-                  <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-md">
+                  <h4 className="font-sans font-semibold text-xs text-[#17191C]">{notif.title}</h4>
+                  <span className="text-[9px] font-bold text-[#C8A96B] bg-[#FAF9F6] px-1.5 py-0.5 rounded-md border border-[#E8E5DF]">
                     {notif.time}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-600 leading-snug">
+                <p className="text-[11px] text-[#74777B] leading-snug">
                   {notif.body}
                 </p>
               </div>
@@ -245,7 +244,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               onNavigate('home');
               setShowNotifications(false);
             }}
-            className="w-full py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs text-center shadow-xs hover:bg-rose-700 transition-colors"
+            className="w-full py-2.5 rounded-xl bg-[#111315] text-white font-semibold text-xs text-center shadow-xs hover:bg-[#17191C] transition-colors"
           >
             Angaar Guryaha Jigjiga
           </button>
