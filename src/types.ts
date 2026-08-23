@@ -84,6 +84,9 @@ export interface PropertyListing {
   status?: ListingStatus; // 'active' | 'sold' | 'rented'
   viewsCount?: number; // e.g. 420
   inquiriesCount?: number; // e.g. 18
+  deletionReason?: string;
+  deletedAt?: string;
+  updatedAt?: string;
 }
 
 export interface FilterState {
@@ -120,3 +123,28 @@ export interface NewListingDraft {
   nearDistance?: string;
 }
 
+export type ActivityActionType = 
+  | 'PROPERTY_POSTED' 
+  | 'PROPERTY_UPDATED' 
+  | 'PROPERTY_DELETED' 
+  | 'STATUS_CHANGED' 
+  | 'USER_REGISTERED' 
+  | 'USER_BANNED' 
+  | 'USER_UNBANNED' 
+  | 'VERIFICATION_TOGGLED' 
+  | 'INQUIRY_SENT' 
+  | 'FAVORITE_TOGGLED'
+  | 'DATABASE_SYNC';
+
+export interface AuditActivityLog {
+  id: string;
+  action: ActivityActionType;
+  entityType: 'property' | 'user' | 'inquiry' | 'system';
+  entityId?: string;
+  entityTitle?: string;
+  actorEmail: string;
+  actorName: string;
+  details: string;
+  timestamp: string;
+  metadata?: Record<string, any>;
+}

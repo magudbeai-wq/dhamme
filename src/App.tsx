@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
-import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus } from './types';
+import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus, AuditActivityLog } from './types';
 import { INITIAL_REGISTERED_ACCOUNTS } from './data/usersData';
 import type { RegisteredAccount } from './data/usersData';
 import { SplashScreen } from './components/SplashScreen';
@@ -23,6 +23,14 @@ import { DhammeRealEstateAIModal } from './components/DhammeRealEstateAIModal';
 import { useInactivityLogout } from './hooks/useInactivityLogout';
 import { supabase } from './services/supabaseClient';
 import { registerServiceWorker, triggerWebPushNotification } from './utils/pushNotifications';
+import { logActivity, fetchAllActivityLogs, downloadFullDatabaseBackup, getLocalActivityLogs } from './services/activityLogger';
+
+const BACKUP_STORAGE_KEYS = [
+  'dhamme_user_posted_properties_v1',
+  'dhamme_properties_archive_v2',
+  'dhamme_all_listings_v3',
+  'dhamme_permanent_backup'
+];
 
 export function App() {
   const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn, user: clerkUser } = useUser();
@@ -46,6 +54,7 @@ export function App() {
     if (path.includes('terms') || screenParam === 'terms') return 'terms';
     return 'splash';
   });
+
   // Real Properties inventory (filter out any legacy mock placeholder IDs)
   const [properties, setProperties] = useState<PropertyListing[]>(() => {
     const fakePropertyIds = [
@@ -56,14 +65,8 @@ export function App() {
       'jigjiga-house-citycenter-05',
       'jigjiga-sale-plot-garabase-06'
     ];
-    const keys = [
-      'dhamme_user_posted_properties_v1',
-      'dhamme_properties_archive_v2',
-      'dhamme_all_listings_v3',
-      'dhamme_permanent_backup'
-    ];
     let loaded: PropertyListing[] = [];
-    keys.forEach((key) => {
+    BACKUP_STORAGE_KEYS.forEach((key) => {
       const saved = localStorage.getItem(key);
       if (saved) {
         try {
@@ -88,8 +91,10 @@ export function App() {
 
     return loaded;
   });
+
   const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [activityLogs, setActivityLogs] = useState<AuditActivityLog[]>(() => getLocalActivityLogs());
 
   // Registered accounts (purges any legacy fake placeholder test accounts)
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>(() => {
@@ -233,70 +238,76 @@ export function App() {
   useEffect(() => {
     try {
       const json = JSON.stringify(properties);
-      const keys = [
-        'dhamme_user_posted_properties_v1',
-        'dhamme_properties_archive_v2',
-        'dhamme_all_listings_v3',
-        'dhamme_permanent_backup'
-      ];
-      keys.forEach((key) => localStorage.setItem(key, json));
+      BACKUP_STORAGE_KEYS.forEach((key) => localStorage.setItem(key, json));
     } catch (e) {
       console.error('Failed to backup properties to local storage:', e);
     }
   }, [properties]);
 
-  // Fetch properties from Supabase cloud database on startup
-  useEffect(() => {
-    async function syncSupabaseProperties() {
-      try {
-        const { data, error } = await supabase.from('properties').select('*');
-        if (data && !error && data.length > 0) {
-          setProperties((prev) => {
-            const merged = [...prev];
-            data.forEach((dbProp: any) => {
-              const formatted: PropertyListing = {
-                id: dbProp.id || `prop-db-${Date.now()}`,
-                title: dbProp.title,
-                priceEtb: Number(dbProp.price_etb),
-                priceLocalFormatted: `${Number(dbProp.price_etb).toLocaleString()} ETB`,
-                mode: dbProp.mode || 'kiro',
-                category: dbProp.category || 'Family House',
-                city: dbProp.city || 'Jigjiga',
-                kebele: dbProp.kebele || 'Kebele 06',
-                beds: dbProp.beds || 3,
-                baths: dbProp.baths || 2,
-                areaSqm: dbProp.area_sqm || 180,
-                water: dbProp.water || 'Yes',
-                electricity: dbProp.electricity || '24h',
-                pool: dbProp.pool || 'No',
-                images: dbProp.images?.length > 0 ? dbProp.images : ['/jigjiga-house-1.jpg'],
-                videoUrl: dbProp.video_url || undefined,
-                videoThumbnail: dbProp.video_thumbnail || undefined,
-                videoDuration: dbProp.video_duration ? Number(dbProp.video_duration) : undefined,
-                videoStatus: dbProp.video_status || (dbProp.video_url ? 'ready' : undefined),
-                description: dbProp.description || '',
-                agentName: dbProp.agent_name || 'Landlord',
-                agentPhone: dbProp.agent_phone || '+251 91 000 0000',
-                agentAvatar: dbProp.agent_avatar || '',
-                postedDate: dbProp.created_at ? new Date(dbProp.created_at).toISOString().split('T')[0] : '2026-08-01',
-                status: 'active'
-              };
-              if (!merged.some((p) => p.id === formatted.id || p.title === formatted.title)) {
-                merged.unshift(formatted);
-              }
-            });
-            return merged;
+  // Full Database Sync Handler (Reconciles Supabase Cloud + LocalStorage)
+  const syncDatabaseFull = useCallback(async () => {
+    try {
+      // 1. Fetch Cloud Properties
+      const { data: propData, error: propError } = await supabase.from('properties').select('*');
+      if (propData && !propError && Array.isArray(propData) && propData.length > 0) {
+        setProperties((prev) => {
+          const merged = [...prev];
+          propData.forEach((dbProp: any) => {
+            const formatted: PropertyListing = {
+              id: dbProp.id || `prop-db-${Date.now()}`,
+              title: dbProp.title,
+              priceEtb: Number(dbProp.price_etb),
+              priceLocalFormatted: `${Number(dbProp.price_etb).toLocaleString()} ETB`,
+              mode: dbProp.mode || 'kiro',
+              category: dbProp.category || 'Family House',
+              city: dbProp.city || 'Jigjiga',
+              kebele: dbProp.kebele || 'Kebele 06',
+              beds: dbProp.beds || 3,
+              baths: dbProp.baths || 2,
+              areaSqm: dbProp.area_sqm || 180,
+              water: dbProp.water || 'Yes',
+              electricity: dbProp.electricity || '24h',
+              pool: dbProp.pool || 'No',
+              images: dbProp.images?.length > 0 ? dbProp.images : ['/jigjiga-house-1.jpg'],
+              videoUrl: dbProp.video_url || undefined,
+              videoThumbnail: dbProp.video_thumbnail || undefined,
+              videoDuration: dbProp.video_duration ? Number(dbProp.video_duration) : undefined,
+              videoStatus: dbProp.video_status || (dbProp.video_url ? 'ready' : undefined),
+              description: dbProp.description || '',
+              agentName: dbProp.agent_name || 'Landlord',
+              agentPhone: dbProp.agent_phone || '+251 91 000 0000',
+              agentAvatar: dbProp.agent_avatar || '',
+              postedDate: dbProp.created_at ? new Date(dbProp.created_at).toISOString().split('T')[0] : '2026-08-01',
+              status: dbProp.status || 'active'
+            };
+            const existingIndex = merged.findIndex((p) => p.id === formatted.id);
+            if (existingIndex >= 0) {
+              merged[existingIndex] = { ...merged[existingIndex], ...formatted };
+            } else {
+              merged.unshift(formatted);
+            }
           });
-        }
-      } catch (err) {
-        console.error('Supabase properties sync error:', err);
+          return merged;
+        });
       }
+
+      // 2. Fetch Cloud Activity Logs
+      const loadedLogs = await fetchAllActivityLogs();
+      if (loadedLogs.length > 0) {
+        setActivityLogs(loadedLogs);
+      }
+    } catch (err) {
+      console.error('Supabase properties sync error:', err);
     }
-    syncSupabaseProperties();
   }, []);
 
+  // Fetch properties & audit logs on startup
+  useEffect(() => {
+    syncDatabaseFull();
+  }, [syncDatabaseFull]);
 
-  // Save registered accounts to LocalStorage
+
+  // Save registered accounts to LocalStorage & Supabase
   useEffect(() => {
     try {
       const json = JSON.stringify(registeredAccounts);
@@ -321,7 +332,7 @@ export function App() {
         avatar_url: userProfile.avatarUrl || '',
         bio: userProfile.bio || 'DHAMME User',
         role: userProfile.isAdmin ? 'admin' : 'user',
-        is_verified: true
+        is_verified: userProfile.isVerified
       }], 'id');
 
       // Fetch user's saved favorites from Supabase
@@ -379,12 +390,54 @@ export function App() {
     setCurrentScreen('details');
   };
 
-  const handleUpdatePropertyStatus = (id: string, newStatus: ListingStatus) => {
+  // Property Update & Status Change Handler with Audit Logging & Supabase sync
+  const handleUpdateProperty = async (updatedProp: PropertyListing) => {
     setProperties((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+      prev.map((p) => (p.id === updatedProp.id ? updatedProp : p))
     );
-    if (selectedProperty && selectedProperty.id === id) {
-      setSelectedProperty((prev) => (prev ? { ...prev, status: newStatus } : null));
+    if (selectedProperty && selectedProperty.id === updatedProp.id) {
+      setSelectedProperty(updatedProp);
+    }
+
+    // Record Audit Log
+    const newLog = await logActivity({
+      action: 'PROPERTY_UPDATED',
+      entityType: 'property',
+      entityId: updatedProp.id,
+      entityTitle: updatedProp.title,
+      actorEmail: userProfile?.email || 'admin@dhamme.app',
+      actorName: userProfile?.fullName || 'Administrator',
+      details: `Updated details/status (${updatedProp.status || 'active'}) for property "${updatedProp.title}" in ${updatedProp.kebele} (${updatedProp.priceLocalFormatted}).`,
+      metadata: { priceEtb: updatedProp.priceEtb, status: updatedProp.status, kebele: updatedProp.kebele }
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
+
+    // Upsert into Supabase
+    try {
+      await supabase.from('properties').upsert([{
+        id: updatedProp.id,
+        title: updatedProp.title,
+        price_etb: updatedProp.priceEtb,
+        mode: updatedProp.mode,
+        category: updatedProp.category,
+        city: updatedProp.city,
+        kebele: updatedProp.kebele,
+        beds: updatedProp.beds,
+        baths: updatedProp.baths,
+        area_sqm: updatedProp.areaSqm,
+        description: updatedProp.description,
+        status: updatedProp.status,
+        updated_at: new Date().toISOString()
+      }], 'id');
+    } catch (err) {
+      console.warn('Supabase property update error:', err);
+    }
+  };
+
+  const handleUpdatePropertyStatus = (id: string, newStatus: ListingStatus) => {
+    const target = properties.find((p) => p.id === id);
+    if (target) {
+      handleUpdateProperty({ ...target, status: newStatus });
     }
   };
 
@@ -405,10 +458,24 @@ export function App() {
 
     setProperties((prev) => [updatedProp, ...prev]);
 
+    // Record Audit Activity
+    const newLog = await logActivity({
+      action: 'PROPERTY_POSTED',
+      entityType: 'property',
+      entityId: updatedProp.id,
+      entityTitle: updatedProp.title,
+      actorEmail: userProfile?.email || 'user@dhamme.app',
+      actorName: userProfile?.fullName || 'Owner',
+      details: `New property "${updatedProp.title}" posted in Jigjiga (${updatedProp.kebele}) for ${updatedProp.priceLocalFormatted}.`,
+      metadata: { priceEtb: updatedProp.priceEtb, category: updatedProp.category, mode: updatedProp.mode }
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
+
     // Save asynchronously to Supabase cloud DB
     try {
       await supabase.from('properties').insert([
         {
+          id: updatedProp.id,
           title: updatedProp.title,
           price_etb: updatedProp.priceEtb,
           mode: updatedProp.mode,
@@ -425,7 +492,9 @@ export function App() {
           video_status: updatedProp.videoStatus,
           agent_name: updatedProp.agentName,
           agent_phone: updatedProp.agentPhone,
-          agent_avatar: updatedProp.agentAvatar
+          agent_avatar: updatedProp.agentAvatar,
+          status: 'active',
+          created_at: new Date().toISOString()
         }
       ]);
     } catch (err) {
@@ -436,12 +505,47 @@ export function App() {
     setCurrentScreen('details');
   };
 
-  const handleDeleteProperty = async (id: string) => {
+  // Delete Property Handler with Deletion Reason, Audit Logging, and LocalStorage Cleanup
+  const handleDeleteProperty = async (id: string, reason = 'Deleted by Admin') => {
+    const deletedProp = properties.find((p) => p.id === id);
+    const title = deletedProp?.title || id;
+
+    // 1. Remove from React State
     setProperties((prev) => prev.filter((p) => p.id !== id));
     if (selectedProperty && selectedProperty.id === id) {
       setSelectedProperty(null);
     }
-    // Delete from Supabase cloud database
+
+    // 2. Clean from all LocalStorage backup keys so it never resurrects
+    BACKUP_STORAGE_KEYS.forEach((key) => {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            const filtered = parsed.filter((p: any) => p.id !== id);
+            localStorage.setItem(key, JSON.stringify(filtered));
+          }
+        }
+      } catch (e) {
+        console.error(`Error cleaning deleted prop from ${key}:`, e);
+      }
+    });
+
+    // 3. Record Audit Log for Admin Review
+    const newLog = await logActivity({
+      action: 'PROPERTY_DELETED',
+      entityType: 'property',
+      entityId: id,
+      entityTitle: title,
+      actorEmail: userProfile?.email || 'admin@dhamme.app',
+      actorName: userProfile?.fullName || 'Administrator',
+      details: `Property "${title}" permanently deleted. Reason: ${reason}`,
+      metadata: { deletionReason: reason, deletedPropertyId: id }
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
+
+    // 4. Delete from Supabase cloud database
     try {
       await supabase.from('properties').delete(`id=eq.${encodeURIComponent(id)}`);
     } catch (err) {
@@ -449,14 +553,15 @@ export function App() {
     }
   };
 
-  const handleBanUser = (userId: string, reason?: string) => {
+  const handleBanUser = async (userId: string, reason = 'Banned by Administrator') => {
+    const targetUser = registeredAccounts.find((u) => u.id === userId);
     setRegisteredAccounts((prev) =>
       prev.map((acc) =>
         acc.id === userId
           ? {
               ...acc,
               isBanned: true,
-              bannedReason: reason || 'Banned by Administrator',
+              bannedReason: reason,
               bannedAt: new Date().toISOString()
             }
           : acc
@@ -465,13 +570,26 @@ export function App() {
     if (userProfile && userProfile.id === userId) {
       setUserProfile((prev) =>
         prev
-          ? { ...prev, isBanned: true, bannedReason: reason || 'Banned by Administrator' }
+          ? { ...prev, isBanned: true, bannedReason: reason }
           : null
       );
     }
+
+    // Log Action
+    const newLog = await logActivity({
+      action: 'USER_BANNED',
+      entityType: 'user',
+      entityId: userId,
+      entityTitle: targetUser?.fullName || userId,
+      actorEmail: userProfile?.email || 'admin@dhamme.app',
+      actorName: userProfile?.fullName || 'Administrator',
+      details: `User ${targetUser?.fullName} (${targetUser?.email}) was banned. Reason: ${reason}`
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
   };
 
-  const handleUnbanUser = (userId: string) => {
+  const handleUnbanUser = async (userId: string) => {
+    const targetUser = registeredAccounts.find((u) => u.id === userId);
     setRegisteredAccounts((prev) =>
       prev.map((acc) =>
         acc.id === userId
@@ -489,6 +607,50 @@ export function App() {
         prev ? { ...prev, isBanned: false, bannedReason: undefined } : null
       );
     }
+
+    // Log Action
+    const newLog = await logActivity({
+      action: 'USER_UNBANNED',
+      entityType: 'user',
+      entityId: userId,
+      entityTitle: targetUser?.fullName || userId,
+      actorEmail: userProfile?.email || 'admin@dhamme.app',
+      actorName: userProfile?.fullName || 'Administrator',
+      details: `User ${targetUser?.fullName} (${targetUser?.email}) was unbanned.`
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
+  };
+
+  const handleToggleUserVerification = async (userId: string) => {
+    const targetUser = registeredAccounts.find((u) => u.id === userId);
+    if (!targetUser) return;
+    const newStatus = !targetUser.isVerified;
+
+    setRegisteredAccounts((prev) =>
+      prev.map((acc) => (acc.id === userId ? { ...acc, isVerified: newStatus } : acc))
+    );
+
+    if (userProfile && userProfile.id === userId) {
+      setUserProfile((prev) => (prev ? { ...prev, isVerified: newStatus } : null));
+    }
+
+    // Update Supabase
+    supabase.from('user_profiles').upsert([{
+      id: targetUser.id,
+      is_verified: newStatus
+    }], 'id');
+
+    // Log Action
+    const newLog = await logActivity({
+      action: 'VERIFICATION_TOGGLED',
+      entityType: 'user',
+      entityId: userId,
+      entityTitle: targetUser.fullName,
+      actorEmail: userProfile?.email || 'admin@dhamme.app',
+      actorName: userProfile?.fullName || 'Administrator',
+      details: `Landlord verification ${newStatus ? 'GRANTED' : 'REVOKED'} for ${targetUser.fullName} (${targetUser.email}).`
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
   };
 
   const handleNavigateScreen = (screen: ScreenName) => {
@@ -528,8 +690,20 @@ export function App() {
   };
 
 
-  const handleRegisterAccount = (newAccount: RegisteredAccount) => {
+  const handleRegisterAccount = async (newAccount: RegisteredAccount) => {
     setRegisteredAccounts((prev) => [...prev, newAccount]);
+
+    // Log User Registration
+    const newLog = await logActivity({
+      action: 'USER_REGISTERED',
+      entityType: 'user',
+      entityId: newAccount.id,
+      entityTitle: newAccount.fullName,
+      actorEmail: newAccount.email,
+      actorName: newAccount.fullName,
+      details: `New user "${newAccount.fullName}" registered with email ${newAccount.email}.`
+    });
+    setActivityLogs((prev) => [newLog, ...prev]);
   };
 
   const handleLoginSuccess = (profile: UserProfile) => {
@@ -583,7 +757,7 @@ export function App() {
   const isAuthScreen = currentScreen === 'login' || currentScreen === 'signup';
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-inter">
+    <div className="min-h-screen bg-[#FAF9F6] text-[#17191C] font-sans">
       
       {/* 1. Splash Screen */}
       {currentScreen === 'splash' && (
@@ -679,10 +853,19 @@ export function App() {
             <AdminDashboard
               properties={properties}
               registeredAccounts={registeredAccounts}
+              activityLogs={activityLogs}
               onSelectProperty={handleSelectProperty}
               onDeleteProperty={handleDeleteProperty}
+              onUpdateProperty={handleUpdateProperty}
               onBanUser={handleBanUser}
               onUnbanUser={handleUnbanUser}
+              onToggleUserVerification={handleToggleUserVerification}
+              onRefreshData={syncDatabaseFull}
+              onExportBackup={() => downloadFullDatabaseBackup({
+                properties,
+                users: registeredAccounts,
+                activityLogs
+              })}
             />
           )}
 
@@ -752,17 +935,17 @@ export function App() {
 
       {/* 10-Minute Session Expiry Notification Modal */}
       {isLoggedOutDueToInactivity && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 text-center relative overflow-hidden">
-            <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-600">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111315]/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-xl border border-[#E8E5DF] text-center relative overflow-hidden">
+            <div className="w-16 h-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded-full flex items-center justify-center mx-auto mb-4 text-[#111315]">
               <span className="material-symbols-outlined text-3xl">timer_off</span>
             </div>
             
-            <h3 className="text-xl font-bold font-poppins text-slate-900 mb-2">
+            <h3 className="text-xl font-bold font-serif text-[#17191C] mb-2">
               Session Auto-Logged Out
             </h3>
             
-            <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+            <p className="text-sm text-[#74777B] mb-6 leading-relaxed">
               You were logged out after 10 minutes of inactivity or leaving the app to keep your Dhamme account and property listings secure.
             </p>
 
@@ -772,13 +955,13 @@ export function App() {
                   clearInactivityNotice();
                   handleNavigateScreen('login');
                 }}
-                className="w-full py-3.5 px-6 bg-rose-600 text-white font-semibold rounded-2xl hover:bg-rose-700 transition-all shadow-md active:scale-95 text-sm"
+                className="w-full py-3.5 px-6 bg-[#111315] hover:bg-[#17191C] text-white font-semibold rounded-xl transition-all shadow-xs active:scale-95 text-sm"
               >
                 Sign Back In
               </button>
               <button
                 onClick={() => clearInactivityNotice()}
-                className="w-full py-3 px-6 bg-slate-100 text-slate-700 font-medium rounded-2xl hover:bg-slate-200 transition-all text-sm"
+                className="w-full py-3 px-6 bg-[#FAF9F6] border border-[#E8E5DF] text-[#74777B] font-medium rounded-xl hover:border-[#111315] transition-all text-sm"
               >
                 Dismiss
               </button>

@@ -1,38 +1,72 @@
 import React, { useState } from 'react';
-import type { PropertyListing, UserProfile } from '../types';
+import type { PropertyListing, UserProfile, AuditActivityLog, ListingStatus, PropertyCategory } from '../types';
 import { PropertyVideoPlayer } from './PropertyVideoPlayer';
+import { JIGJIGA_XAAFADAHA, JIGJIGA_KEBELES } from '../data/jigjigaLocations';
 
 interface AdminDashboardProps {
   properties: PropertyListing[];
   registeredAccounts: UserProfile[];
+  activityLogs?: AuditActivityLog[];
   onSelectProperty: (property: PropertyListing) => void;
-  onDeleteProperty?: (id: string) => void;
+  onDeleteProperty?: (id: string, reason?: string) => void;
+  onUpdateProperty?: (updated: PropertyListing) => void;
   onBanUser?: (userId: string, reason?: string) => void;
   onUnbanUser?: (userId: string) => void;
+  onToggleUserVerification?: (userId: string) => void;
+  onRefreshData?: () => Promise<void>;
+  onExportBackup?: () => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   properties,
   registeredAccounts,
+  activityLogs = [],
   onSelectProperty,
   onDeleteProperty,
+  onUpdateProperty,
   onBanUser,
-  onUnbanUser
+  onUnbanUser,
+  onToggleUserVerification,
+  onRefreshData,
+  onExportBackup
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'properties' | 'videos' | 'kebeles'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'actions' | 'properties' | 'users' | 'videos' | 'kebeles'>('overview');
   const [searchFilter, setSearchFilter] = useState('');
+  const [logFilter, setLogFilter] = useState<string>('all');
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+
+  // Edit Modal State
+  const [editingProperty, setEditingProperty] = useState<PropertyListing | null>(null);
 
   const showNotification = (msg: string) => {
     setActionNotice(msg);
     setTimeout(() => setActionNotice(null), 4000);
   };
 
+  const handleManualSync = async () => {
+    if (onRefreshData) {
+      setIsSyncing(true);
+      try {
+        await onRefreshData();
+        showNotification('✅ Database fully synchronized with Supabase Cloud & Local Storage.');
+      } catch (err) {
+        showNotification('⚠️ Database sync completed with local cache fallback.');
+      } finally {
+        setIsSyncing(false);
+      }
+    }
+  };
+
   const handleConfirmDelete = (prop: PropertyListing) => {
-    const confirm = window.confirm(`Ma hubtaa inaad gabi ahaanba tirtirto gurigan?\n"${prop.title}" (${prop.kebele})`);
-    if (confirm && onDeleteProperty) {
-      onDeleteProperty(prop.id);
-      showNotification(`✅ Guriga "${prop.title}" si guul leh ayaa loo tirtiray.`);
+    const reason = window.prompt(
+      `Ma hubtaa inaad tirtirto gurigan?\n"${prop.title}" (${prop.kebele})\n\nGeli sababta aad u tirtirayso (Reason for Deletion):`,
+      'Guri been abuur ah ama macluumaad khaldan (Wrong/Fake home)'
+    );
+
+    if (reason !== null && onDeleteProperty) {
+      onDeleteProperty(prop.id, reason || 'Admin deleted listing');
+      showNotification(`🗑️ Guriga "${prop.title}" si rasmi ah ayaa loo tirtiray database-ka.`);
     }
   };
 
@@ -41,7 +75,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       alert('Ma xannibi kartid Master Admin-ka!');
       return;
     }
-    const reason = window.prompt(`Geli sababta aad u xannibayso ${user.fullName}:`, 'Ku xad-gudub shuruucda DHAMME (Violation of terms)');
+    const reason = window.prompt(
+      `Geli sababta aad u xannibayso ${user.fullName}:`,
+      'Ku xad-gudub shuruucda DHAMME (Violation of terms / Posting fake homes)'
+    );
     if (reason !== null && onBanUser) {
       onBanUser(user.id, reason);
       showNotification(`🚫 Isticmaalaha ${user.fullName} waa la xannibay.`);
@@ -54,6 +91,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       onUnbanUser(user.id);
       showNotification(`✅ Xannibaaddii waa laga qaaday ${user.fullName}.`);
     }
+  };
+
+  const handleSavePropertyEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProperty || !onUpdateProperty) return;
+
+    onUpdateProperty(editingProperty);
+    showNotification(`✅ Guriga "${editingProperty.title}" xogtiisa waa la cusboonaysiiyay.`);
+    setEditingProperty(null);
   };
 
   // Default Master Admin account if directory empty
@@ -96,6 +142,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     p.agentName.toLowerCase().includes(searchFilter.toLowerCase())
   );
 
+  const filteredLogs = activityLogs.filter((log) => {
+    if (logFilter === 'all') return true;
+    if (logFilter === 'properties') return log.entityType === 'property';
+    if (logFilter === 'users') return log.entityType === 'user';
+    if (logFilter === 'deletions') return log.action === 'PROPERTY_DELETED';
+    if (logFilter === 'inquiries') return log.entityType === 'inquiry';
+    return true;
+  });
+
+  const categories: PropertyCategory[] = ['Family House', 'Single Room', 'Studio', 'Villa', 'Apartment'];
 
   return (
     <main className="max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 space-y-6 animate-fade-in bg-[#FAF9F6]">
@@ -115,34 +171,52 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Admin Executive Header Banner */}
       <div className="bg-[#111315] p-6 sm:p-8 rounded-3xl text-white shadow-sm border border-[#E8E5DF] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative overflow-hidden">
-        <div className="space-y-1 z-10">
-          <div className="flex items-center space-x-2">
+        <div className="space-y-1.5 z-10">
+          <div className="flex items-center space-x-2 flex-wrap gap-1">
             <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[#C8A96B] text-[#111315]">
-              👑 MASTER ADMIN PANEL
+              👑 MASTER ADMIN CONTROL PANEL
             </span>
             <span className="text-xs font-mono text-[#FAF9F6]/80">magudbeai@gmail.com</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight">
-            DHAMME Live User & Real Estate Analytics
+            DHAMME Real Estate Intelligence & Audit Center
           </h1>
-          <p className="text-xs text-[#FAF9F6]/70 font-normal">
-            Dhamaan isticmaalayaasha is diwaan galiyay ({totalUsers} Users) & Guryaha Jigjiga ({videoProperties.length} Video Tours).
+          <p className="text-xs text-[#FAF9F6]/70 font-normal max-w-xl">
+            Maamulka guryaha, hubinta sawirada, xannibaadda fraud-ka, iyo la socodka dhammaan dhaqdhaqaaqyada rasmiga ah.
           </p>
         </div>
 
-        <div className="z-10 bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 text-center shrink-0">
-          <span className="text-[10px] uppercase font-bold text-[#C8A96B] block">System Status</span>
-          <span className="text-xs font-semibold text-white flex items-center space-x-1 justify-center">
-            <span className="w-2 h-2 rounded-full bg-[#4A7A63] animate-ping" />
-            <span>On-Time Live User Sync</span>
-          </span>
+        {/* Action Controls in Header (Sync & Export Backup) */}
+        <div className="z-10 flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={handleManualSync}
+            disabled={isSyncing}
+            className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 flex items-center space-x-1.5 transition active:scale-95 disabled:opacity-50"
+            title="Reconcile and sync with Supabase cloud database"
+          >
+            <span className={`material-symbols-outlined text-[16px] text-[#C8A96B] ${isSyncing ? 'animate-spin' : ''}`}>
+              {isSyncing ? 'sync' : 'cloud_sync'}
+            </span>
+            <span>{isSyncing ? 'Syncing Cloud...' : 'Sync Database'}</span>
+          </button>
+
+          {onExportBackup && (
+            <button
+              onClick={onExportBackup}
+              className="px-4 py-2.5 rounded-xl bg-[#C8A96B] hover:brightness-105 text-[#111315] text-xs font-bold shadow-xs flex items-center space-x-1.5 transition active:scale-95"
+              title="Download full JSON database backup file"
+            >
+              <span className="material-symbols-outlined text-[16px]">download</span>
+              <span>Export Backup (JSON)</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Master KPI Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         
-        {/* User Growth */}
+        {/* User Directory */}
         <div className="bg-white p-5 rounded-3xl listing-card-shadow border border-[#E8E5DF] flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#111315]">
             <span className="text-[11px] font-semibold uppercase text-[#74777B]">Users Directory</span>
@@ -184,15 +258,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Total App Views */}
+        {/* Recent Actions & Audit Log Count */}
         <div className="bg-white p-5 rounded-3xl listing-card-shadow border border-[#E8E5DF] flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#111315]">
-            <span className="text-[11px] font-semibold uppercase text-[#74777B]">App Engagement</span>
-            <span className="material-symbols-outlined text-[24px]">visibility</span>
+            <span className="text-[11px] font-semibold uppercase text-[#74777B]">Recent Activity Logs</span>
+            <span className="material-symbols-outlined text-[24px]">history</span>
           </div>
           <div className="mt-3">
-            <span className="font-serif font-bold text-3xl text-[#17191C]">{totalViews.toLocaleString()}</span>
-            <span className="text-[10px] text-[#74777B] block font-normal">Total Property Page Views</span>
+            <span className="font-serif font-bold text-3xl text-[#17191C]">{activityLogs.length}</span>
+            <span className="text-[10px] text-[#4A7A63] block font-medium">
+              {totalViews.toLocaleString()} Views • {totalInquiries} Inquiries Tracked
+            </span>
           </div>
         </div>
 
@@ -201,9 +277,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Navigation Tabs */}
       <div className="flex gap-2 border-b border-[#E8E5DF] pb-2 overflow-x-auto hide-scrollbar">
         {[
-          { id: 'overview', label: '📊 Intelligence Overview' },
-          { id: 'users', label: `👥 User Directory (${totalUsers})` },
+          { id: 'overview', label: '📊 Overview' },
+          { id: 'actions', label: `📜 Recent Actions (${activityLogs.length})` },
           { id: 'properties', label: `🏠 Posted Homes (${totalProperties})` },
+          { id: 'users', label: `👥 User Directory (${totalUsers})` },
           { id: 'videos', label: `🎥 Video Moderation (${videoProperties.length})` },
           { id: 'kebeles', label: '📍 Kebele Analytics' }
         ].map((tab) => (
@@ -222,50 +299,76 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
 
 
-      {/* TAB 1: OVERVIEW & LIVE SIGNUPS FEED */}
+      {/* TAB 1: OVERVIEW & SYSTEM INTELLIGENCE */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* Live User Signups Feed */}
+          {/* Quick Actions Card */}
           <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-4">
             <div className="flex justify-between items-center pb-3 border-b border-[#E8E5DF]">
               <div className="flex items-center space-x-2 text-[#111315]">
-                <span className="material-symbols-outlined text-[22px]">person_add</span>
+                <span className="material-symbols-outlined text-[22px]">admin_panel_settings</span>
                 <h3 className="font-serif font-bold text-base text-[#17191C]">
-                  Users-ka Is Diwaan Galisay (Live Signups Feed)
+                  Awoodaha Maamulka (Admin Quick Capabilities)
                 </h3>
               </div>
               <span className="text-[10px] font-semibold text-[#111315] bg-[#FAF9F6] px-2 py-0.5 rounded-md border border-[#E8E5DF]">
-                {totalInquiries} Leads Active
+                Full Access
               </span>
             </div>
 
-            <div className="space-y-3 text-xs max-h-80 overflow-y-auto pr-1">
-              {allUsers.map((u) => (
-                <div key={u.id} className="p-3 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] flex justify-between items-center">
-                  <div className="flex items-center space-x-3">
-                    {u.avatarUrl ? (
-                      <img src={u.avatarUrl} alt={u.fullName} className="w-9 h-9 rounded-full object-cover border border-[#E8E5DF]" />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-[#111315] text-white flex items-center justify-center font-bold text-xs">
-                        {u.fullName.charAt(0)}
-                      </div>
-                    )}
-                    <div>
-                      <span className="font-semibold text-[#17191C] block">{u.fullName} {u.isAdmin && '👑'}</span>
-                      <span className="text-[11px] text-[#74777B] font-mono block">{u.email}</span>
-                      <span className="text-[10px] text-[#74777B] block">📞 {u.phone}</span>
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="text-[10px] font-medium bg-white text-[#17191C] px-2 py-0.5 rounded-md border border-[#E8E5DF]">
-                      Registered
-                    </span>
-                    <span className="text-[10px] text-[#74777B] block mt-1 font-mono">{u.joinedDate || 'Today'}</span>
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div 
+                onClick={() => setActiveTab('properties')}
+                className="p-3.5 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] hover:border-[#111315] cursor-pointer transition space-y-1"
+              >
+                <div className="flex items-center space-x-2 text-[#111315] font-semibold">
+                  <span className="material-symbols-outlined text-[18px]">delete_sweep</span>
+                  <span>Tirtir Guryaha Khaldan</span>
                 </div>
-              ))}
+                <p className="text-[11px] text-[#74777B]">
+                  Si fudud u tirtir guryaha been abuurka ah, spam-ka ama kuwa khaldan.
+                </p>
+              </div>
+
+              <div 
+                onClick={() => setActiveTab('actions')}
+                className="p-3.5 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] hover:border-[#111315] cursor-pointer transition space-y-1"
+              >
+                <div className="flex items-center space-x-2 text-[#111315] font-semibold">
+                  <span className="material-symbols-outlined text-[18px]">history</span>
+                  <span>Eeg Waxyaabihii Ugu Dambeeyay</span>
+                </div>
+                <p className="text-[11px] text-[#74777B]">
+                  La soco tallaabo kasta oo app-ka ka dhacday (Recent Actions Log).
+                </p>
+              </div>
+
+              <div 
+                onClick={() => setActiveTab('users')}
+                className="p-3.5 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] hover:border-[#111315] cursor-pointer transition space-y-1"
+              >
+                <div className="flex items-center space-x-2 text-[#111315] font-semibold">
+                  <span className="material-symbols-outlined text-[18px]">verified_user</span>
+                  <span>Xaqiiji Mulkiilayaasha</span>
+                </div>
+                <p className="text-[11px] text-[#74777B]">
+                  Sii ama ka qaad shahaadada Verified Landlord Profile.
+                </p>
+              </div>
+
+              <div 
+                onClick={handleManualSync}
+                className="p-3.5 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] hover:border-[#111315] cursor-pointer transition space-y-1"
+              >
+                <div className="flex items-center space-x-2 text-[#111315] font-semibold">
+                  <span className="material-symbols-outlined text-[18px]">cloud_done</span>
+                  <span>Hubi Database-ka</span>
+                </div>
+                <p className="text-[11px] text-[#74777B]">
+                  Xogtu ma luminayso: Supabase Cloud & LocalStorage 100% sync.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -304,7 +407,216 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 2: COMPLETE USER DIRECTORY */}
+      {/* TAB 2: RECENT ACTIONS & AUDIT TRAIL */}
+      {activeTab === 'actions' && (
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h3 className="font-serif font-bold text-lg text-[#17191C] flex items-center space-x-2">
+                <span className="material-symbols-outlined text-[#111315]">history</span>
+                <span>Dhaqdhaqaaqyada Rasmiga ah (Recent Actions Audit Trail)</span>
+              </h3>
+              <p className="text-xs text-[#74777B]">
+                Tallaabo kasta oo la qaaday (guri la soo dhigay, la cusboonaysiiyay, la tirtiray, user is diwaan galiyay).
+              </p>
+            </div>
+
+            {/* Filter Chips */}
+            <div className="flex gap-1.5 overflow-x-auto">
+              {[
+                { id: 'all', label: 'All Actions' },
+                { id: 'properties', label: 'Properties' },
+                { id: 'deletions', label: 'Deletions' },
+                { id: 'users', label: 'Users' }
+              ].map((filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setLogFilter(filter.id)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+                    logFilter === filter.id
+                      ? 'bg-[#111315] text-white'
+                      : 'bg-[#FAF9F6] text-[#74777B] border border-[#E8E5DF]'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filteredLogs.length === 0 ? (
+            <div className="text-center py-12 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] p-6 space-y-2">
+              <span className="material-symbols-outlined text-[36px] text-[#74777B]">history_toggle_off</span>
+              <p className="text-xs text-[#74777B]">
+                Weli ma jiro dhaqdhaqaaq cusub oo ku aaday filter-kan.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
+              {filteredLogs.map((log) => {
+                let badgeColor = 'bg-[#FAF9F6] text-[#17191C] border-[#E8E5DF]';
+                let icon = 'info';
+
+                if (log.action === 'PROPERTY_POSTED') {
+                  badgeColor = 'bg-[#4A7A63]/10 text-[#4A7A63] border-[#4A7A63]/30';
+                  icon = 'add_home';
+                } else if (log.action === 'PROPERTY_DELETED') {
+                  badgeColor = 'bg-[#A8453F]/10 text-[#A8453F] border-[#A8453F]/30';
+                  icon = 'delete';
+                } else if (log.action === 'PROPERTY_UPDATED' || log.action === 'STATUS_CHANGED') {
+                  badgeColor = 'bg-[#C8A96B]/15 text-[#C8A96B] border-[#C8A96B]/40';
+                  icon = 'edit';
+                } else if (log.action === 'USER_REGISTERED') {
+                  badgeColor = 'bg-[#111315] text-white border-[#111315]';
+                  icon = 'person_add';
+                } else if (log.action === 'USER_BANNED') {
+                  badgeColor = 'bg-[#A8453F] text-white border-[#A8453F]';
+                  icon = 'block';
+                }
+
+                return (
+                  <div
+                    key={log.id}
+                    className="p-4 bg-[#FAF9F6] rounded-2xl border border-[#E8E5DF] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs"
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 rounded-xl bg-white border border-[#E8E5DF] flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="material-symbols-outlined text-[18px] text-[#111315]">{icon}</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="flex items-center space-x-2 flex-wrap gap-1">
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase ${badgeColor}`}>
+                            {log.action.replace('_', ' ')}
+                          </span>
+                          {log.entityTitle && (
+                            <span className="font-semibold text-[#17191C]">{log.entityTitle}</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[#74777B] leading-relaxed">
+                          {log.details}
+                        </p>
+                        <span className="text-[10px] text-[#74777B] block font-mono">
+                          Actor: {log.actorName} ({log.actorEmail})
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-left sm:text-right shrink-0">
+                      <span className="text-[10px] font-mono text-[#74777B] block">
+                        {new Date(log.timestamp).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 3: POSTED HOMES INVENTORY & WRONG HOMES DELETION */}
+      {activeTab === 'properties' && (
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h3 className="font-serif font-bold text-lg text-[#17191C]">
+                Maamulka Guryaha Jigjiga ({properties.length} Listings)
+              </h3>
+              <p className="text-xs text-[#74777B]">
+                Halkan waxaad ka tirtiri kartaa guryaha khaldan, wax ka bedeli kartaa macluumaadka, ama ku calaamadin kartaa Featured.
+              </p>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Raadi Guri (Title, Kebele, Owner)..."
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              className="p-2.5 bg-[#FAF9F6] rounded-xl text-xs w-full sm:w-64 border border-[#E8E5DF] text-[#17191C]"
+            />
+          </div>
+
+          {filteredProperties.length === 0 ? (
+            <div className="text-center py-12 text-xs text-[#74777B]">
+              Weli ma jirtay guryo la soo dhigay oo ku aaday raadintaada.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProperties.map((prop) => (
+                <div
+                  key={prop.id}
+                  className="bg-[#FAF9F6] p-4 rounded-2xl border border-[#E8E5DF] flex flex-col justify-between space-y-3"
+                >
+                  <div className="flex space-x-3 cursor-pointer" onClick={() => onSelectProperty(prop)}>
+                    <img src={prop.images[0]} alt={prop.title} className="w-24 h-20 rounded-xl object-cover shrink-0" />
+                    <div className="flex-1 flex flex-col justify-between text-xs">
+                      <div>
+                        <h4 className="font-semibold text-[#17191C] line-clamp-1">{prop.title}</h4>
+                        <span className="text-[#74777B] text-[11px] block">{prop.city}, {prop.kebele}</span>
+                        <span className="text-[10px] text-[#74777B] block">👤 {prop.agentName} ({prop.agentPhone})</span>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-1">
+                        <span className="font-serif font-bold text-[#17191C] text-xs">{prop.priceLocalFormatted}</span>
+                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-medium ${
+                          prop.status === 'sold' ? 'bg-[#A8453F] text-white' : prop.status === 'rented' ? 'bg-[#C8A96B] text-[#111315]' : 'bg-[#4A7A63] text-white'
+                        }`}>
+                          {prop.status ? prop.status.toUpperCase() : 'ACTIVE'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Admin Quick Status & Actions Toolbar */}
+                  <div className="pt-2 border-t border-[#E8E5DF] flex flex-wrap items-center justify-between gap-1.5">
+                    
+                    {/* Status Dropdown */}
+                    <select
+                      value={prop.status || 'active'}
+                      onChange={(e) => {
+                        if (onUpdateProperty) {
+                          onUpdateProperty({ ...prop, status: e.target.value as ListingStatus });
+                          showNotification(`Status updated to ${e.target.value.toUpperCase()} for "${prop.title}"`);
+                        }
+                      }}
+                      className="p-1.5 bg-white rounded-lg text-[11px] font-medium text-[#17191C] border border-[#E8E5DF]"
+                    >
+                      <option value="active">Active</option>
+                      <option value="sold">Sold</option>
+                      <option value="rented">Rented</option>
+                    </select>
+
+                    <div className="flex items-center gap-1">
+                      {/* Edit Button */}
+                      <button
+                        onClick={() => setEditingProperty(prop)}
+                        className="px-2.5 py-1.5 bg-white border border-[#E8E5DF] text-[#17191C] text-[11px] font-semibold rounded-lg hover:border-[#111315] transition flex items-center space-x-1"
+                        title="Edit listing details"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">edit</span>
+                        <span>Beddel</span>
+                      </button>
+
+                      {/* Delete Button (For wrong/fake homes) */}
+                      <button
+                        onClick={() => handleConfirmDelete(prop)}
+                        className="px-2.5 py-1.5 bg-[#A8453F] text-white text-[11px] font-semibold rounded-lg flex items-center space-x-1 hover:brightness-110 transition"
+                        title="Permanently delete wrong/fake listing"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">delete</span>
+                        <span>Tirtir (Delete)</span>
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 4: COMPLETE USER DIRECTORY */}
       {activeTab === 'users' && (
         <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -377,17 +689,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         )}
                       </td>
                       <td className="p-3">
-                        {isUserVerified ? (
-                          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#4A7A63] text-white">
-                            <span className="material-symbols-outlined text-[13px]">verified</span>
-                            <span>Verified</span>
+                        <button
+                          onClick={() => {
+                            if (onToggleUserVerification) {
+                              onToggleUserVerification(user.id);
+                              showNotification(`Verification toggled for ${user.fullName}`);
+                            }
+                          }}
+                          className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium transition ${
+                            isUserVerified
+                              ? 'bg-[#4A7A63] text-white'
+                              : 'bg-[#FAF9F6] text-[#74777B] border border-[#E8E5DF] hover:border-[#111315]'
+                          }`}
+                          title="Click to toggle verified status"
+                        >
+                          <span className="material-symbols-outlined text-[13px]">
+                            {isUserVerified ? 'verified' : 'pending'}
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#FAF9F6] text-[#74777B] border border-[#E8E5DF]">
-                            <span className="material-symbols-outlined text-[13px]">pending</span>
-                            <span>Pending</span>
-                          </span>
-                        )}
+                          <span>{isUserVerified ? 'Verified' : 'Pending'}</span>
+                        </button>
                       </td>
                       <td className="p-3 text-right">
                         {isMasterAdmin ? (
@@ -421,77 +741,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 3: POSTED HOMES INVENTORY */}
-      {activeTab === 'properties' && (
-        <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h3 className="font-serif font-bold text-lg text-[#17191C]">
-              Dhamaan Guryaha La Soo Dhigay Jigjiga ({properties.length})
-            </h3>
-
-            <input
-              type="text"
-              placeholder="Raadi Guri (Title, Kebele, Owner)..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              className="p-2.5 bg-[#FAF9F6] rounded-xl text-xs w-full sm:w-64 border border-[#E8E5DF] text-[#17191C]"
-            />
-          </div>
-
-          {filteredProperties.length === 0 ? (
-            <div className="text-center py-12 text-xs text-[#74777B]">
-              Weli ma jirtay guryo la soo dhigay oo ku aaday raadintaada.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProperties.map((prop) => (
-                <div
-                  key={prop.id}
-                  onClick={() => onSelectProperty(prop)}
-                  className="bg-[#FAF9F6] p-3.5 rounded-2xl border border-[#E8E5DF] flex space-x-3 cursor-pointer hover:border-[#111315] transition"
-                >
-                  <img src={prop.images[0]} alt={prop.title} className="w-24 h-20 rounded-xl object-cover shrink-0" />
-                  <div className="flex-1 flex flex-col justify-between text-xs">
-                    <div>
-                      <h4 className="font-semibold text-[#17191C] line-clamp-1">{prop.title}</h4>
-                      <span className="text-[#74777B] text-[11px] block">{prop.city}, {prop.kebele}</span>
-                    </div>
-
-                    <div className="flex justify-between items-center pt-1">
-                      <span className="font-serif font-bold text-[#17191C] text-xs">{prop.priceLocalFormatted}</span>
-                      <span className={`px-2 py-0.5 rounded-md text-[9px] font-medium ${
-                        prop.status === 'sold' ? 'bg-[#A8453F] text-white' : prop.status === 'rented' ? 'bg-[#C8A96B] text-[#111315]' : 'bg-[#4A7A63] text-white'
-                      }`}>
-                        {prop.status ? prop.status.toUpperCase() : 'ACTIVE'}
-                      </span>
-                    </div>
-
-                    {/* Admin Delete and View Action Row */}
-                    <div className="flex gap-2 pt-2 border-t border-[#E8E5DF]">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); onSelectProperty(prop); }}
-                        className="flex-1 py-1.5 px-2 bg-[#111315] text-white text-[11px] font-semibold rounded-xl text-center"
-                      >
-                        Fiiri (View)
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleConfirmDelete(prop); }}
-                        className="py-1.5 px-3 bg-[#A8453F] text-white text-[11px] font-semibold rounded-xl flex items-center space-x-1"
-                        title="Delete listing permanently"
-                      >
-                        <span className="material-symbols-outlined text-[14px]">delete</span>
-                        <span>Tirtir</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* TAB 4: VIDEO MODERATION (TOURS) */}
+      {/* TAB 5: VIDEO MODERATION (TOURS) */}
       {activeTab === 'videos' && (
         <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-5">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -564,7 +814,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <button
                         onClick={() => handleConfirmDelete(prop)}
                         className="px-3 py-1.5 bg-[#A8453F] text-white text-[11px] font-semibold rounded-xl flex items-center space-x-1"
-                        title="Delete video post"
+                        title="Delete wrong video post"
                       >
                         <span className="material-symbols-outlined text-[14px]">delete</span>
                         <span>Tirtir</span>
@@ -578,7 +828,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 5: KEBELE ANALYTICS */}
+      {/* TAB 6: KEBELE ANALYTICS */}
       {activeTab === 'kebeles' && (
         <div className="bg-white p-6 rounded-3xl listing-card-shadow border border-[#E8E5DF] space-y-4">
           <h3 className="font-serif font-bold text-lg text-[#17191C] flex items-center space-x-2">
@@ -610,6 +860,141 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* DIRECT EDIT PROPERTY MODAL */}
+      {editingProperty && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111315]/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
+          <div className="bg-white max-w-lg w-full p-6 rounded-3xl shadow-xl space-y-4 border border-[#E8E5DF] my-auto">
+            <div className="flex justify-between items-center pb-2 border-b border-[#E8E5DF]">
+              <h3 className="font-serif font-bold text-lg text-[#17191C] flex items-center space-x-2">
+                <span className="material-symbols-outlined text-[#111315]">edit_note</span>
+                <span>Wax Ka Bedel Guriga (Edit Property)</span>
+              </h3>
+              <button onClick={() => setEditingProperty(null)} className="text-[#74777B] hover:text-[#17191C]">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePropertyEdit} className="space-y-3.5 text-xs text-left">
+              <div>
+                <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                  Magaca Guriga (Title):
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editingProperty.title}
+                  onChange={(e) => setEditingProperty({ ...editingProperty, title: e.target.value })}
+                  className="w-full p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] text-sm text-[#17191C] focus:border-[#111315] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                    Qiimaha ETB (Price):
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={editingProperty.priceEtb}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setEditingProperty({
+                        ...editingProperty,
+                        priceEtb: val,
+                        priceLocalFormatted: editingProperty.mode === 'kiro' ? `${val.toLocaleString()} ETB/mo` : `${val.toLocaleString()} ETB`
+                      });
+                    }}
+                    className="w-full p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] text-sm font-bold text-[#17191C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                    Nooca (Mode):
+                  </label>
+                  <select
+                    value={editingProperty.mode}
+                    onChange={(e) => setEditingProperty({ ...editingProperty, mode: e.target.value as any })}
+                    className="w-full p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] text-xs font-semibold text-[#17191C]"
+                  >
+                    <option value="kiro">Kiro (Rent)</option>
+                    <option value="iib">Iib (Sale)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                    Qaybta (Category):
+                  </label>
+                  <select
+                    value={editingProperty.category}
+                    onChange={(e) => setEditingProperty({ ...editingProperty, category: e.target.value as any })}
+                    className="w-full p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] text-xs font-semibold text-[#17191C]"
+                  >
+                    {categories.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                    Kebele / Xaafad:
+                  </label>
+                  <select
+                    value={editingProperty.kebele}
+                    onChange={(e) => setEditingProperty({ ...editingProperty, kebele: e.target.value })}
+                    className="w-full p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] text-xs font-semibold text-[#17191C]"
+                  >
+                    <optgroup label="🏘️ Xaafadaha">
+                      {JIGJIGA_XAAFADAHA.map((x) => (
+                        <option key={x} value={x}>{x}</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="📍 Kebele-yada">
+                      {JIGJIGA_KEBELES.map((k) => (
+                        <option key={k} value={k}>{k}</option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                  Faahfaahinta (Description):
+                </label>
+                <textarea
+                  rows={3}
+                  value={editingProperty.description}
+                  onChange={(e) => setEditingProperty({ ...editingProperty, description: e.target.value })}
+                  className="w-full p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] text-xs text-[#17191C]"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingProperty(null)}
+                  className="flex-1 py-3 rounded-xl bg-white border border-[#E8E5DF] text-[#74777B] font-semibold text-xs"
+                >
+                  Jooji (Cancel)
+                </button>
+                <button
+                  type="submit"
+                  className="flex-2 py-3 px-6 rounded-xl bg-[#111315] text-white font-semibold text-xs shadow-xs hover:bg-[#17191C] transition"
+                >
+                  Kaydi Isbedelka (Save Updates)
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
