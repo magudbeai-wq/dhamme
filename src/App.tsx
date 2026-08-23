@@ -654,6 +654,10 @@ export function App() {
   };
 
   const handleNavigateScreen = (screen: ScreenName) => {
+    if (screen === 'login' || screen === 'signup') {
+      clearInactivityNotice();
+    }
+
     if ((screen.startsWith('post_step') || screen === 'my_listings') && !userProfile) {
       setCurrentScreen('login');
       try { window.history.pushState({}, '', '/login'); } catch (e) {}
@@ -691,6 +695,7 @@ export function App() {
 
 
   const handleRegisterAccount = async (newAccount: RegisteredAccount) => {
+    clearInactivityNotice();
     setRegisteredAccounts((prev) => [...prev, newAccount]);
 
     // Log User Registration
@@ -707,6 +712,7 @@ export function App() {
   };
 
   const handleLoginSuccess = (profile: UserProfile) => {
+    clearInactivityNotice();
     if (profile.isBanned) {
       alert(`Akoonkaaga waa la xannibay: ${profile.bannedReason || 'La xiriir Maamulka.'}`);
       return;
@@ -720,6 +726,7 @@ export function App() {
   };
 
   const handleLogout = () => {
+    clearInactivityNotice();
     if (isClerkSignedIn) {
       clerkSignOut();
     }
@@ -933,8 +940,8 @@ export function App() {
         <DhammeRealEstateAIModal onClose={() => setShowAIModal(false)} />
       )}
 
-      {/* 10-Minute Session Expiry Notification Modal */}
-      {isLoggedOutDueToInactivity && (
+      {/* Session Expiry Notification Modal (Never shown over login/signup) */}
+      {isLoggedOutDueToInactivity && !isAuthScreen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111315]/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-xl border border-[#E8E5DF] text-center relative overflow-hidden">
             <div className="w-16 h-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded-full flex items-center justify-center mx-auto mb-4 text-[#111315]">
