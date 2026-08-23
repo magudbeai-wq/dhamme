@@ -127,7 +127,7 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
-      className={`relative w-full rounded-3xl overflow-hidden bg-black shadow-2xl border border-[#bec9c5]/50 group select-none ${className}`}
+      className={`relative w-full rounded-3xl overflow-hidden bg-slate-950 shadow-2xl border border-slate-800 group select-none ${className}`}
     >
       {/* Video Element */}
       <video
@@ -138,18 +138,18 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
         muted={isMuted}
         autoPlay={autoPlay}
         onClick={togglePlay}
-        className="w-full h-full max-h-[500px] object-contain cursor-pointer bg-black"
+        className="w-full h-full max-h-[500px] object-contain cursor-pointer bg-slate-950"
       />
 
       {/* Top Banner overlay */}
       <div className={`absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none flex items-center justify-between z-20 ${showControls || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
         <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
           <span className="text-xs font-poppins font-black text-white uppercase tracking-wider drop-shadow-md">
             🎥 Video Tour • {title}
           </span>
         </div>
-        <span className="text-[10px] font-bold text-[#a2f2de] bg-black/50 px-2.5 py-1 rounded-full border border-white/20">
+        <span className="text-[10px] font-bold text-amber-400 bg-slate-900/80 px-2.5 py-1 rounded-full border border-amber-400/40">
           Jigjiga Live Tour
         </span>
       </div>
@@ -161,13 +161,13 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
           className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px] cursor-pointer z-10"
         >
           {isLoading ? (
-            <div className="w-16 h-16 rounded-full bg-black/60 border border-white/30 flex items-center justify-center text-white">
+            <div className="w-16 h-16 rounded-full bg-slate-900/80 border border-white/30 flex items-center justify-center text-white">
               <span className="material-symbols-outlined text-[32px] animate-spin">progress_activity</span>
             </div>
           ) : (
             <button
               type="button"
-              className="w-16 h-16 rounded-full bg-[#005145]/90 hover:bg-[#005145] text-white flex items-center justify-center shadow-2xl border-2 border-[#d4af37] transform hover:scale-110 active:scale-95 transition-all"
+              className="w-16 h-16 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-2xl border-2 border-amber-300 transform hover:scale-110 active:scale-95 transition-all"
               title="Play Video"
             >
               <span className="material-symbols-outlined text-[36px] ml-1">play_arrow</span>
@@ -178,10 +178,10 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
 
       {/* Error Fallback Card */}
       {hasError && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 text-white p-6 text-center z-30 space-y-3">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 text-white p-6 text-center z-30 space-y-3">
           <span className="material-symbols-outlined text-[48px] text-amber-400">videocam_off</span>
           <h4 className="font-poppins font-bold text-sm">Muuqaalka Lama Soo Bandhigi Karo</h4>
-          <p className="text-xs text-gray-300 max-w-xs">
+          <p className="text-xs text-slate-300 max-w-xs">
             Fadlan hubi internet-kaaga ama dib u celi bogga si aad u daawato muuqaalka guriga.
           </p>
           <button
@@ -193,7 +193,7 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
                 videoRef.current.play().catch(() => {});
               }
             }}
-            className="px-4 py-2 rounded-xl bg-[#005145] text-white font-bold text-xs hover:bg-[#0f6b5c] transition"
+            className="px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 transition"
           >
             Isku Day Mar Kale (Retry)
           </button>
@@ -215,7 +215,7 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
             step={0.1}
             value={currentTime}
             onChange={handleSeek}
-            className="w-full h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-[#d4af37] focus:outline-none"
+            className="w-full h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-rose-600 focus:outline-none"
           />
         </div>
 
@@ -242,13 +242,13 @@ export const PropertyVideoPlayer: React.FC<PropertyVideoPlayerProps> = ({
               <span className="material-symbols-outlined text-[22px]">
                 {isMuted ? 'volume_off' : 'volume_up'}
               </span>
-              <span className="text-[10px] hidden sm:inline text-gray-300">
+              <span className="text-[10px] hidden sm:inline text-slate-300">
                 {isMuted ? 'Muted' : 'Sound On'}
               </span>
             </button>
 
             {/* Time Stamp */}
-            <span className="font-mono text-[11px] text-gray-300 font-semibold">
+            <span className="font-mono text-[11px] text-slate-300 font-semibold">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>

@@ -33,19 +33,19 @@ export const MyListings: React.FC<MyListingsProps> = ({
     <main className="max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 space-y-6 animate-fade-in">
       
       {/* Dashboard Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white p-5 sm:p-6 rounded-3xl listing-card-shadow border border-slate-200 gap-4">
         <div>
-          <span className="text-[10px] font-extrabold text-[#005145] uppercase tracking-wider block">
+          <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider block">
             Landlord Analytics & Management
           </span>
-          <h1 className="font-poppins text-2xl font-black text-[#1b1b1c]">
+          <h1 className="font-poppins text-2xl font-black text-slate-900">
             Guryahayga & Dashboard-ka
           </h1>
         </div>
 
         <button
           onClick={onStartNewListing}
-          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white font-poppins font-bold text-xs shadow-md flex items-center justify-center space-x-2 hover:brightness-110 active:scale-95 transition-all self-start sm:self-auto"
+          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-poppins font-bold text-xs shadow-md flex items-center justify-center space-x-2 hover:shadow-rose-600/30 active:scale-95 transition-all self-start sm:self-auto"
         >
           <span className="material-symbols-outlined text-[20px]">add</span>
           <span>Soo Dhig Guri Cusub</span>
@@ -56,49 +56,49 @@ export const MyListings: React.FC<MyListingsProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         
         {/* Total Listings Card */}
-        <div className="bg-[#fcf9f8] p-4 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#005145]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#3f4946]">Guryaha</span>
+        <div className="bg-white p-4 rounded-3xl listing-card-shadow border border-slate-200 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-rose-600">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Guryaha</span>
             <span className="material-symbols-outlined text-[22px]">domain</span>
           </div>
           <div className="mt-3">
-            <span className="font-poppins font-black text-2xl text-[#1b1b1c]">{totalListings}</span>
-            <span className="text-[10px] text-[#6f7976] block font-semibold">Total Listings</span>
+            <span className="font-poppins font-black text-2xl text-slate-900">{totalListings}</span>
+            <span className="text-[10px] text-slate-500 block font-semibold">Total Listings</span>
           </div>
         </div>
 
         {/* Total Views Analytics Card */}
-        <div className="bg-[#fcf9f8] p-4 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#0f6b5c]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#3f4946]">Aragtida</span>
+        <div className="bg-white p-4 rounded-3xl listing-card-shadow border border-slate-200 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-rose-600">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Aragtida</span>
             <span className="material-symbols-outlined text-[22px]">visibility</span>
           </div>
           <div className="mt-3">
-            <span className="font-poppins font-black text-2xl text-[#005145]">{totalViews.toLocaleString()}</span>
-            <span className="text-[10px] text-[#6f7976] block font-semibold">Total Property Views</span>
+            <span className="font-poppins font-black text-2xl text-rose-600">{totalViews.toLocaleString()}</span>
+            <span className="text-[10px] text-slate-500 block font-semibold">Total Property Views</span>
           </div>
         </div>
 
         {/* Total Calls Inquiries Card */}
-        <div className="bg-[#fcf9f8] p-4 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#7b2f10]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#3f4946]">Waqtiga Wacitaanka</span>
+        <div className="bg-white p-4 rounded-3xl listing-card-shadow border border-slate-200 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-amber-600">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Waqtiga Wacitaanka</span>
             <span className="material-symbols-outlined text-[22px]">call</span>
           </div>
           <div className="mt-3">
-            <span className="font-poppins font-black text-2xl text-[#7b2f10]">{totalInquiries}</span>
-            <span className="text-[10px] text-[#6f7976] block font-semibold">Direct Client Inquiries</span>
+            <span className="font-poppins font-black text-2xl text-amber-600">{totalInquiries}</span>
+            <span className="text-[10px] text-slate-500 block font-semibold">Direct Client Inquiries</span>
           </div>
         </div>
 
         {/* Sold / Rented Status Summary */}
-        <div className="bg-[#fcf9f8] p-4 rounded-3xl listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-amber-700">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#3f4946]">Xaaladaha</span>
+        <div className="bg-white p-4 rounded-3xl listing-card-shadow border border-slate-200 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-amber-600">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Xaaladaha</span>
             <span className="material-symbols-outlined text-[22px]">sell</span>
           </div>
           <div className="mt-2 text-xs space-y-0.5">
-            <div className="flex justify-between text-[11px] font-bold text-emerald-700">
+            <div className="flex justify-between text-[11px] font-bold text-rose-600">
               <span>Active:</span>
               <span>{activeCount}</span>
             </div>
@@ -128,8 +128,8 @@ export const MyListings: React.FC<MyListingsProps> = ({
             onClick={() => setStatusFilter(tab.id as any)}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
               statusFilter === tab.id
-                ? 'bg-[#005145] text-white shadow-sm'
-                : 'bg-[#fcf9f8] text-[#3f4946] border border-[#bec9c5]/60 hover:bg-[#f0eded]'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
             }`}
           >
             {tab.label}
@@ -139,19 +139,19 @@ export const MyListings: React.FC<MyListingsProps> = ({
 
       {/* Landlord Property Listings Cards */}
       {filteredListings.length === 0 ? (
-        <div className="text-center py-16 bg-[#fcf9f8] rounded-3xl border border-[#bec9c5]/40 p-8 space-y-4 shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-[#f0eded] text-[#005145] flex items-center justify-center mx-auto">
+        <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-4 shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
             <span className="material-symbols-outlined text-[36px]">domain</span>
           </div>
-          <h3 className="font-poppins font-bold text-lg text-[#1b1b1c]">
+          <h3 className="font-poppins font-bold text-lg text-slate-900">
             Weli Ma Jirto Guryo Kusoo Aaday Qeybtaan
           </h3>
-          <p className="text-xs text-[#3f4946] max-w-xs mx-auto">
+          <p className="text-xs text-slate-600 max-w-xs mx-auto">
             Soo dhig guri cusub ama beddel tab-ka si aad u aragto guryahaaga.
           </p>
           <button
             onClick={onStartNewListing}
-            className="px-6 py-3.5 rounded-2xl bg-[#005145] hover:bg-[#0f6b5c] text-white font-poppins font-bold text-xs uppercase shadow-md transition-all active:scale-95"
+            className="px-6 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-poppins font-bold text-xs uppercase shadow-md transition-all active:scale-95"
           >
             Soo Dhig Guri Cusub
           </button>
@@ -166,12 +166,12 @@ export const MyListings: React.FC<MyListingsProps> = ({
             return (
               <article
                 key={property.id}
-                className="bg-[#fcf9f8] rounded-3xl overflow-hidden listing-card-shadow border border-[#bec9c5]/40 flex flex-col justify-between"
+                className="bg-white rounded-3xl overflow-hidden listing-card-shadow border border-slate-200 flex flex-col justify-between"
               >
                 {/* Property Card Top Image */}
                 <div 
                   onClick={() => onSelectProperty(property)}
-                  className="relative aspect-[16/10] w-full bg-[#e5e2e1] overflow-hidden cursor-pointer group"
+                  className="relative aspect-[16/10] w-full bg-slate-100 overflow-hidden cursor-pointer group"
                 >
                   <img
                     src={property.images[0]}
@@ -195,7 +195,7 @@ export const MyListings: React.FC<MyListingsProps> = ({
                     )}
 
                     {currentStatus === 'active' && (
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-md">
+                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-md">
                         ACTIVE
                       </span>
                     )}
@@ -210,7 +210,7 @@ export const MyListings: React.FC<MyListingsProps> = ({
 
                   {/* Price Tag */}
                   <div className="absolute bottom-3 left-3">
-                    <span className="font-poppins text-base font-black text-white bg-black/60 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
+                    <span className="font-poppins text-base font-black text-white bg-rose-600/90 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
                       {property.priceLocalFormatted}
                     </span>
                   </div>
@@ -221,31 +221,31 @@ export const MyListings: React.FC<MyListingsProps> = ({
                   <div>
                     <h3 
                       onClick={() => onSelectProperty(property)}
-                      className="font-poppins text-base font-bold text-[#1b1b1c] hover:text-[#005145] cursor-pointer line-clamp-2"
+                      className="font-poppins text-base font-bold text-slate-900 hover:text-rose-600 cursor-pointer line-clamp-2"
                     >
                       {property.title}
                     </h3>
-                    <span className="text-xs text-[#005145] font-semibold block mt-1">
+                    <span className="text-xs text-rose-600 font-semibold block mt-1">
                       {property.city}, {property.kebele}
                     </span>
                   </div>
 
                   {/* Per-Listing Analytics Stats Bar */}
-                  <div className="p-2.5 bg-[#f0eded] rounded-2xl grid grid-cols-2 gap-2 text-center text-xs border border-[#bec9c5]/30">
-                    <div className="flex items-center justify-center space-x-1.5 text-[#005145]" title="Views Count">
+                  <div className="p-2.5 bg-slate-50 rounded-2xl grid grid-cols-2 gap-2 text-center text-xs border border-slate-200">
+                    <div className="flex items-center justify-center space-x-1.5 text-rose-600" title="Views Count">
                       <span className="material-symbols-outlined text-[18px]">visibility</span>
                       <span className="font-bold">{views} Aragtida (Views)</span>
                     </div>
 
-                    <div className="flex items-center justify-center space-x-1.5 text-[#7b2f10]" title="Calls/Inquiries">
+                    <div className="flex items-center justify-center space-x-1.5 text-amber-600" title="Calls/Inquiries">
                       <span className="material-symbols-outlined text-[18px]">call</span>
                       <span className="font-bold">{calls} Wacitaan</span>
                     </div>
                   </div>
 
                   {/* Landlord Status Action Controls */}
-                  <div className="pt-2 border-t border-[#bec9c5]/30 space-y-2">
-                    <label className="block text-[10px] font-bold text-[#3f4946] uppercase">
+                  <div className="pt-2 border-t border-slate-100 space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-600 uppercase">
                       Beddel Xaalada Guriga (Change Property Status):
                     </label>
 
@@ -254,8 +254,8 @@ export const MyListings: React.FC<MyListingsProps> = ({
                         onClick={() => onUpdateStatus(property.id, 'active')}
                         className={`py-2 rounded-xl font-bold text-[10px] transition-all ${
                           currentStatus === 'active'
-                            ? 'bg-emerald-700 text-white shadow-xs'
-                            : 'bg-[#e5e2e1] text-[#3f4946] hover:bg-[#d8d5d4]'
+                            ? 'bg-rose-600 text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
                         🟢 Active
@@ -266,7 +266,7 @@ export const MyListings: React.FC<MyListingsProps> = ({
                         className={`py-2 rounded-xl font-bold text-[10px] transition-all ${
                           currentStatus === 'sold'
                             ? 'bg-red-600 text-white shadow-xs'
-                            : 'bg-[#e5e2e1] text-[#3f4946] hover:bg-[#d8d5d4]'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
                         🔴 Waala Iibsaday
@@ -277,7 +277,7 @@ export const MyListings: React.FC<MyListingsProps> = ({
                         className={`py-2 rounded-xl font-bold text-[10px] transition-all ${
                           currentStatus === 'rented'
                             ? 'bg-amber-600 text-white shadow-xs'
-                            : 'bg-[#e5e2e1] text-[#3f4946] hover:bg-[#d8d5d4]'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
                         🟡 Waala Kireeyay

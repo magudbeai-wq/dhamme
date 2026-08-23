@@ -19,7 +19,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#fcf9f8]/95 backdrop-blur-xl border-t border-[#bec9c5]/50 nav-shadow pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/80 nav-shadow pb-safe">
       <div className="flex items-center justify-around h-16 max-w-screen-md mx-auto px-3">
         {navItems.map((item) => {
           const isActive = currentScreen === item.id || (item.isPost && currentScreen.startsWith('post_step'));
@@ -32,10 +32,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
                 className="flex flex-col items-center justify-center -mt-5 group"
                 title="Post New Listing"
               >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#00382f] via-[#005145] to-[#0f6b5c] text-white flex items-center justify-center shadow-xl shadow-[#005145]/40 border-2 border-[#a2f2de]/40 group-active:scale-95 transition-all">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-rose-600 via-rose-600 to-rose-800 text-white flex items-center justify-center shadow-lg shadow-rose-600/40 border-2 border-amber-300 group-active:scale-95 transition-all">
                   <span className="material-symbols-outlined text-[32px]">add</span>
                 </div>
-                <span className="text-[10px] font-bold text-[#005145] mt-0.5 tracking-tight">{item.label}</span>
+                <span className="text-[10px] font-extrabold text-rose-600 mt-0.5 tracking-tight">{item.label}</span>
               </button>
             );
           }
@@ -45,15 +45,15 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
               key={item.id}
               onClick={() => onNavigate(item.id)}
               className={`flex flex-col items-center justify-center w-16 py-1 transition-all active:scale-95 ${
-                isActive ? 'text-[#005145] font-bold scale-105' : 'text-[#6f7976] hover:text-[#1b1b1c]'
+                isActive ? 'text-rose-600 font-bold scale-105' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
-              <div className={`p-1 rounded-xl transition-colors ${isActive ? 'bg-[#005145]/10' : ''}`}>
-                <span className={`material-symbols-outlined text-[24px] block ${isActive ? 'fill-1 text-[#005145]' : ''}`}>
+              <div className={`p-1 rounded-xl transition-colors ${isActive ? 'bg-rose-50 text-rose-600' : ''}`}>
+                <span className={`material-symbols-outlined text-[24px] block ${isActive ? 'fill-1 text-rose-600' : ''}`}>
                   {item.icon}
                 </span>
               </div>
-              <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
+              <span className="text-[10px] tracking-tight mt-0.5 font-semibold">{item.label}</span>
             </button>
           );
         })}

@@ -27,11 +27,11 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
 
   const currentSize = sizeMap[variant];
 
-  // Theme colors
-  const titleColor = lightMode ? 'text-white drop-shadow-md' : 'text-[#005145]';
+  // Theme colors - Crisp White & Vibrant Crimson Red
+  const titleColor = lightMode ? 'text-white drop-shadow-md' : 'text-slate-900';
   const subtitleBg = lightMode 
-    ? 'bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#00382f] border-white/40 shadow-sm font-black' 
-    : 'bg-[#005145] text-white border-[#005145] shadow-xs font-bold';
+    ? 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 text-slate-950 border-white/40 shadow-sm font-black' 
+    : 'bg-rose-600 text-white border-rose-700 shadow-xs font-bold';
 
   return (
     <div 
@@ -43,12 +43,12 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
         
         {/* Expanding Ring Halo Pulse behind emblem */}
         {animated && (
-          <div className="absolute -inset-2 rounded-2xl bg-gradient-to-tr from-[#d4af37]/40 to-[#00e6a5]/30 animate-ring-expand blur-md pointer-events-none" />
+          <div className="absolute -inset-2 rounded-2xl bg-gradient-to-tr from-rose-500/40 via-amber-400/30 to-rose-600/30 animate-ring-expand blur-md pointer-events-none" />
         )}
         
         {/* SVG Container */}
-        <div className={`relative w-full h-full rounded-2xl bg-gradient-to-br from-[#00382f] via-[#005145] to-[#0f6b5c] p-1.5 shadow-xl border-2 border-[#d4af37]/60 flex items-center justify-center overflow-hidden transition-all duration-300 ${
-          animated ? 'group-hover:scale-105 group-hover:border-[#d4af37]' : ''
+        <div className={`relative w-full h-full rounded-2xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 p-1.5 shadow-xl border-2 border-amber-400/80 flex items-center justify-center overflow-hidden transition-all duration-300 ${
+          animated ? 'group-hover:scale-105 group-hover:border-amber-300' : ''
         }`}>
           
           <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent pointer-events-none" />
@@ -57,7 +57,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
             {/* Outer Arch */}
             <path 
               d="M15 55 L50 18 L85 55" 
-              stroke="#D4AF37" 
+              stroke="#FBBF24" 
               strokeWidth="7" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
@@ -66,7 +66,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
             {/* Inner Wall & "D" Curve */}
             <path 
               d="M26 52 V78 C26 81.5 28.5 84 32 84 H52 C65 84 74 76 74 65 C74 54 65 46 52 46 H26" 
-              stroke="#A2F2DE" 
+              stroke="#FFFFFF" 
               strokeWidth="6" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
@@ -76,7 +76,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
             <g className={animated ? "animate-star-twinkle" : ""}>
               <path 
                 d="M50 24 L51.8 29.5 L57.5 29.5 L52.9 32.8 L54.7 38.3 L50 34.9 L45.3 38.3 L47.1 32.8 L42.5 29.5 L48.2 29.5 Z" 
-                fill="#D4AF37" 
+                fill="#FBBF24" 
                 stroke="#FFFFFF"
                 strokeWidth="0.8"
               />
@@ -85,8 +85,8 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
             {/* Doorway Arch */}
             <path 
               d="M41 84 V68 C41 65.2 43.2 63 46 63 H54 C56.8 63 59 65.2 59 68 V84" 
-              fill="#002b24" 
-              stroke="#D4AF37" 
+              fill="#4C0519" 
+              stroke="#FBBF24" 
               strokeWidth="3.5" 
             />
           </svg>
@@ -99,7 +99,7 @@ export const DhammeLogo: React.FC<DhammeLogoProps> = ({
           <h1 className={`font-poppins font-black ${currentSize.title} ${titleColor} tracking-tight leading-none ${
             animated && lightMode ? 'animate-gold-shimmer' : ''
           }`}>
-            DHAMME
+            DHAMME<span className="text-rose-600">.</span>
           </h1>
         </div>
 

@@ -170,35 +170,35 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
     <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-6">
       
       {/* AWARD WINNER DESIGNER LUXURY HERO BACKDROP BANNER */}
-      <section className="relative w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-[#d4af37]/60 group transition-all duration-500 hover:border-[#d4af37] hover:shadow-[#005145]/20">
+      <section className="relative w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-rose-500/30 group transition-all duration-500 hover:border-rose-500 hover:shadow-rose-500/20">
         
         {/* Aspect Ratio Container */}
-        <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-[#002b24]">
+        <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-slate-950">
           
-          {/* Image 1: Primary Default Background (Jigjiga Aerial Avenue View) */}
+          {/* Image 1: Primary Default Background */}
           <img
             src="/jigjiga-aerial.jpg"
             alt="Jigjiga City Aerial Boulevard"
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
           />
 
-          {/* Image 2: Hover Transition Background (Jigjiga Statue Landmark) */}
+          {/* Image 2: Hover Transition Background */}
           <img
             src="/jigjiga-landmark.jpg"
             alt="Jigjiga Horse Statue Landmark"
             className="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
           />
 
-          {/* Multi-layer Emerald Glass Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#002b24] via-[#00382f]/70 to-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#002b24]/90 via-transparent to-[#002b24]/60" />
+          {/* Multi-layer Crimson & Dark Slate Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-rose-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-transparent to-rose-950/60" />
 
           {/* Luxury Floating Content Container */}
           <div className="absolute inset-0 p-5 sm:p-8 flex flex-col justify-between z-10">
             
-            {/* Top Row: Unhidden High-Visibility Dhamme Logo & Location Tag */}
+            {/* Top Row: Logo & Location Tag */}
             <div className="flex items-center justify-between">
-              <div className="bg-[#00382f]/85 backdrop-blur-xl border border-[#d4af37]/60 p-2.5 sm:p-3 rounded-2xl shadow-2xl flex items-center space-x-2 group-hover:border-[#d4af37] transition-all">
+              <div className="bg-slate-900/85 backdrop-blur-xl border border-rose-500/50 p-2.5 sm:p-3 rounded-2xl shadow-2xl flex items-center space-x-2 group-hover:border-rose-500 transition-all">
                 <DhammeLogo 
                   variant="sm" 
                   animated={true} 
@@ -207,26 +207,26 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                 />
               </div>
 
-              <span className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-black/60 text-[#d4af37] border border-[#d4af37]/40 backdrop-blur-md shadow-lg flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-slate-950/70 text-amber-400 border border-amber-400/40 backdrop-blur-md shadow-lg flex items-center space-x-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                 <span>📍 JIGJIGA CITY MARKETPLACE</span>
               </span>
             </div>
 
             {/* Middle/Bottom Main Typography Slogan */}
             <div className="space-y-2 sm:space-y-3 max-w-2xl text-left">
-              <span className="inline-block px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-widest bg-[#d4af37] text-[#002b24] shadow-md">
+              <span className="inline-block px-3 py-1 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-widest bg-amber-400 text-slate-950 shadow-md">
                 SOMALI REGION REAL ESTATE PLATFORM
               </span>
 
               {/* Slogan */}
               <h1 className="font-poppins font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight drop-shadow-xl group-hover:translate-x-1 transition-transform duration-300">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffffff] via-[#f0cf65] to-[#d4af37] animate-gold-shimmer">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-400 animate-gold-shimmer">
                   DHamme ayaa kuu dhamaystiraya
                 </span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-gray-200 font-medium max-w-lg leading-relaxed drop-shadow-md">
+              <p className="text-xs sm:text-sm text-slate-200 font-medium max-w-lg leading-relaxed drop-shadow-md">
                 Kirayso ama Iibso guryaha ugu casrisan ee Jigjiga. Si professional ah oo degdeg ah!
               </p>
             </div>
@@ -235,13 +235,13 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={handleRequestLiveGps}
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#002b24] font-poppins font-black text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center space-x-1.5"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 text-white font-poppins font-black text-xs shadow-xl hover:shadow-rose-600/50 active:scale-95 transition-all flex items-center space-x-1.5 border border-rose-400/30"
               >
                 <span className="material-symbols-outlined text-[18px]">my_location</span>
                 <span>{userGps ? '📍 Live GPS Active' : '📍 Hel GPS Location Near Me'}</span>
               </button>
 
-              <div className="text-[11px] text-white/90 font-bold bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl border border-white/20">
+              <div className="text-[11px] text-white/90 font-bold bg-slate-900/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/20">
                 ⭐ Rated #1 Real Estate App in Jigjiga
               </div>
             </div>
@@ -251,13 +251,13 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       </section>
 
       {/* Daily In-App Notification Banner */}
-      <div className="bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-between border border-[#a2f2de]/30">
+      <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-rose-800 text-white p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-between border border-rose-400/40">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-[#a2f2de] text-[22px] animate-bounce">notifications_active</span>
+            <span className="material-symbols-outlined text-amber-300 text-[22px] animate-bounce">notifications_active</span>
           </div>
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#a2f2de] block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
               Fariin Maalmoolee (Daily Alert)
             </span>
             <p className="text-xs font-bold leading-tight">
@@ -278,13 +278,13 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       <section className="space-y-4">
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <div className="bg-[#e5e2e1] p-1.5 rounded-2xl flex w-full max-w-xs relative shadow-inner border border-[#bec9c5]/40">
+          <div className="bg-slate-200/80 p-1.5 rounded-2xl flex w-full max-w-xs relative shadow-inner border border-slate-300/60">
             <button
               onClick={() => handleModeChange('kiro')}
               className={`flex-1 py-2.5 px-4 rounded-xl font-poppins font-bold text-xs transition-all duration-300 z-10 flex items-center justify-center space-x-1.5 ${
                 activeFilter.mode === 'kiro'
-                  ? 'bg-[#005145] text-white shadow-md'
-                  : 'text-[#3f4946] hover:text-[#1b1b1c]'
+                  ? 'bg-rose-600 text-white shadow-md'
+                  : 'text-slate-700 hover:text-slate-900'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">key</span>
@@ -295,8 +295,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               onClick={() => handleModeChange('iib')}
               className={`flex-1 py-2.5 px-4 rounded-xl font-poppins font-bold text-xs transition-all duration-300 z-10 flex items-center justify-center space-x-1.5 ${
                 activeFilter.mode === 'iib'
-                  ? 'bg-[#005145] text-white shadow-md'
-                  : 'text-[#3f4946] hover:text-[#1b1b1c]'
+                  ? 'bg-rose-600 text-white shadow-md'
+                  : 'text-slate-700 hover:text-slate-900'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">sell</span>
@@ -309,8 +309,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
             disabled={gpsLoading}
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm border active:scale-95 ${
               userGps 
-                ? 'bg-emerald-700 text-white border-emerald-600 ring-2 ring-emerald-500/30' 
-                : 'bg-[#fcf9f8] text-[#005145] border-[#005145]/30 hover:bg-[#f0eded]'
+                ? 'bg-rose-700 text-white border-rose-600 ring-2 ring-rose-500/30' 
+                : 'bg-white text-rose-600 border-rose-200 hover:bg-rose-50'
             }`}
             title="Hel Location-kaaga GPS Near Me"
           >
@@ -329,20 +329,20 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
         {/* GPS Live Coordinates Status Bar */}
         {userGps && (
-          <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-2xl text-xs text-emerald-900 flex items-center justify-between shadow-xs max-w-xl mx-auto">
+          <div className="bg-rose-50 border border-rose-200 p-2.5 rounded-2xl text-xs text-rose-950 flex items-center justify-between shadow-xs max-w-xl mx-auto">
             <div className="flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-rose-600 animate-ping" />
               <span className="font-bold">Live Device GPS:</span>
               <span className="font-mono">{userGps.lat.toFixed(4)}° N, {userGps.lng.toFixed(4)}° E</span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase bg-emerald-200 px-2 py-0.5 rounded-md text-emerald-800">
+            <span className="text-[10px] font-extrabold uppercase bg-rose-200 px-2 py-0.5 rounded-md text-rose-900">
               Closest Sorted
             </span>
           </div>
         )}
 
         {gpsError && !userGps && (
-          <div className="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-xl text-center border border-amber-200 max-w-xl mx-auto">
+          <div className="text-[11px] text-amber-900 bg-amber-50 p-2 rounded-xl text-center border border-amber-200 max-w-xl mx-auto">
             {gpsError}
           </div>
         )}
@@ -350,21 +350,21 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         {/* Search Bar */}
         <div className="relative group max-w-2xl mx-auto">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-[#005145]">search</span>
+            <span className="material-symbols-outlined text-rose-600">search</span>
           </div>
           <input
             type="text"
             placeholder="Raadi Kebele (Kebele 06 Garab'ase, Kebele 03 Taiwan, Kebele 08)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-24 py-3.5 bg-[#fcf9f8] rounded-2xl border border-[#bec9c5]/60 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#005145] focus:border-transparent transition-all font-inter text-sm placeholder:text-[#6f7976]"
+            className="w-full pl-12 pr-24 py-3.5 bg-white rounded-2xl border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-600 focus:border-transparent transition-all font-inter text-sm placeholder:text-slate-400"
           />
           
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1">
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="p-1.5 text-[#6f7976] hover:text-[#1b1b1c] rounded-lg"
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -373,8 +373,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               onClick={onOpenFilter}
               className={`p-2.5 rounded-xl active:scale-95 transition-all shadow-sm flex items-center justify-center ${
                 activeFilter.kebele || activeFilter.hasVideo || activeFilter.waterRequired || activeFilter.powerRequired || (activeFilter.beds && activeFilter.beds !== 'any')
-                  ? 'bg-amber-600 text-white ring-2 ring-amber-400'
-                  : 'bg-[#005145] hover:bg-[#0f6b5c] text-white'
+                  ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-300 font-bold'
+                  : 'bg-rose-600 hover:bg-rose-700 text-white'
               }`}
               title="Filters"
             >
@@ -386,9 +386,9 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         {/* Active Applied Filters Bar */}
         {(activeFilter.kebele || activeFilter.hasVideo || activeFilter.waterRequired || activeFilter.powerRequired || (activeFilter.beds && activeFilter.beds !== 'any') || (activeFilter.maxPriceEtb && activeFilter.maxPriceEtb < 500000)) && (
           <div className="flex flex-wrap items-center justify-center gap-2 pt-1 max-w-2xl mx-auto animate-fade-in">
-            <span className="text-[11px] font-bold text-[#3f4946]">Filters Active:</span>
+            <span className="text-[11px] font-bold text-slate-600">Filters Active:</span>
             {activeFilter.kebele && (
-              <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold border border-emerald-300 flex items-center gap-1">
+              <span className="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-bold border border-rose-200 flex items-center gap-1">
                 📍 {activeFilter.kebele}
               </span>
             )}
@@ -398,7 +398,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               </span>
             )}
             {activeFilter.beds && activeFilter.beds !== 'any' && (
-              <span className="px-2.5 py-1 bg-[#005145]/10 text-[#005145] rounded-full text-[10px] font-bold border border-[#005145]/20">
+              <span className="px-2.5 py-1 bg-rose-50 text-rose-700 rounded-full text-[10px] font-bold border border-rose-200">
                 🛏️ {activeFilter.beds} Beds
               </span>
             )}
@@ -426,7 +426,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                   powerRequired: false,
                   hasVideo: false
                 })}
-                className="text-[10px] font-bold text-red-600 hover:underline ml-1"
+                className="text-[10px] font-bold text-rose-600 hover:underline ml-1"
               >
                 Reset All Filters
               </button>
@@ -442,10 +442,10 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               <button
                 key={cat}
                 onClick={() => handleCategoryChange(cat)}
-                className={`flex-none px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all duration-200 ${
+                className={`flex-none px-4 py-2 rounded-full text-xs font-semibold shadow-xs transition-all duration-200 ${
                   isSelected
-                    ? 'bg-[#005145] text-white font-bold ring-2 ring-[#005145]/30'
-                    : 'bg-[#fcf9f8] text-[#3f4946] border border-[#bec9c5]/60 hover:bg-[#f6f3f2]'
+                    ? 'bg-rose-600 text-white font-bold ring-2 ring-rose-500/30'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 {cat}
@@ -455,20 +455,20 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         </div>
 
         {/* Results Header Count & List / Map View Toggle */}
-        <div className="flex items-center justify-between text-xs text-[#3f4946] px-1 pt-1">
+        <div className="flex items-center justify-between text-xs text-slate-600 px-1 pt-1">
           <span className="font-semibold flex items-center space-x-1">
-            <span className="w-2 h-2 rounded-full bg-[#005145]" />
+            <span className="w-2 h-2 rounded-full bg-rose-600" />
             <span>{filteredProperties.length} {filteredProperties.length === 1 ? 'Guri Loo Helay' : 'Guryo Loo Helay'} Jigjiga ({activeFilter.mode === 'kiro' ? 'Kiro' : 'Iib'})</span>
           </span>
 
           {/* List vs Map View Toggle Pills */}
-          <div className="flex items-center bg-[#e5e2e1] p-1 rounded-xl border border-[#bec9c5]/40 shadow-xs">
+          <div className="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300/50 shadow-xs">
             <button
               onClick={() => setViewFormat('list')}
               className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                 viewFormat === 'list'
-                  ? 'bg-[#005145] text-white shadow-xs'
-                  : 'text-[#3f4946] hover:text-[#1b1b1c]'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'text-slate-700 hover:text-slate-900'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">view_list</span>
@@ -478,8 +478,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               onClick={() => setViewFormat('map')}
               className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                 viewFormat === 'map'
-                  ? 'bg-[#005145] text-white shadow-xs'
-                  : 'text-[#3f4946] hover:text-[#1b1b1c]'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'text-slate-700 hover:text-slate-900'
               }`}
             >
               <span className="material-symbols-outlined text-[16px]">map</span>
@@ -504,20 +504,20 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         /* Property Cards Grid */
         <section className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {filteredProperties.length === 0 ? (
-          <div className="col-span-full text-center py-16 bg-[#fcf9f8] rounded-3xl border border-[#bec9c5]/40 p-8 space-y-4 shadow-sm">
-            <div className="w-16 h-16 rounded-full bg-[#005145]/10 text-[#005145] flex items-center justify-center mx-auto">
+          <div className="col-span-full text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-4 shadow-sm">
+            <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
               <span className="material-symbols-outlined text-[36px]">add_home</span>
             </div>
-            <h3 className="font-poppins font-bold text-lg text-[#1b1b1c]">
+            <h3 className="font-poppins font-bold text-lg text-slate-900">
               Weli Ma Jirtay Guryo La Soo Dhigay Jigjiga
             </h3>
-            <p className="text-xs text-[#3f4946] max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
               Noqo qofka ugu horeeya ee gurigiisa ama dabaq kiro/iib ah Jigjiga ugu soo dhiga DHAMME Real Estate!
             </p>
             {onStartPostListing && (
               <button
                 onClick={onStartPostListing}
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white font-poppins font-bold text-xs shadow-md hover:brightness-110 active:scale-95 transition-all inline-flex items-center space-x-2"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-poppins font-bold text-xs shadow-md hover:shadow-rose-600/30 active:scale-95 transition-all inline-flex items-center space-x-2"
               >
                 <span className="material-symbols-outlined text-[18px]">add</span>
                 <span>📍 Soo Dhig Gurigii Ugu Horeeyay (Post First Home)</span>
@@ -536,12 +536,12 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               <article
                 key={property.id}
                 onClick={() => onSelectProperty(property)}
-                className={`bg-[#fcf9f8] rounded-3xl overflow-hidden listing-card-shadow transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer border flex flex-col group relative ${
-                  isSold || isRented ? 'border-red-400 bg-red-50/20' : 'border-[#bec9c5]/40'
+                className={`bg-white rounded-3xl overflow-hidden listing-card-shadow transition-all duration-300 hover:-translate-y-1 cursor-pointer border flex flex-col group relative ${
+                  isSold || isRented ? 'border-red-400 bg-red-50/20' : 'border-slate-200'
                 }`}
               >
                 {/* Property Image Container */}
-                <div className="relative aspect-[4/3] w-full bg-[#e5e2e1] overflow-hidden">
+                <div className="relative aspect-[4/3] w-full bg-slate-100 overflow-hidden">
                   <img
                     src={property.images[0]}
                     alt={property.title}
@@ -580,8 +580,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
 
                   {/* Badges */}
                   <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-md backdrop-blur-md ${
-                      property.mode === 'kiro' ? 'bg-[#005145] text-white' : 'bg-[#d4af37] text-[#00382f]'
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md backdrop-blur-md ${
+                      property.mode === 'kiro' ? 'bg-rose-600 text-white' : 'bg-amber-400 text-slate-950'
                     }`}>
                       {property.mode === 'kiro' ? 'Kiro (Rent)' : 'Iib (Sale)'}
                     </span>
@@ -595,7 +595,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                     )}
 
                     {property.isFeatured && (
-                      <span className="px-3 py-1 bg-[#7b2f10] text-white rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1">
+                      <span className="px-3 py-1 bg-slate-900 text-amber-400 border border-amber-400/50 rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-md backdrop-blur-md flex items-center space-x-1">
                         <span className="material-symbols-outlined text-[12px]">star</span>
                         <span>Featured</span>
                       </span>
@@ -612,14 +612,14 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                     className="absolute top-3 right-3 bg-black/40 backdrop-blur-md text-white p-2.5 rounded-full hover:bg-black/70 active:scale-90 transition-all z-10"
                     title={isFav ? 'Remove Favorite' : 'Add Favorite'}
                   >
-                    <span className={`material-symbols-outlined text-[20px] ${isFav ? 'fill-1 text-red-500' : 'text-white'}`}>
+                    <span className={`material-symbols-outlined text-[20px] ${isFav ? 'fill-1 text-rose-500' : 'text-white'}`}>
                       favorite
                     </span>
                   </button>
 
                   {/* Views Count & Floating Price Tag on Image */}
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-10">
-                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-black/60 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
+                    <span className="font-poppins text-lg font-black text-white drop-shadow-md bg-rose-600/90 px-3 py-1 rounded-xl backdrop-blur-md border border-white/20">
                       {property.priceLocalFormatted}
                     </span>
 
@@ -634,45 +634,45 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                 {/* Listing Details Content */}
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    <h3 className="font-poppins text-base font-bold text-[#1b1b1c] leading-snug group-hover:text-[#005145] transition-colors line-clamp-2">
+                    <h3 className="font-poppins text-base font-bold text-slate-900 leading-snug group-hover:text-rose-600 transition-colors line-clamp-2">
                       {property.title}
                     </h3>
 
                     {/* Location Pin & Kebele */}
-                    <div className="flex items-center gap-1 text-[#3f4946] text-xs mt-1.5">
-                      <span className="material-symbols-outlined text-[18px] text-[#005145]">location_on</span>
-                      <span className="font-semibold text-[#1b1b1c]">{property.city}, {property.kebele}</span>
+                    <div className="flex items-center gap-1 text-slate-600 text-xs mt-1.5">
+                      <span className="material-symbols-outlined text-[18px] text-rose-600">location_on</span>
+                      <span className="font-semibold text-slate-900">{property.city}, {property.kebele}</span>
                     </div>
 
                     {/* Live Calculated GPS Distance Badge */}
                     {dist !== undefined ? (
-                      <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-bold mt-1 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300 self-start inline-flex">
-                        <span className="material-symbols-outlined text-[14px] text-emerald-700 animate-pulse">my_location</span>
+                      <div className="flex items-center gap-1 text-[11px] text-rose-800 font-bold mt-1 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 self-start inline-flex">
+                        <span className="material-symbols-outlined text-[14px] text-rose-600 animate-pulse">my_location</span>
                         <span>{dist} km from your device</span>
                       </div>
                     ) : property.nearDistance ? (
-                      <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 self-start inline-flex">
-                        <span className="material-symbols-outlined text-[14px] text-emerald-600">near_me</span>
+                      <div className="flex items-center gap-1 text-[11px] text-slate-700 font-medium mt-1 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 self-start inline-flex">
+                        <span className="material-symbols-outlined text-[14px] text-rose-600">near_me</span>
                         <span>{property.nearDistance}</span>
                       </div>
                     ) : null}
                   </div>
 
                   {/* Specs Row */}
-                  <div className="pt-3 border-t border-[#bec9c5]/30 grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-1.5 rounded-xl bg-[#f0eded] flex flex-col items-center">
-                      <span className="material-symbols-outlined text-[18px] text-[#7b2f10]">bed</span>
-                      <span className="font-bold text-[11px] text-[#1b1b1c] mt-0.5">{property.beds} Qol</span>
+                  <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="p-1.5 rounded-xl bg-slate-50 flex flex-col items-center border border-slate-100">
+                      <span className="material-symbols-outlined text-[18px] text-rose-600">bed</span>
+                      <span className="font-bold text-[11px] text-slate-900 mt-0.5">{property.beds} Qol</span>
                     </div>
 
-                    <div className="p-1.5 rounded-xl bg-[#f0eded] flex flex-col items-center">
-                      <span className="material-symbols-outlined text-[18px] text-[#005145]">water_drop</span>
-                      <span className="font-bold text-[10px] text-[#1b1b1c] truncate max-w-full mt-0.5">{property.water}</span>
+                    <div className="p-1.5 rounded-xl bg-slate-50 flex flex-col items-center border border-slate-100">
+                      <span className="material-symbols-outlined text-[18px] text-blue-600">water_drop</span>
+                      <span className="font-bold text-[10px] text-slate-900 truncate max-w-full mt-0.5">{property.water}</span>
                     </div>
 
-                    <div className="p-1.5 rounded-xl bg-[#f0eded] flex flex-col items-center">
-                      <span className="material-symbols-outlined text-[18px] text-[#0f6b5c]">bolt</span>
-                      <span className="font-bold text-[10px] text-[#1b1b1c] truncate max-w-full mt-0.5">{property.electricity}</span>
+                    <div className="p-1.5 rounded-xl bg-slate-50 flex flex-col items-center border border-slate-100">
+                      <span className="material-symbols-outlined text-[18px] text-amber-500">bolt</span>
+                      <span className="font-bold text-[10px] text-slate-900 truncate max-w-full mt-0.5">{property.electricity}</span>
                     </div>
                   </div>
 

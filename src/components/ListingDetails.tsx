@@ -32,10 +32,10 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
   const views = property.viewsCount || 45;
 
   return (
-    <div className="min-h-screen bg-[#F2E8DC] pb-28 animate-fade-in">
+    <div className="min-h-screen bg-slate-50 pb-28 animate-fade-in">
       
       {/* Top Image Carousel Header */}
-      <div className="relative aspect-[4/3] sm:aspect-[16/9] w-full max-w-screen-lg mx-auto bg-[#e5e2e1] overflow-hidden sm:rounded-b-3xl shadow-lg">
+      <div className="relative aspect-[4/3] sm:aspect-[16/9] w-full max-w-screen-lg mx-auto bg-slate-900 overflow-hidden sm:rounded-b-3xl shadow-xl">
         <img
           src={property.images[activeImgIndex] || property.images[0]}
           alt={property.title}
@@ -59,7 +59,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
           className="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/70 active:scale-95 transition-all shadow-md z-10"
           title={isFav ? 'Remove Favorite' : 'Add Favorite'}
         >
-          <span className={`material-symbols-outlined text-[24px] ${isFav ? 'fill-1 text-red-500' : ''}`}>
+          <span className={`material-symbols-outlined text-[24px] ${isFav ? 'fill-1 text-rose-500' : 'text-white'}`}>
             favorite
           </span>
         </button>
@@ -97,7 +97,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
                 key={idx}
                 onClick={() => setActiveImgIndex(idx)}
                 className={`h-2.5 rounded-full transition-all duration-300 ${
-                  idx === activeImgIndex ? 'w-7 bg-white' : 'w-2.5 bg-white/50'
+                  idx === activeImgIndex ? 'w-7 bg-rose-500' : 'w-2.5 bg-white/50'
                 }`}
               />
             ))}
@@ -109,17 +109,17 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
       <div className="max-w-screen-md mx-auto px-4 sm:px-6 pt-6 space-y-5">
         
         {/* Title, Badges & Views Count */}
-        <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-3 border border-[#bec9c5]/40">
+        <div className="bg-white p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-3 border border-slate-200">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
             <div>
               <div className="flex flex-wrap gap-2 mb-2">
-                <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                  property.mode === 'kiro' ? 'bg-[#005145] text-white' : 'bg-[#d4af37] text-[#00382f]'
+                <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  property.mode === 'kiro' ? 'bg-rose-600 text-white' : 'bg-amber-400 text-slate-950'
                 }`}>
                   {property.mode === 'kiro' ? 'Kiro (For Rent)' : 'Iib (For Sale)'}
                 </span>
 
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#0f6b5c]/10 text-[#005145] border border-[#005145]/20">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200">
                   {property.category}
                 </span>
 
@@ -132,42 +132,42 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
                 )}
 
                 {/* Views Count Badge */}
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#f0eded] text-[#005145] border border-[#bec9c5]/40 flex items-center space-x-1">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 flex items-center space-x-1">
                   <span className="material-symbols-outlined text-[14px]">visibility</span>
                   <span>{views} Aragtida (Views)</span>
                 </span>
               </div>
 
-              <h1 className="font-poppins text-2xl font-black text-[#1b1b1c] leading-tight">
+              <h1 className="font-poppins text-2xl font-black text-slate-900 leading-tight">
                 {property.title}
               </h1>
             </div>
 
             <div className="text-left sm:text-right shrink-0">
-              <span className="font-poppins text-2xl font-black text-[#005145] block">
+              <span className="font-poppins text-2xl font-black text-rose-600 block">
                 {property.priceLocalFormatted}
               </span>
-              <span className="text-[11px] text-[#6f7976] font-medium">
+              <span className="text-[11px] text-slate-500 font-medium">
                 {property.mode === 'kiro' ? 'Monthly Rent' : 'Total Price (Sale)'}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 text-[#3f4946] text-sm pt-2 border-t border-[#bec9c5]/30">
-            <span className="material-symbols-outlined text-[#005145]">location_on</span>
-            <span className="font-semibold">{property.city}, {property.kebele}</span>
+          <div className="flex items-center gap-1.5 text-slate-600 text-sm pt-2 border-t border-slate-100">
+            <span className="material-symbols-outlined text-rose-600">location_on</span>
+            <span className="font-semibold text-slate-900">{property.city}, {property.kebele}</span>
           </div>
         </div>
 
-        {/* PROPERTY VIDEO TOUR SECTION (MANDATORY FEATURE) */}
+        {/* PROPERTY VIDEO TOUR SECTION */}
         {property.videoUrl && (
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
-              <h3 className="font-poppins font-bold text-base text-[#1b1b1c] flex items-center space-x-2">
-                <span className="material-symbols-outlined text-[#005145]">videocam</span>
+              <h3 className="font-poppins font-bold text-base text-slate-900 flex items-center space-x-2">
+                <span className="material-symbols-outlined text-rose-600">videocam</span>
                 <span>Muuqaalka Tooska ah ee Guriga (Live Video Tour)</span>
               </h3>
-              <span className="text-[11px] font-semibold text-[#005145]">HD Video</span>
+              <span className="text-[11px] font-bold text-rose-600">HD Video</span>
             </div>
 
             <PropertyVideoPlayer
@@ -178,30 +178,29 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
           </div>
         )}
 
-
         {/* GPS Location & Map Card */}
-        <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-3 border border-[#bec9c5]/40">
+        <div className="bg-white p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-3 border border-slate-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <span className="material-symbols-outlined text-[#005145] text-[24px]">my_location</span>
-              <h3 className="font-poppins font-bold text-base text-[#1b1b1c]">
+              <span className="material-symbols-outlined text-rose-600 text-[24px]">my_location</span>
+              <h3 className="font-poppins font-bold text-base text-slate-900">
                 GPS Location & Map (Jigjiga)
               </h3>
             </div>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
               GPS Verified
             </span>
           </div>
 
-          <div className="p-3.5 bg-[#f0eded] rounded-2xl space-y-2 border border-[#bec9c5]/30 text-xs">
+          <div className="p-3.5 bg-slate-50 rounded-2xl space-y-2 border border-slate-200 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-[#6f7976] font-semibold">GPS Coordinates:</span>
-              <span className="font-mono font-bold text-[#005145]">{property.gpsCoords || `${lat}° N, ${lng}° E`}</span>
+              <span className="text-slate-500 font-semibold">GPS Coordinates:</span>
+              <span className="font-mono font-bold text-rose-600">{property.gpsCoords || `${lat}° N, ${lng}° E`}</span>
             </div>
             {property.nearDistance && (
               <div className="flex items-center justify-between">
-                <span className="text-[#6f7976] font-semibold">Proximity / Distance:</span>
-                <span className="font-bold text-[#1b1b1c]">{property.nearDistance}</span>
+                <span className="text-slate-500 font-semibold">Proximity / Distance:</span>
+                <span className="font-bold text-slate-900">{property.nearDistance}</span>
               </div>
             )}
           </div>
@@ -210,58 +209,58 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-poppins font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2"
+            className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-poppins font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2"
           >
-            <span className="material-symbols-outlined text-[20px]">map</span>
+            <span className="material-symbols-outlined text-[20px] text-amber-400">map</span>
             <span>Fur Google Maps (View Location on GPS Map)</span>
           </a>
         </div>
 
         {/* Specs Grid */}
-        <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow grid grid-cols-2 sm:grid-cols-4 gap-3 text-center border border-[#bec9c5]/40">
-          <div className="p-3.5 rounded-2xl bg-[#f0eded] border border-[#bec9c5]/20">
-            <span className="material-symbols-outlined text-[#7b2f10] text-[28px] block mb-1">bed</span>
-            <span className="font-poppins font-bold text-xs text-[#1b1b1c] block">{property.beds} Qol (Beds)</span>
+        <div className="bg-white p-5 sm:p-6 rounded-3xl listing-card-shadow grid grid-cols-2 sm:grid-cols-4 gap-3 text-center border border-slate-200">
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+            <span className="material-symbols-outlined text-rose-600 text-[28px] block mb-1">bed</span>
+            <span className="font-poppins font-bold text-xs text-slate-900 block">{property.beds} Qol (Beds)</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#f0eded] border border-[#bec9c5]/20">
-            <span className="material-symbols-outlined text-[#005145] text-[28px] block mb-1">bathtub</span>
-            <span className="font-poppins font-bold text-xs text-[#1b1b1c] block">{property.baths} Musqul</span>
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+            <span className="material-symbols-outlined text-rose-600 text-[28px] block mb-1">bathtub</span>
+            <span className="font-poppins font-bold text-xs text-slate-900 block">{property.baths} Musqul</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#f0eded] border border-[#bec9c5]/20">
-            <span className="material-symbols-outlined text-[#0f6b5c] text-[28px] block mb-1">water_drop</span>
-            <span className="font-poppins font-bold text-xs text-[#1b1b1c] block">{property.water}</span>
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+            <span className="material-symbols-outlined text-blue-600 text-[28px] block mb-1">water_drop</span>
+            <span className="font-poppins font-bold text-xs text-slate-900 block">{property.water}</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#f0eded] border border-[#bec9c5]/20">
-            <span className="material-symbols-outlined text-amber-600 text-[28px] block mb-1">bolt</span>
-            <span className="font-poppins font-bold text-xs text-[#1b1b1c] block">{property.electricity}</span>
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+            <span className="material-symbols-outlined text-amber-500 text-[28px] block mb-1">bolt</span>
+            <span className="font-poppins font-bold text-xs text-slate-900 block">{property.electricity}</span>
           </div>
         </div>
 
         {/* Description */}
-        <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-2 border border-[#bec9c5]/40">
-          <h3 className="font-poppins font-bold text-base text-[#1b1b1c]">
+        <div className="bg-white p-5 sm:p-6 rounded-3xl listing-card-shadow space-y-2 border border-slate-200">
+          <h3 className="font-poppins font-bold text-base text-slate-900">
             Faahfaahinta Guriga (Property Description)
           </h3>
-          <p className="text-xs text-[#3f4946] leading-relaxed font-medium">
+          <p className="text-xs text-slate-600 leading-relaxed font-medium">
             {property.description}
           </p>
         </div>
 
         {/* Landlord Agent Card */}
-        <div className="bg-[#fcf9f8] p-5 sm:p-6 rounded-3xl listing-card-shadow flex flex-col sm:flex-row items-center justify-between gap-4 border border-[#bec9c5]/40">
+        <div className="bg-white p-5 sm:p-6 rounded-3xl listing-card-shadow flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-200">
           <div className="flex items-center space-x-4 w-full sm:w-auto">
             <img 
               src={property.agentAvatar} 
               alt={property.agentName}
-              className="w-14 h-14 rounded-full object-cover border-2 border-[#005145] shadow-sm shrink-0"
+              className="w-14 h-14 rounded-full object-cover border-2 border-rose-600 shadow-sm shrink-0"
             />
             <div>
-              <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">{property.agentName}</h4>
-              <span className="text-xs text-[#005145] font-semibold flex items-center space-x-1 mt-0.5">
-                <span className="material-symbols-outlined text-[16px] text-[#005145]">verified</span>
+              <h4 className="font-poppins font-bold text-sm text-slate-900">{property.agentName}</h4>
+              <span className="text-xs text-rose-600 font-semibold flex items-center space-x-1 mt-0.5">
+                <span className="material-symbols-outlined text-[16px] text-amber-500">verified</span>
                 <span>Verified Landlord in Jigjiga</span>
               </span>
             </div>
@@ -270,7 +269,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
           <div className="flex flex-col sm:flex-row gap-3.5 w-full sm:w-auto">
             <button
               onClick={() => setShowLeaseModal(true)}
-              className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-[#ebe1d5] text-[#005145] font-poppins font-bold text-xs shadow-sm hover:bg-[#e5d8c8] active:scale-95 transition-all flex items-center justify-center space-x-1.5 border border-[#bec9c5]/60"
+              className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-rose-50 text-rose-700 font-poppins font-bold text-xs shadow-xs hover:bg-rose-100 active:scale-95 transition-all flex items-center justify-center space-x-1.5 border border-rose-200"
             >
               <span className="material-symbols-outlined text-[20px]">description</span>
               <span>Heshiiska Kirada (Lease Contract)</span>
@@ -281,8 +280,8 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
               disabled={isSold || isRented}
               className={`w-full sm:w-auto px-6 py-3.5 rounded-2xl font-poppins font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-2 ${
                 isSold || isRented
-                  ? 'bg-gray-400 text-white cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white active:scale-95'
+                  ? 'bg-slate-400 text-white cursor-not-allowed'
+                  : 'bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 hover:shadow-rose-600/30 text-white active:scale-95'
               }`}
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -297,20 +296,20 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
 
       {/* Agent Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#fcf9f8] max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-4 text-center border border-[#bec9c5]/40">
-            <div className="w-16 h-16 rounded-2xl bg-[#005145] text-white flex items-center justify-center mx-auto shadow-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white max-w-sm w-full p-6 rounded-3xl shadow-2xl space-y-4 text-center border border-slate-200">
+            <div className="w-16 h-16 rounded-2xl bg-rose-600 text-white flex items-center justify-center mx-auto shadow-md">
               <span className="material-symbols-outlined text-[36px]">contact_phone</span>
             </div>
 
-            <h3 className="font-poppins font-bold text-lg text-[#1b1b1c]">
+            <h3 className="font-poppins font-bold text-lg text-slate-900">
               La Xiriir Milkiilaha (Jigjiga)
             </h3>
-            <p className="text-xs text-[#3f4946]">
+            <p className="text-xs text-slate-600">
               Wac ama fariin WhatsApp ugu dir nambarkan:
             </p>
             
-            <div className="p-3.5 bg-[#f0eded] rounded-2xl font-mono font-bold text-base text-[#005145] border border-[#bec9c5]/30">
+            <div className="p-3.5 bg-slate-50 rounded-2xl font-mono font-bold text-base text-rose-600 border border-slate-200">
               {property.agentPhone}
             </div>
 
@@ -327,7 +326,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
                     message: `Initiated direct phone call to ${property.agentPhone}`
                   }]).catch((err) => console.warn('Inquiry log error:', err));
                 }}
-                className="py-3.5 rounded-2xl bg-[#005145] text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-md hover:bg-[#0f6b5c] transition"
+                className="py-3.5 rounded-2xl bg-rose-600 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-md hover:bg-rose-700 transition"
               >
                 <span className="material-symbols-outlined text-[18px]">call</span>
                 <span>Wac Nambarka</span>
@@ -355,7 +354,7 @@ export const ListingDetails: React.FC<ListingDetailsProps> = ({
 
             <button
               onClick={() => setShowContactModal(false)}
-              className="text-xs font-semibold text-[#645d54] hover:underline pt-2 block mx-auto"
+              className="text-xs font-semibold text-slate-500 hover:underline pt-2 block mx-auto"
             >
               Xidh (Close)
             </button>

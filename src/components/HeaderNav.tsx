@@ -73,7 +73,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#F2E8DC]/95 backdrop-blur-xl shadow-md border-b border-[#bec9c5]/40 transition-all duration-300">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-200/80 transition-all duration-300">
       <div className="flex items-center justify-between px-4 sm:px-6 h-16 w-full max-w-screen-xl mx-auto">
         
         {/* Animated Brand Logo */}
@@ -91,7 +91,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowLangMenu(!showLangMenu)}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-full bg-white/90 border border-[#bec9c5]/60 text-xs font-bold text-[#005145] hover:bg-[#ebe1d5] active:scale-95 transition-all shadow-xs"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 transition-all shadow-xs"
               title="Change Language"
             >
               <span>{lang === 'so' ? '🇸🇴 SO' : lang === 'en' ? '🇬🇧 EN' : '🇪🇹 AM'}</span>
@@ -99,11 +99,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             </button>
 
             {showLangMenu && (
-              <div className="absolute right-0 top-10 w-36 bg-white rounded-2xl shadow-xl border border-[#bec9c5]/60 p-1.5 z-50 animate-fade-in space-y-1">
+              <div className="absolute right-0 top-10 w-36 bg-white rounded-2xl shadow-xl border border-slate-200 p-1.5 z-50 animate-fade-in space-y-1">
                 <button
                   onClick={() => handleSelectLang('so')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                    lang === 'so' ? 'bg-[#005145] text-white' : 'text-[#1b1b1c] hover:bg-[#ebe1d5]'
+                    lang === 'so' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <span>🇸🇴 Af-Somali</span>
@@ -112,7 +112,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 <button
                   onClick={() => handleSelectLang('en')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                    lang === 'en' ? 'bg-[#005145] text-white' : 'text-[#1b1b1c] hover:bg-[#ebe1d5]'
+                    lang === 'en' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <span>🇬🇧 English</span>
@@ -121,7 +121,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 <button
                   onClick={() => handleSelectLang('am')}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                    lang === 'am' ? 'bg-[#005145] text-white' : 'text-[#1b1b1c] hover:bg-[#ebe1d5]'
+                    lang === 'am' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <span>🇪🇹 አማርኛ</span>
@@ -135,7 +135,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           {isAdmin && (
             <button
               onClick={() => onNavigate('admin_dashboard')}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#d4af37] via-[#f0cf65] to-[#d4af37] text-[#002b24] text-xs font-black shadow-md hover:brightness-110 active:scale-95 transition-all border border-[#d4af37]"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-slate-950 text-xs font-black shadow-md hover:brightness-105 active:scale-95 transition-all border border-amber-300"
               title="Admin Dashboard"
             >
               <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
@@ -146,24 +146,24 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           {/* AI Helper Trigger */}
           <button
             onClick={onOpenAI}
-            className="flex items-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-gradient-to-r from-[#005145] to-[#0f6b5c] text-white text-xs font-bold shadow-md hover:shadow-lg hover:brightness-110 active:scale-95 transition-all"
+            className="flex items-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 text-white text-xs font-bold shadow-md hover:shadow-rose-500/20 active:scale-95 transition-all"
             title="Dhamme AI Helper"
           >
-            <span className="material-symbols-outlined text-[18px] text-[#a2f2de] animate-pulse">auto_awesome</span>
+            <span className="material-symbols-outlined text-[18px] text-amber-300 animate-pulse">auto_awesome</span>
             <span className="hidden sm:inline">AI Helper</span>
           </button>
 
           {/* Notifications & Web Push button */}
           <button 
             onClick={handleToggleNotifications}
-            className="w-10 h-10 rounded-full bg-[#f0eded] border border-[#bec9c5]/40 flex items-center justify-center hover:bg-[#e5e2e1] active:scale-95 transition-all relative"
+            className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all relative"
             title="Notifications & Web Push"
           >
-            <span className={`material-symbols-outlined text-[20px] ${pushStatus === 'granted' ? 'text-emerald-700' : 'text-[#3f4946]'}`}>
+            <span className={`material-symbols-outlined text-[20px] ${pushStatus === 'granted' ? 'text-rose-600' : 'text-slate-600'}`}>
               {pushStatus === 'granted' ? 'notifications_active' : 'notifications'}
             </span>
-            <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#7b2f10] ring-2 ring-white animate-ping" />
-            <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#7b2f10] ring-2 ring-white" />
+            <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-600 ring-2 ring-white animate-ping" />
+            <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-600 ring-2 ring-white" />
           </button>
 
           {/* Clerk User Button / App Profile Avatar */}
@@ -172,7 +172,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               <UserButton afterSignOutUrl="/" />
               <button
                 onClick={() => onNavigate('profile')}
-                className="hidden sm:flex text-xs font-semibold text-[#005145] hover:underline"
+                className="hidden sm:flex text-xs font-bold text-rose-600 hover:text-rose-700"
               >
                 Profile
               </button>
@@ -182,7 +182,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           <SignedOut>
             <div 
               onClick={() => onNavigate('profile')}
-              className="w-10 h-10 rounded-full border-2 border-[#005145] bg-[#ebe1d5] flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-2 hover:ring-[#005145]/30 relative"
+              className="w-10 h-10 rounded-full border-2 border-rose-600 bg-rose-50 flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-sm hover:ring-4 hover:ring-rose-500/20 relative"
               title="Sign In / Profile"
             >
               {userProfile?.avatarUrl ? (
@@ -192,7 +192,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                   alt={userProfile.fullName} 
                 />
               ) : (
-                <span className="material-symbols-outlined text-[#005145] text-[24px]">
+                <span className="material-symbols-outlined text-rose-600 text-[24px]">
                   person
                 </span>
               )}
@@ -203,20 +203,19 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
 
       </div>
 
-
       {/* Daily Notifications Modal / Dropdown */}
       {showNotifications && (
-        <div className="absolute right-4 top-16 w-80 sm:w-96 bg-[#fcf9f8] rounded-3xl shadow-2xl border border-[#bec9c5]/60 p-4 space-y-3 z-50 animate-fade-in">
-          <div className="flex justify-between items-center pb-2 border-b border-[#bec9c5]/30">
-            <div className="flex items-center space-x-1.5 text-[#005145]">
+        <div className="absolute right-4 top-16 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 p-4 space-y-3 z-50 animate-fade-in">
+          <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+            <div className="flex items-center space-x-1.5 text-rose-600">
               <span className="material-symbols-outlined text-[20px]">notifications_active</span>
-              <h3 className="font-poppins font-bold text-sm text-[#1b1b1c]">
+              <h3 className="font-poppins font-bold text-sm text-slate-900">
                 Fariimaha Maalmoolee (Notifications)
               </h3>
             </div>
             <button 
               onClick={() => setShowNotifications(false)}
-              className="text-[#6f7976] hover:text-[#1b1b1c] p-1"
+              className="text-slate-400 hover:text-slate-600 p-1"
             >
               <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
@@ -226,15 +225,15 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             {notificationsList.map((notif) => (
               <div 
                 key={notif.id}
-                className="p-3 bg-[#f0eded] rounded-2xl border border-[#bec9c5]/30 space-y-1 relative"
+                className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1 relative"
               >
                 <div className="flex justify-between items-start">
-                  <h4 className="font-poppins font-bold text-xs text-[#1b1b1c]">{notif.title}</h4>
-                  <span className="text-[9px] font-bold text-[#005145] bg-[#005145]/10 px-1.5 py-0.5 rounded-md">
+                  <h4 className="font-poppins font-bold text-xs text-slate-900">{notif.title}</h4>
+                  <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-md">
                     {notif.time}
                   </span>
                 </div>
-                <p className="text-[11px] text-[#3f4946] leading-snug">
+                <p className="text-[11px] text-slate-600 leading-snug">
                   {notif.body}
                 </p>
               </div>
@@ -246,7 +245,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               onNavigate('home');
               setShowNotifications(false);
             }}
-            className="w-full py-2.5 rounded-xl bg-[#005145] text-white font-bold text-xs text-center shadow-xs hover:bg-[#0f6b5c]"
+            className="w-full py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs text-center shadow-xs hover:bg-rose-700 transition-colors"
           >
             Angaar Guryaha Jigjiga
           </button>

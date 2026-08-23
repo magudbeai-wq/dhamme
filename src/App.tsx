@@ -583,7 +583,7 @@ export function App() {
   const isAuthScreen = currentScreen === 'login' || currentScreen === 'signup';
 
   return (
-    <div className="min-h-screen bg-[#F2E8DC] text-[#1b1b1c] font-inter">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-inter">
       
       {/* 1. Splash Screen */}
       {currentScreen === 'splash' && (
@@ -752,17 +752,17 @@ export function App() {
 
       {/* 10-Minute Session Expiry Notification Modal */}
       {isLoggedOutDueToInactivity && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[#005145]/10 text-center relative overflow-hidden">
-            <div className="w-16 h-16 bg-[#005145]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#005145]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-200 text-center relative overflow-hidden">
+            <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-600">
               <span className="material-symbols-outlined text-3xl">timer_off</span>
             </div>
             
-            <h3 className="text-xl font-bold font-poppins text-[#1b1b1c] mb-2">
+            <h3 className="text-xl font-bold font-poppins text-slate-900 mb-2">
               Session Auto-Logged Out
             </h3>
             
-            <p className="text-sm text-[#645d54] mb-6 leading-relaxed">
+            <p className="text-sm text-slate-600 mb-6 leading-relaxed">
               You were logged out after 10 minutes of inactivity or leaving the app to keep your Dhamme account and property listings secure.
             </p>
 
@@ -772,13 +772,13 @@ export function App() {
                   clearInactivityNotice();
                   handleNavigateScreen('login');
                 }}
-                className="w-full py-3.5 px-6 bg-[#005145] text-white font-semibold rounded-2xl hover:bg-[#0f6b5c] transition-all shadow-md active:scale-95 text-sm"
+                className="w-full py-3.5 px-6 bg-rose-600 text-white font-semibold rounded-2xl hover:bg-rose-700 transition-all shadow-md active:scale-95 text-sm"
               >
                 Sign Back In
               </button>
               <button
                 onClick={() => clearInactivityNotice()}
-                className="w-full py-3 px-6 bg-[#ebe1d5] text-[#1b1b1c] font-medium rounded-2xl hover:bg-[#e5d8c8] transition-all text-sm"
+                className="w-full py-3 px-6 bg-slate-100 text-slate-700 font-medium rounded-2xl hover:bg-slate-200 transition-all text-sm"
               >
                 Dismiss
               </button>

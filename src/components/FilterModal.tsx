@@ -43,29 +43,29 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-[#fcf9f8] max-w-md w-full rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white max-w-md w-full rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto border border-slate-200">
         
-        <div className="flex justify-between items-center pb-2 border-b border-[#bec9c5]/40">
-          <h2 className="font-poppins text-xl font-bold text-[#1b1b1c] flex items-center space-x-2">
-            <span className="material-symbols-outlined text-[#005145]">tune</span>
+        <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+          <h2 className="font-poppins text-xl font-bold text-slate-900 flex items-center space-x-2">
+            <span className="material-symbols-outlined text-rose-600">tune</span>
             <span>Guryaha Jigjiga (Filters)</span>
           </h2>
-          <button onClick={onClose} className="text-[#645d54] hover:text-[#1b1b1c]">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
         {/* Mode Toggle */}
         <div>
-          <label className="block text-xs font-bold text-[#3f4946] mb-2 uppercase tracking-wider">
+          <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wider">
             Nooca Guriga (Listing Type):
           </label>
-          <div className="grid grid-cols-2 gap-2 bg-[#e5e2e1] p-1 rounded-2xl">
+          <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-2xl">
             <button
               onClick={() => setMode('kiro')}
               className={`py-2 rounded-xl font-bold text-xs transition ${
-                mode === 'kiro' ? 'bg-[#005145] text-white shadow-sm' : 'text-[#3f4946]'
+                mode === 'kiro' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-700'
               }`}
             >
               Kiro (Rent)
@@ -73,7 +73,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             <button
               onClick={() => setMode('iib')}
               className={`py-2 rounded-xl font-bold text-xs transition ${
-                mode === 'iib' ? 'bg-[#005145] text-white shadow-sm' : 'text-[#3f4946]'
+                mode === 'iib' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-700'
               }`}
             >
               Iib (Sale)
@@ -83,13 +83,13 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 
         {/* Kebele & Xaafada Selection for Jigjiga */}
         <div>
-          <label className="block text-xs font-bold text-[#3f4946] mb-2 uppercase tracking-wider">
+          <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wider">
             Dooro Kebele ama Xaafada Jigjiga:
           </label>
           <select
             value={kebele}
             onChange={(e) => setKebele(e.target.value)}
-            className="w-full p-3 bg-[#f0eded] rounded-xl text-xs font-bold text-[#1b1b1c] border border-[#bec9c5]/40"
+            className="w-full p-3 bg-slate-50 rounded-xl text-xs font-bold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600 focus:outline-none"
           >
             {filterLocations.map((loc) => (
               <option key={loc} value={loc}>{loc === 'All' ? '🌐 Dhamaan Xaafadaha (All Locations)' : loc}</option>
@@ -99,7 +99,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 
         {/* Category */}
         <div>
-          <label className="block text-xs font-bold text-[#3f4946] mb-2 uppercase tracking-wider">
+          <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wider">
             Nooca Guriga (Property Category):
           </label>
           <div className="flex flex-wrap gap-2">
@@ -109,8 +109,8 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                 onClick={() => setCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${
                   category === cat
-                    ? 'bg-[#005145] text-white border-[#005145]'
-                    : 'bg-[#fcf9f8] text-[#3f4946] border-[#bec9c5]'
+                    ? 'bg-rose-600 text-white border-rose-600 shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 {cat}
@@ -121,9 +121,9 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 
         {/* Max Price Slider ETB */}
         <div>
-          <div className="flex justify-between text-xs font-bold text-[#3f4946] mb-2">
+          <div className="flex justify-between text-xs font-bold text-slate-600 mb-2">
             <span>Qiimaha Ugu Sareeya (ETB):</span>
-            <span className="text-[#005145] font-poppins">{maxPriceEtb.toLocaleString()} ETB</span>
+            <span className="text-rose-600 font-poppins font-black">{maxPriceEtb.toLocaleString()} ETB</span>
           </div>
           <input
             type="range"
@@ -132,22 +132,22 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             step="5000"
             value={maxPriceEtb}
             onChange={(e) => setMaxPriceEtb(Number(e.target.value))}
-            className="w-full accent-[#005145]"
+            className="w-full accent-rose-600"
           />
         </div>
 
         {/* Bedrooms */}
         <div>
-          <label className="block text-xs font-bold text-[#3f4946] mb-2 uppercase tracking-wider">
+          <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wider">
             Tirada Qolalka (Bedrooms):
           </label>
-          <div className="flex justify-between bg-[#f0eded] p-1 rounded-2xl">
+          <div className="flex justify-between bg-slate-100 p-1 rounded-2xl">
             {['any', '1', '2', '3', '4+'].map((b) => (
               <button
                 key={b}
                 onClick={() => setBeds(b)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition uppercase ${
-                  beds === b ? 'bg-[#005145] text-white' : 'text-[#3f4946]'
+                  beds === b ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700'
                 }`}
               >
                 {b}
@@ -157,42 +157,42 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         </div>
 
         {/* Amenities & Video Tour Checkboxes */}
-        <div className="space-y-3 pt-2 border-t border-[#bec9c5]/40">
-          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
+        <div className="space-y-3 pt-2 border-t border-slate-100">
+          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-slate-900">
             <input
               type="checkbox"
               checked={hasVideo}
               onChange={(e) => setHasVideo(e.target.checked)}
-              className="w-4 h-4 rounded text-[#005145] focus:ring-[#005145]"
+              className="w-4 h-4 rounded text-rose-600 focus:ring-rose-600"
             />
-            <span className="flex items-center space-x-1 text-[#005145] font-bold">
+            <span className="flex items-center space-x-1 text-rose-600 font-bold">
               <span className="material-symbols-outlined text-[18px]">videocam</span>
               <span>Keliya Guryaha Muuqaalka Leh (Video Tour Available)</span>
             </span>
           </label>
 
-          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
+          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-slate-900">
             <input
               type="checkbox"
               checked={waterRequired}
               onChange={(e) => setWaterRequired(e.target.checked)}
-              className="w-4 h-4 rounded text-[#005145] focus:ring-[#005145]"
+              className="w-4 h-4 rounded text-rose-600 focus:ring-rose-600"
             />
             <span className="flex items-center space-x-1">
-              <span className="material-symbols-outlined text-[18px] text-[#005145]">water_drop</span>
+              <span className="material-symbols-outlined text-[18px] text-blue-600">water_drop</span>
               <span>Biyaha Wakaallada Jigjiga</span>
             </span>
           </label>
 
-          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
+          <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-slate-900">
             <input
               type="checkbox"
               checked={powerRequired}
               onChange={(e) => setPowerRequired(e.target.checked)}
-              className="w-4 h-4 rounded text-[#005145] focus:ring-[#005145]"
+              className="w-4 h-4 rounded text-rose-600 focus:ring-rose-600"
             />
             <span className="flex items-center space-x-1">
-              <span className="material-symbols-outlined text-[18px] text-amber-600">bolt</span>
+              <span className="material-symbols-outlined text-[18px] text-amber-500">bolt</span>
               <span>Laydhka 24 Saac (Solar / Mains)</span>
             </span>
           </label>
@@ -211,14 +211,14 @@ export const FilterModal: React.FC<FilterModalProps> = ({
               setPowerRequired(false);
               setHasVideo(false);
             }}
-            className="flex-1 py-3 rounded-2xl bg-[#e5e2e1] text-[#3f4946] font-bold text-xs hover:bg-[#eae7e7]"
+            className="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition"
           >
             Reset
           </button>
 
           <button
             onClick={handleApply}
-            className="flex-2 py-3 px-6 rounded-2xl bg-[#005145] text-white font-bold text-xs shadow-md hover:bg-[#0f6b5c]"
+            className="flex-2 py-3 px-6 rounded-2xl bg-rose-600 text-white font-bold text-xs shadow-md hover:bg-rose-700 transition"
           >
             Aruuri Guryaha (Apply Filters)
           </button>
@@ -228,4 +228,3 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     </div>
   );
 };
-

@@ -149,11 +149,11 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
     <div className="space-y-4">
       {/* Header info */}
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold text-[#3f4946] uppercase tracking-wider flex items-center space-x-1.5">
-          <span className="material-symbols-outlined text-[#005145] text-[18px]">videocam</span>
+        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-1.5">
+          <span className="material-symbols-outlined text-rose-600 text-[18px]">videocam</span>
           <span>Property Video Tour (Mandatory Video Feature)</span>
         </label>
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
           MP4, WebM, MOV (Max 100MB)
         </span>
       </div>
@@ -171,24 +171,24 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
         <div className="space-y-3">
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-[#005145] rounded-3xl p-6 bg-[#f0eded] hover:bg-[#e5e2e1] transition cursor-pointer text-center space-y-3 group"
+            className="border-2 border-dashed border-rose-600 rounded-3xl p-6 bg-slate-50 hover:bg-rose-50/50 transition cursor-pointer text-center space-y-3 group"
           >
-            <div className="w-14 h-14 rounded-full bg-[#005145]/10 group-hover:bg-[#005145]/20 text-[#005145] flex items-center justify-center mx-auto transition">
+            <div className="w-14 h-14 rounded-full bg-rose-50 group-hover:bg-rose-100 text-rose-600 flex items-center justify-center mx-auto transition">
               <span className="material-symbols-outlined text-[32px]">video_call</span>
             </div>
             
             <div>
-              <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
+              <h4 className="font-poppins font-bold text-sm text-slate-900">
                 Soo Geli Muuqaalka Guriga (Upload Property Video)
               </h4>
-              <p className="text-xs text-[#3f4946] mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 Guryaha muuqaalka leh waxay helaan 3x macaamiil dheeraad ah Jigjiga.
               </p>
             </div>
 
             <button
               type="button"
-              className="px-5 py-2.5 rounded-xl bg-[#005145] text-white text-xs font-bold shadow-md hover:bg-[#0f6b5c] transition inline-flex items-center space-x-1.5"
+              className="px-5 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold shadow-md hover:bg-rose-700 transition inline-flex items-center space-x-1.5"
             >
               <span className="material-symbols-outlined text-[18px]">upload_file</span>
               <span>Soo Dooro Fiidiyow (Choose Video)</span>
@@ -210,12 +210,12 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
               placeholder="Ama geli Direct Video Link (e.g. https://.../tour.mp4)..."
               value={videoUrlInput}
               onChange={(e) => setVideoUrlInput(e.target.value)}
-              className="flex-1 p-3 bg-[#f0eded] rounded-xl text-xs border border-[#bec9c5]/40 text-[#1b1b1c] focus:outline-none focus:ring-2 focus:ring-[#005145]"
+              className="flex-1 p-3 bg-slate-50 rounded-xl text-xs border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-600"
             />
             <button
               type="button"
               onClick={handleAddDirectUrl}
-              className="px-4 py-3 bg-[#005145] text-white rounded-xl text-xs font-bold hover:bg-[#0f6b5c] transition shrink-0"
+              className="px-4 py-3 bg-rose-600 text-white rounded-xl text-xs font-bold hover:bg-rose-700 transition shrink-0"
             >
               Add URL
             </button>
@@ -225,23 +225,23 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
 
       {/* Uploading & Processing State Progress Bar */}
       {isUploading && (
-        <div className="p-6 bg-[#f0eded] rounded-3xl border border-[#005145]/30 text-center space-y-4 shadow-sm animate-pulse">
-          <div className="w-12 h-12 rounded-full bg-[#005145] text-white flex items-center justify-center mx-auto shadow-md">
+        <div className="p-6 bg-slate-50 rounded-3xl border border-rose-200 text-center space-y-4 shadow-sm animate-pulse">
+          <div className="w-12 h-12 rounded-full bg-rose-600 text-white flex items-center justify-center mx-auto shadow-md">
             <span className="material-symbols-outlined text-[26px] animate-spin">sync</span>
           </div>
 
           <div>
-            <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
+            <h4 className="font-poppins font-bold text-sm text-slate-900">
               {processingStatus || 'Uploading Video...'}
             </h4>
-            <span className="font-mono font-bold text-[#005145] text-xs">
+            <span className="font-mono font-bold text-rose-600 text-xs">
               {uploadProgress}%
             </span>
           </div>
 
-          <div className="w-full h-2.5 bg-[#e5e2e1] rounded-full overflow-hidden">
+          <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#005145] to-[#d4af37] rounded-full transition-all duration-300"
+              className="h-full bg-gradient-to-r from-rose-600 to-amber-500 rounded-full transition-all duration-300"
               style={{ width: `${uploadProgress}%` }}
             />
           </div>
@@ -250,9 +250,9 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
 
       {/* Video Preview Card (Uploaded State) */}
       {currentVideoUrl && !isUploading && (
-        <div className="p-4 bg-[#f0eded] rounded-3xl border border-[#005145] space-y-3">
+        <div className="p-4 bg-slate-50 rounded-3xl border border-rose-600 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-[#005145]">
+            <div className="flex items-center space-x-2 text-rose-600">
               <span className="material-symbols-outlined text-[20px]">check_circle</span>
               <span className="font-poppins font-bold text-xs">
                 Muuqaalka Guriga Waa Diyaar (Video Ready)
@@ -270,7 +270,7 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
           </div>
 
           {/* Mini video preview */}
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-md border border-white/20">
+          <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-md border border-white/20">
             <video
               src={currentVideoUrl}
               controls
@@ -279,12 +279,12 @@ export const VideoUploadField: React.FC<VideoUploadFieldProps> = ({
             />
           </div>
 
-          <div className="flex justify-between items-center text-[11px] text-[#3f4946] pt-1">
+          <div className="flex justify-between items-center text-[11px] text-slate-600 pt-1">
             <span>✅ Muuqaalku wuxuu ka muuqan doonaa bogga gurigaaga.</span>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-xs text-[#005145] font-bold underline"
+              className="text-xs text-rose-600 font-bold underline"
             >
               Beddel Fiidiyowga (Replace)
             </button>

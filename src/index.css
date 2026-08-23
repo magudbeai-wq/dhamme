@@ -1,29 +1,32 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 :root {
   --font-poppins: 'Poppins', sans-serif;
   --font-inter: 'Inter', sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
 
-  /* Stitch Design Token Colors */
-  --color-brand-sand: #F2E8DC;
-  --color-primary: #005145;
-  --color-primary-container: #0f6b5c;
+  /* Award-Winning Design Token Colors: White, Crimson Red, Luxury Gold, Midnight Slate */
+  --color-brand-sand: #F8FAFC;
+  --color-primary: #E11D48;
+  --color-primary-dark: #BE123C;
+  --color-primary-container: #FFF1F2;
   --color-on-primary: #ffffff;
-  --color-on-primary-container: #99e8d5;
-  --color-secondary: #645d54;
-  --color-secondary-container: #ebe1d5;
-  --color-tertiary: #7b2f10;
+  --color-on-primary-container: #9F1239;
+  --color-secondary: #0F172A;
+  --color-secondary-container: #F1F5F9;
+  --color-tertiary: #F59E0B;
+  --color-tertiary-hover: #D97706;
   --color-on-tertiary: #ffffff;
-  --color-surface: #fcf9f8;
-  --color-surface-container: #f0eded;
-  --color-surface-container-high: #eae7e7;
-  --color-surface-container-highest: #e5e2e1;
-  --color-on-surface: #1b1b1c;
-  --color-on-surface-variant: #3f4946;
-  --color-outline: #6f7976;
-  --color-outline-variant: #bec9c5;
+  --color-surface: #ffffff;
+  --color-surface-container: #F8FAFC;
+  --color-surface-container-high: #F1F5F9;
+  --color-surface-container-highest: #E2E8F0;
+  --color-on-surface: #0F172A;
+  --color-on-surface-variant: #475569;
+  --color-outline: #CBD5E1;
+  --color-outline-variant: #E2E8F0;
 }
 
 * {
@@ -35,10 +38,11 @@
 body {
   background-color: var(--color-brand-sand);
   color: var(--color-on-surface);
-  font-family: var(--font-inter);
+  font-family: var(--font-jakarta), var(--font-inter), sans-serif;
   -webkit-tap-highlight-color: transparent;
   min-height: 100vh;
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
 }
 
 .font-poppins {
@@ -47,6 +51,10 @@ body {
 
 .font-inter {
   font-family: var(--font-inter);
+}
+
+.font-jakarta {
+  font-family: var(--font-jakarta);
 }
 
 .material-symbols-outlined {
@@ -78,38 +86,74 @@ body {
   scrollbar-width: none;
 }
 
+/* Premium Shadows & Glassmorphism */
 .listing-card-shadow {
-  box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.06), 0px 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 12px 32px rgba(15, 23, 42, 0.06), 0px 2px 8px rgba(225, 29, 72, 0.04);
+}
+
+.listing-card-shadow:hover {
+  box-shadow: 0px 20px 40px rgba(225, 29, 72, 0.12), 0px 4px 12px rgba(15, 23, 42, 0.06);
 }
 
 .nav-shadow {
-  box-shadow: 0px -10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px -10px 30px rgba(15, 23, 42, 0.08);
 }
 
 .glass-card {
-  background: rgba(252, 249, 248, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(190, 201, 197, 0.4);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-card-red {
+  background: rgba(255, 241, 242, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(254, 205, 211, 0.8);
 }
 
 .glass-dark {
-  background: rgba(0, 43, 36, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(162, 242, 222, 0.15);
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* Luxury Gold & Emerald Gradients */
+/* Luxury Color Gradients */
+.bg-gradient-red {
+  background: linear-gradient(135deg, #E11D48 0%, #BE123C 50%, #9F1239 100%);
+}
+
+.bg-gradient-red-vibrant {
+  background: linear-gradient(135deg, #FF2A54 0%, #E11D48 50%, #BE123C 100%);
+}
+
 .bg-gradient-gold {
-  background: linear-gradient(135deg, #d4af37 0%, #f0cf65 50%, #b8860b 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #D97706 100%);
 }
 
-.bg-gradient-emerald {
-  background: linear-gradient(135deg, #00382f 0%, #005145 50%, #0f6b5c 100%);
+.bg-gradient-gold-red {
+  background: linear-gradient(135deg, #E11D48 0%, #F59E0B 100%);
 }
 
-/* Animations for Professional Logo & Splash */
+.bg-gradient-dark {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+}
+
+.text-gradient-red {
+  background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Keyframes & Animation Utilities */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -117,23 +161,23 @@ body {
 
 @keyframes logoFloat {
   0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-8px) scale(1.03); }
+  50% { transform: translateY(-6px) scale(1.02); }
 }
 
 @keyframes ringExpand {
   0% { transform: scale(0.85); opacity: 0.8; }
-  50% { transform: scale(1.25); opacity: 0.2; }
+  50% { transform: scale(1.2); opacity: 0.2; }
   100% { transform: scale(0.85); opacity: 0.8; }
+}
+
+@keyframes redPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
 }
 
 @keyframes goldShimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
-}
-
-@keyframes starTwinkle {
-  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  50% { transform: scale(1.3) rotate(15deg); opacity: 0.8; }
 }
 
 .animate-fade-in {
@@ -148,18 +192,17 @@ body {
   animation: ringExpand 3s ease-in-out infinite;
 }
 
+.animate-red-pulse {
+  animation: redPulse 2.5s infinite;
+}
+
 .animate-gold-shimmer {
-  background: linear-gradient(90deg, #D4AF37 0%, #FFFFFF 50%, #D4AF37 100%);
+  background: linear-gradient(90deg, #F59E0B 0%, #FFFFFF 50%, #F59E0B 100%);
   background-size: 200% auto;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
   animation: goldShimmer 3.5s linear infinite;
-}
-
-.animate-star-twinkle {
-  transform-origin: center;
-  animation: starTwinkle 2.5s ease-in-out infinite;
 }
 
 /* Hide Clerk Development Mode Footer & Branding */
@@ -170,4 +213,3 @@ body {
 [class*="cl-dev-mode"] {
   display: none !important;
 }
-

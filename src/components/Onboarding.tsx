@@ -49,7 +49,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-[#F2E8DC] p-6 max-w-lg mx-auto shadow-2xl animate-fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-slate-50 p-6 max-w-lg mx-auto shadow-2xl animate-fade-in overflow-y-auto">
       
       {/* Top Header with Animated Logo & Skip */}
       <div className="flex justify-between items-center pt-2">
@@ -61,14 +61,14 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               <div 
                 key={i} 
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  i === step ? 'w-8 bg-[#005145]' : 'w-2 bg-[#bec9c5]'
+                  i === step ? 'w-8 bg-rose-600' : 'w-2 bg-slate-300'
                 }`}
               />
             ))}
           </div>
           <button 
             onClick={onComplete}
-            className="text-xs font-bold text-[#005145] hover:underline"
+            className="text-xs font-bold text-rose-600 hover:underline"
           >
             Kaftan (Skip)
           </button>
@@ -77,23 +77,23 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
       {/* Hero Image Card */}
       <div className="my-auto py-4 space-y-6">
-        <div className="relative aspect-[4/3] w-full rounded-3xl overflow-hidden shadow-xl border border-[#bec9c5]/40 group">
+        <div className="relative aspect-[4/3] w-full rounded-3xl overflow-hidden shadow-xl border border-slate-200 group">
           <img 
             src={current.image} 
             alt={current.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="absolute top-4 right-4 w-12 h-12 rounded-2xl bg-[#005145] text-white flex items-center justify-center shadow-lg border border-[#a2f2de]/30">
+          <div className="absolute top-4 right-4 w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-lg border border-amber-300">
             <span className="material-symbols-outlined text-[28px]">{current.icon}</span>
           </div>
         </div>
 
         <div className="text-center space-y-2 px-2">
-          <h2 className="font-poppins text-2xl font-black text-[#1b1b1c]">
+          <h2 className="font-poppins text-2xl font-black text-slate-900">
             {current.titleSo}
           </h2>
-          <p className="text-xs text-[#3f4946] leading-relaxed max-w-sm mx-auto font-semibold">
+          <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto font-semibold">
             {current.descSo}
           </p>
         </div>
@@ -103,7 +103,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       <div className="space-y-3 pb-4">
         <button
           onClick={handleNext}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-bold text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center space-x-2"
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 hover:shadow-rose-600/30 text-white font-poppins font-bold text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center space-x-2"
         >
           <span>{step === 3 ? 'Biloow (Get Started)' : 'Sii Soco (Next)'}</span>
           <span className="material-symbols-outlined text-[20px]">arrow_forward</span>

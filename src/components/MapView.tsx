@@ -10,11 +10,11 @@ interface MapViewProps {
 
 // Preset Jigjiga Neighborhood Center Coordinates & Landmarks
 const NEIGHBORHOOD_ZONES = [
-  { name: 'Kebele 06 (Garab\'ase)', lat: 9.3580, lng: 42.7980, color: 'bg-emerald-600' },
+  { name: 'Kebele 06 (Garab\'ase)', lat: 9.3580, lng: 42.7980, color: 'bg-rose-600' },
   { name: 'Kebele 04 (Taiwan Market)', lat: 9.3510, lng: 42.7930, color: 'bg-amber-600' },
   { name: 'Kebele 02 (Jigjiga Univ.)', lat: 9.3450, lng: 42.8050, color: 'bg-blue-600' },
   { name: 'Kebele 03 (Airport Road)', lat: 9.3620, lng: 42.7880, color: 'bg-purple-600' },
-  { name: 'Kebele 01 (City Center)', lat: 9.3524, lng: 42.7961, color: 'bg-[#005145]' }
+  { name: 'Kebele 01 (City Center)', lat: 9.3524, lng: 42.7961, color: 'bg-rose-700' }
 ];
 
 export const MapView: React.FC<MapViewProps> = ({
@@ -45,8 +45,8 @@ export const MapView: React.FC<MapViewProps> = ({
             onClick={() => setSelectedZone('All')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs ${
               selectedZone === 'All'
-                ? 'bg-[#005145] text-white ring-2 ring-[#005145]/30'
-                : 'bg-white text-[#645d54] hover:bg-[#ebe1d5] border border-[#bec9c5]/40'
+                ? 'bg-rose-600 text-white ring-2 ring-rose-500/30'
+                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
             }`}
           >
             📍 All Jigjiga Zones ({properties.length})
@@ -58,8 +58,8 @@ export const MapView: React.FC<MapViewProps> = ({
               onClick={() => setSelectedZone(zone.name.split(' ')[0])}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                 selectedZone.includes(zone.name.split(' ')[0])
-                  ? 'bg-[#005145] text-white font-bold ring-2 ring-[#005145]/30'
-                  : 'bg-white text-[#3f4946] hover:bg-[#ebe1d5] border border-[#bec9c5]/40'
+                  ? 'bg-rose-600 text-white font-bold ring-2 ring-rose-500/30'
+                  : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
               }`}
             >
               {zone.name}
@@ -69,31 +69,31 @@ export const MapView: React.FC<MapViewProps> = ({
       </div>
 
       {/* Interactive Map Visual Stage Container */}
-      <div className="relative w-full h-[520px] rounded-3xl bg-[#ded4c5] border border-[#bec9c5]/60 overflow-hidden shadow-xl listing-card-shadow">
+      <div className="relative w-full h-[520px] rounded-3xl bg-slate-200 border border-slate-300 overflow-hidden shadow-xl listing-card-shadow">
         
         {/* Map Vector Grid & Satellite Pattern Background */}
         <div 
-          className="absolute inset-0 opacity-40 bg-[radial-[#005145]_1px,transparent_1px] [background-size:24px_24px] pointer-events-none" 
+          className="absolute inset-0 opacity-40 bg-[radial-[#E11D48]_1px,transparent_1px] [background-size:24px_24px] pointer-events-none" 
         />
 
         {/* Top Floating Map Header Info */}
         <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between">
-          <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/60 shadow-md">
-            <span className="material-symbols-outlined text-[#005145] text-[20px] animate-pulse">
+          <div className="flex items-center space-x-2 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/60 shadow-md">
+            <span className="material-symbols-outlined text-rose-600 text-[20px] animate-pulse">
               location_on
             </span>
             <div>
-              <h4 className="text-xs font-bold text-[#1b1b1c] leading-none font-poppins">
+              <h4 className="text-xs font-bold text-slate-900 leading-none font-poppins">
                 Jigjiga Interactive Real Estate Map
               </h4>
-              <span className="text-[10px] text-[#645d54] font-medium">
+              <span className="text-[10px] text-slate-500 font-medium">
                 {displayedProperties.length} active listings on map
               </span>
             </div>
           </div>
 
-          <div className="bg-[#005145] text-white px-3 py-1.5 rounded-xl text-xs font-mono font-bold shadow-md flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+          <div className="bg-slate-900 text-amber-400 border border-amber-400/40 px-3 py-1.5 rounded-xl text-xs font-mono font-bold shadow-md flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             <span>LIVE GPS GRID</span>
           </div>
         </div>
@@ -149,10 +149,10 @@ export const MapView: React.FC<MapViewProps> = ({
                 <div
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl shadow-xl font-poppins text-xs font-black transition-all border ${
                     isSelected
-                      ? 'bg-[#005145] text-white border-emerald-400 ring-4 ring-[#005145]/30'
+                      ? 'bg-rose-600 text-white border-amber-300 ring-4 ring-rose-500/30'
                       : prop.mode === 'iib'
-                      ? 'bg-[#7b2f10] text-white border-amber-300'
-                      : 'bg-white text-[#005145] border-[#bec9c5]/60 hover:bg-[#005145] hover:text-white'
+                      ? 'bg-slate-900 text-amber-400 border-amber-300'
+                      : 'bg-white text-rose-600 border-slate-200 hover:bg-rose-600 hover:text-white'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">
@@ -161,7 +161,7 @@ export const MapView: React.FC<MapViewProps> = ({
                   <span>{formatPriceShort(prop.priceEtb)}</span>
                   
                   {isFav && (
-                    <span className="material-symbols-outlined text-red-400 text-[14px] fill-1">
+                    <span className="material-symbols-outlined text-rose-400 text-[14px] fill-1">
                       favorite
                     </span>
                   )}
@@ -171,9 +171,9 @@ export const MapView: React.FC<MapViewProps> = ({
                 <div
                   className={`w-2.5 h-2.5 mx-auto -mt-1 rotate-45 transition-colors ${
                     isSelected
-                      ? 'bg-[#005145]'
+                      ? 'bg-rose-600'
                       : prop.mode === 'iib'
-                      ? 'bg-[#7b2f10]'
+                      ? 'bg-slate-900'
                       : 'bg-white'
                   }`}
                 />
@@ -184,13 +184,13 @@ export const MapView: React.FC<MapViewProps> = ({
 
         {/* Selected Property Floating Preview Card (Bottom Drawer Card) */}
         {selectedProp && (
-          <div className="absolute bottom-3 left-3 right-3 z-40 bg-white/95 backdrop-blur-xl p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-[#bec9c5]/60 animate-fade-in">
+          <div className="absolute bottom-3 left-3 right-3 z-40 bg-white/95 backdrop-blur-xl p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-slate-200 animate-fade-in">
             <div className="flex gap-3 sm:gap-4 items-center">
               
               {/* Thumbnail Image */}
               <div 
                 onClick={() => onSelectProperty(selectedProp)}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-gray-200 shrink-0 relative cursor-pointer group"
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative cursor-pointer group"
               >
                 <img
                   src={selectedProp.images[0]}
@@ -198,7 +198,7 @@ export const MapView: React.FC<MapViewProps> = ({
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <span className={`absolute top-1.5 left-1.5 text-[9px] font-black uppercase px-2 py-0.5 rounded-md text-white ${
-                  selectedProp.mode === 'iib' ? 'bg-[#7b2f10]' : 'bg-[#005145]'
+                  selectedProp.mode === 'iib' ? 'bg-amber-500 text-slate-950' : 'bg-rose-600'
                 }`}>
                   {selectedProp.mode === 'iib' ? 'IIB' : 'KIRO'}
                 </span>
@@ -207,7 +207,7 @@ export const MapView: React.FC<MapViewProps> = ({
               {/* Property Details Brief */}
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold text-[#005145] bg-[#005145]/10 px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
                     {selectedProp.kebele}
                   </span>
                   <button
@@ -215,9 +215,9 @@ export const MapView: React.FC<MapViewProps> = ({
                       e.stopPropagation();
                       onToggleFavorite(selectedProp.id);
                     }}
-                    className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                    className="p-1 text-slate-400 hover:text-rose-600 transition-colors"
                   >
-                    <span className={`material-symbols-outlined text-[20px] ${favorites.includes(selectedProp.id) ? 'fill-1 text-red-500' : ''}`}>
+                    <span className={`material-symbols-outlined text-[20px] ${favorites.includes(selectedProp.id) ? 'fill-1 text-rose-600' : ''}`}>
                       favorite
                     </span>
                   </button>
@@ -225,27 +225,27 @@ export const MapView: React.FC<MapViewProps> = ({
 
                 <h3 
                   onClick={() => onSelectProperty(selectedProp)}
-                  className="font-poppins font-bold text-sm text-[#1b1b1c] truncate mt-1 cursor-pointer hover:text-[#005145] transition-colors"
+                  className="font-poppins font-bold text-sm text-slate-900 truncate mt-1 cursor-pointer hover:text-rose-600 transition-colors"
                 >
                   {selectedProp.title}
                 </h3>
 
-                <div className="text-base font-black font-poppins text-[#005145] mt-0.5">
+                <div className="text-base font-black font-poppins text-rose-600 mt-0.5">
                   {selectedProp.priceLocalFormatted}
                 </div>
 
                 {/* Badges */}
-                <div className="flex items-center gap-3 text-xs text-[#645d54] mt-1">
+                <div className="flex items-center gap-3 text-xs text-slate-600 mt-1">
                   <span className="flex items-center gap-1 font-semibold">
-                    <span className="material-symbols-outlined text-[16px] text-[#005145]">bed</span>
+                    <span className="material-symbols-outlined text-[16px] text-rose-600">bed</span>
                     {selectedProp.beds} Beds
                   </span>
                   <span className="flex items-center gap-1 font-semibold">
-                    <span className="material-symbols-outlined text-[16px] text-[#005145]">bathtub</span>
+                    <span className="material-symbols-outlined text-[16px] text-rose-600">bathtub</span>
                     {selectedProp.baths} Baths
                   </span>
                   <span className="flex items-center gap-1 font-semibold">
-                    <span className="material-symbols-outlined text-[16px] text-[#005145]">square_foot</span>
+                    <span className="material-symbols-outlined text-[16px] text-rose-600">square_foot</span>
                     {selectedProp.areaSqm} m²
                   </span>
                 </div>
@@ -253,7 +253,7 @@ export const MapView: React.FC<MapViewProps> = ({
                 {/* View Details CTA Button */}
                 <button
                   onClick={() => onSelectProperty(selectedProp)}
-                  className="mt-2.5 w-full py-2 rounded-xl bg-[#005145] text-white font-bold text-xs hover:bg-[#0f6b5c] transition-all flex items-center justify-center space-x-1 shadow-sm"
+                  className="mt-2.5 w-full py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 transition-all flex items-center justify-center space-x-1 shadow-sm"
                 >
                   <span>Fiiri Faahfaahinta (View Details)</span>
                   <span className="material-symbols-outlined text-[16px]">arrow_forward</span>

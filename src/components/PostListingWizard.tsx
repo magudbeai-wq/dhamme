@@ -155,16 +155,16 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
 
   return (
-    <div className="min-h-screen bg-[#F2E8DC] pb-24 p-4 sm:p-6 max-w-screen-md mx-auto animate-fade-in space-y-6">
+    <div className="min-h-screen bg-slate-50 pb-24 p-4 sm:p-6 max-w-screen-md mx-auto animate-fade-in space-y-6">
       
       {/* Wizard Header Progress Bar */}
-      <div className="bg-[#fcf9f8] p-5 rounded-3xl listing-card-shadow space-y-3 border border-[#bec9c5]/40">
+      <div className="bg-white p-5 rounded-3xl listing-card-shadow space-y-3 border border-slate-200">
         <div className="flex justify-between items-center">
           <div>
-            <span className="text-[10px] font-bold text-[#005145] uppercase tracking-wider block">
+            <span className="text-[10px] font-bold text-rose-600 uppercase tracking-wider block">
               Tallaabada {currentStep} ee 5 (Jigjiga)
             </span>
-            <h1 className="font-poppins text-lg font-bold text-[#1b1b1c]">
+            <h1 className="font-poppins text-lg font-bold text-slate-900">
               {currentStep === 1 && '1. Faahfaahinta Koowaad (Basic Info)'}
               {currentStep === 2 && '2. Cabirka & Qolalka (Specs)'}
               {currentStep === 3 && '3. Kebele & GPS Location (Jigjiga)'}
@@ -173,15 +173,15 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
             </h1>
           </div>
 
-          <button onClick={onCancel} className="text-xs text-[#645d54] hover:text-[#1b1b1c] font-semibold">
+          <button onClick={onCancel} className="text-xs text-slate-500 hover:text-slate-900 font-semibold">
             Jooji (Cancel)
           </button>
         </div>
 
         {/* Progress bar line */}
-        <div className="w-full h-2 bg-[#e5e2e1] rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-[#005145] rounded-full transition-all duration-300"
+            className="h-full bg-gradient-to-r from-rose-600 to-rose-700 rounded-full transition-all duration-300"
             style={{ width: `${(currentStep / 5) * 100}%` }}
           />
         </div>
@@ -189,17 +189,17 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
       {/* STEP 1: Basic Info */}
       {currentStep === 1 && (
-        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40">
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow space-y-5 border border-slate-200">
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Nooca Guriga (Listing Type):
             </label>
-            <div className="grid grid-cols-2 gap-2 bg-[#e5e2e1] p-1.5 rounded-2xl">
+            <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl">
               <button
                 type="button"
                 onClick={() => setDraft({ ...draft, mode: 'kiro' })}
                 className={`py-2.5 rounded-xl font-bold text-xs ${
-                  draft.mode === 'kiro' ? 'bg-[#005145] text-white shadow-sm' : 'text-[#3f4946]'
+                  draft.mode === 'kiro' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-700'
                 }`}
               >
                 Kiro (For Rent)
@@ -208,7 +208,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                 type="button"
                 onClick={() => setDraft({ ...draft, mode: 'iib' })}
                 className={`py-2.5 rounded-xl font-bold text-xs ${
-                  draft.mode === 'iib' ? 'bg-[#005145] text-white shadow-sm' : 'text-[#3f4946]'
+                  draft.mode === 'iib' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-700'
                 }`}
               >
                 Iib (For Sale)
@@ -217,7 +217,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Magaca Guriga (Property Title):
             </label>
             <input
@@ -226,18 +226,18 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
               placeholder="e.g. Jigjiga Kebele 06 Villa with Garden"
               value={draft.title}
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-              className="w-full p-3.5 bg-[#f0eded] rounded-xl border border-[#bec9c5]/40 text-sm text-[#1b1b1c] focus:outline-none focus:ring-2 focus:ring-[#005145]"
+              className="w-full p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-600"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Qaybta (Category):
             </label>
             <select
               value={draft.category}
               onChange={(e) => setDraft({ ...draft, category: e.target.value as PropertyCategory })}
-              className="w-full p-3.5 bg-[#f0eded] rounded-xl border border-[#bec9c5]/40 text-sm font-semibold text-[#1b1b1c]"
+              className="w-full p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-rose-600"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -246,7 +246,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Faahfaahinta Guriga (Description):
             </label>
             <textarea
@@ -254,14 +254,14 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
               placeholder="Faahfaahinta guriga Jigjiga, biyaha, solar-ka..."
               value={draft.description}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-              className="w-full p-3.5 bg-[#f0eded] rounded-xl border border-[#bec9c5]/40 text-sm text-[#1b1b1c]"
+              className="w-full p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-900 focus:ring-2 focus:ring-rose-600"
             />
           </div>
 
           <button
             onClick={() => onNavigateStep(2)}
             disabled={!draft.title.trim()}
-            className="w-full py-4 rounded-2xl bg-[#005145] hover:bg-[#0f6b5c] text-white font-poppins font-bold text-xs uppercase tracking-wider disabled:opacity-50 shadow-md active:scale-95 transition"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:shadow-rose-600/30 text-white font-poppins font-bold text-xs uppercase tracking-wider disabled:opacity-50 shadow-md active:scale-95 transition"
           >
             Tallaabada Xigta (Next Step)
           </button>
@@ -270,10 +270,10 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
       {/* STEP 2: Specs */}
       {currentStep === 2 && (
-        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40">
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow space-y-5 border border-slate-200">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#3f4946] mb-1">
+              <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
                 Bedrooms (Qolalka):
               </label>
               <input
@@ -282,12 +282,12 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                 max="20"
                 value={draft.beds}
                 onChange={(e) => setDraft({ ...draft, beds: Number(e.target.value) })}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-sm font-bold text-center border border-[#bec9c5]/40"
+                className="w-full p-3 bg-slate-50 rounded-xl text-sm font-bold text-center border border-slate-200 focus:ring-2 focus:ring-rose-600"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#3f4946] mb-1">
+              <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
                 Bathrooms (Musqulaha):
               </label>
               <input
@@ -296,40 +296,40 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                 max="20"
                 value={draft.baths}
                 onChange={(e) => setDraft({ ...draft, baths: Number(e.target.value) })}
-                className="w-full p-3 bg-[#f0eded] rounded-xl text-sm font-bold text-center border border-[#bec9c5]/40"
+                className="w-full p-3 bg-slate-50 rounded-xl text-sm font-bold text-center border border-slate-200 focus:ring-2 focus:ring-rose-600"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Cabirka Guriga (Area Sqm):
             </label>
             <input
               type="number"
               value={draft.areaSqm}
               onChange={(e) => setDraft({ ...draft, areaSqm: Number(e.target.value) })}
-              className="w-full p-3 bg-[#f0eded] rounded-xl text-sm font-bold text-[#1b1b1c] border border-[#bec9c5]/40"
+              className="w-full p-3 bg-slate-50 rounded-xl text-sm font-bold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600"
             />
           </div>
 
           <div className="space-y-3 pt-2">
-            <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
+            <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-slate-900">
               <input
                 type="checkbox"
                 checked={draft.water}
                 onChange={(e) => setDraft({ ...draft, water: e.target.checked })}
-                className="w-4 h-4 rounded text-[#005145]"
+                className="w-4 h-4 rounded text-rose-600 focus:ring-rose-600"
               />
               <span>Water Connection (Biyaha Wakaallada)</span>
             </label>
 
-            <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-[#1b1b1c]">
+            <label className="flex items-center space-x-3 cursor-pointer text-xs font-semibold text-slate-900">
               <input
                 type="checkbox"
                 checked={draft.electricity}
                 onChange={(e) => setDraft({ ...draft, electricity: e.target.checked })}
-                className="w-4 h-4 rounded text-[#005145]"
+                className="w-4 h-4 rounded text-rose-600 focus:ring-rose-600"
               />
               <span>24h Electricity / Solar Power</span>
             </label>
@@ -338,13 +338,13 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           <div className="flex space-x-3">
             <button
               onClick={() => onNavigateStep(1)}
-              className="flex-1 py-3.5 rounded-2xl bg-[#e5e2e1] text-[#3f4946] font-bold text-xs"
+              className="flex-1 py-3.5 rounded-2xl bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition"
             >
               Kusoo Noqo (Back)
             </button>
             <button
               onClick={() => onNavigateStep(3)}
-              className="flex-2 py-3.5 rounded-2xl bg-[#005145] text-white font-bold text-xs uppercase shadow-md"
+              className="flex-2 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase shadow-md transition"
             >
               Tallaabada 3-aad (Next)
             </button>
@@ -354,22 +354,22 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
       {/* STEP 3: Location & Live GPS */}
       {currentStep === 3 && (
-        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40">
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow space-y-5 border border-slate-200">
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Magaalada:
             </label>
             <input
               type="text"
               disabled
               value="Jigjiga (Somali Region, Ethiopia)"
-              className="w-full p-3.5 bg-[#e5e2e1] rounded-xl text-sm font-bold text-[#1b1b1c]"
+              className="w-full p-3.5 bg-slate-100 rounded-xl text-sm font-bold text-slate-900"
             />
           </div>
 
           <div>
-            <label className="block text-[#3f4946] text-xs font-bold mb-1">
-              Doorh Xaafada ama Kabalaha Jigjiga (Select Xaafad or Kebele):
+            <label className="block text-slate-600 text-xs font-bold mb-1 uppercase tracking-wider">
+              Dooro Xaafada ama Kabalaha Jigjiga (Select Xaafad or Kebele):
             </label>
             <select
               value={isCustomLocation ? 'Others (Qor Xaafad Kale)' : draft.kebele}
@@ -383,7 +383,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                   setDraft({ ...draft, kebele: val });
                 }
               }}
-              className="w-full p-3.5 bg-[#f0eded] rounded-xl text-sm font-bold text-[#1b1b1c] border border-[#bec9c5]/40"
+              className="w-full p-3.5 bg-slate-50 rounded-xl text-sm font-bold text-slate-900 border border-slate-200 focus:ring-2 focus:ring-rose-600"
             >
               <optgroup label="🏘️ Xaafadaha Magaalada Jigjiga">
                 {JIGJIGA_XAAFADAHA.map((x, idx) => (
@@ -402,7 +402,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
             {isCustomLocation && (
               <div className="mt-3">
-                <label className="block text-[11px] font-bold text-[#005145] uppercase mb-1">
+                <label className="block text-[11px] font-bold text-rose-600 uppercase mb-1">
                   Qor Magaca Xaafadaada (Type Custom Neighborhood):
                 </label>
                 <input
@@ -414,27 +414,27 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                     setCustomLocationName(val);
                     setDraft({ ...draft, kebele: val.trim() || 'Xaafad' });
                   }}
-                  className="w-full p-3 bg-[#f0eded] rounded-xl text-sm font-bold text-[#1b1b1c] border border-[#005145]"
+                  className="w-full p-3 bg-slate-50 rounded-xl text-sm font-bold text-slate-900 border border-rose-600"
                 />
               </div>
             )}
           </div>
 
           {/* Live Device GPS Capture Section */}
-          <div className="p-4 bg-[#f0eded] rounded-2xl space-y-3 border border-[#bec9c5]/40 text-center">
-            <div className="flex items-center justify-center space-x-2 text-[#005145]">
+          <div className="p-4 bg-slate-50 rounded-2xl space-y-3 border border-slate-200 text-center">
+            <div className="flex items-center justify-center space-x-2 text-rose-600">
               <span className="material-symbols-outlined text-[24px]">my_location</span>
-              <h4 className="font-poppins font-bold text-xs text-[#1b1b1c]">
+              <h4 className="font-poppins font-bold text-xs text-slate-900">
                 GPS Geolocation (Latitude & Longitude)
               </h4>
             </div>
 
-            <p className="text-[11px] text-[#3f4946]">
+            <p className="text-[11px] text-slate-600">
               Taabo badhanka hoose si uu telefoonku si otomaatig ah ugu soo qabto GPS-ka gurigaaga.
             </p>
 
             {draft.gpsCoords && (
-              <div className="p-2.5 bg-white rounded-xl text-xs font-mono font-bold text-[#005145] border border-[#bec9c5]/30">
+              <div className="p-2.5 bg-white rounded-xl text-xs font-mono font-bold text-rose-600 border border-slate-200">
                 📍 {draft.gpsCoords}
               </div>
             )}
@@ -443,16 +443,16 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
               type="button"
               onClick={handleCaptureLiveGps}
               disabled={detectingGps}
-              className="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5"
+              className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5"
             >
-              <span className={`material-symbols-outlined text-[18px] ${detectingGps ? 'animate-spin' : ''}`}>
+              <span className={`material-symbols-outlined text-[18px] text-amber-400 ${detectingGps ? 'animate-spin' : ''}`}>
                 {detectingGps ? 'sync' : 'gps_fixed'}
               </span>
               <span>{detectingGps ? 'Detecting GPS...' : '📍 Soo Qabo GPS Location-kayga Hada'}</span>
             </button>
 
             {gpsStatus && (
-              <p className="text-[10px] font-semibold text-emerald-800 pt-1">
+              <p className="text-[10px] font-semibold text-rose-700 pt-1">
                 {gpsStatus}
               </p>
             )}
@@ -461,13 +461,13 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           <div className="flex space-x-3 pt-2">
             <button
               onClick={() => onNavigateStep(2)}
-              className="flex-1 py-3.5 rounded-2xl bg-[#e5e2e1] text-[#3f4946] font-bold text-xs"
+              className="flex-1 py-3.5 rounded-2xl bg-slate-100 text-slate-600 font-bold text-xs"
             >
               Back
             </button>
             <button
               onClick={() => onNavigateStep(4)}
-              className="flex-2 py-3.5 rounded-2xl bg-[#005145] text-white font-bold text-xs uppercase shadow-md"
+              className="flex-2 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase shadow-md"
             >
               Next Step
             </button>
@@ -477,20 +477,20 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
       {/* STEP 4: Photos & Mandatory Property Video Upload */}
       {currentStep === 4 && (
-        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-6 border border-[#bec9c5]/40 text-center">
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow space-y-6 border border-slate-200 text-center">
           
           {/* Section 1: Photos */}
           <div className="space-y-4">
-            <div className="border-2 border-dashed border-[#005145] rounded-3xl p-6 bg-[#f0eded] space-y-3 relative group hover:bg-[#e5e2e1] transition">
-              <span className="material-symbols-outlined text-[48px] text-[#005145]">add_a_photo</span>
-              <h4 className="font-poppins font-bold text-sm text-[#1b1b1c]">
+            <div className="border-2 border-dashed border-rose-500 rounded-3xl p-6 bg-rose-50/50 space-y-3 relative group hover:bg-rose-50 transition">
+              <span className="material-symbols-outlined text-[48px] text-rose-600">add_a_photo</span>
+              <h4 className="font-poppins font-bold text-sm text-slate-900">
                 1. Soo Geli Sawirada Guriga (Upload Photos)
               </h4>
-              <p className="text-xs text-[#3f4946]">
+              <p className="text-xs text-slate-600">
                 Taabo halkan si aad sawiro dhab ah oo guri ah uga soo doorato telefoonkaaga.
               </p>
 
-              <label className="inline-block px-5 py-2.5 rounded-xl bg-[#005145] text-white text-xs font-bold cursor-pointer shadow-md hover:bg-[#0f6b5c]">
+              <label className="inline-block px-5 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold cursor-pointer shadow-md hover:bg-rose-700">
                 <span>Soo Dooro Sawiro (Choose Photos)</span>
                 <input
                   type="file"
@@ -508,12 +508,12 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                 placeholder="Ama geli Image URL link..."
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                className="flex-1 p-3 bg-[#f0eded] rounded-xl text-xs border border-[#bec9c5]/40"
+                className="flex-1 p-3 bg-slate-50 rounded-xl text-xs border border-slate-200"
               />
               <button
                 type="button"
                 onClick={handleAddUrlImage}
-                className="px-4 py-3 bg-[#005145] text-white rounded-xl text-xs font-bold"
+                className="px-4 py-3 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800"
               >
                 Add URL
               </button>
@@ -521,17 +521,17 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
             {draft.images.length > 0 && (
               <div className="space-y-2 text-left">
-                <span className="text-xs font-bold text-[#3f4946] block">
+                <span className="text-xs font-bold text-slate-600 block">
                   Sawirada la soo galiyay ({draft.images.length}):
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {draft.images.map((img, i) => (
-                    <div key={i} className="aspect-video rounded-2xl overflow-hidden relative border border-[#bec9c5]/40 shadow-xs group">
+                    <div key={i} className="aspect-video rounded-2xl overflow-hidden relative border border-slate-200 shadow-xs group">
                       <img src={img} alt={`Uploaded ${i}`} className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(i)}
-                        className="absolute top-1.5 right-1.5 bg-black/60 text-white p-1 rounded-full hover:bg-red-600 transition"
+                        className="absolute top-1.5 right-1.5 bg-black/60 text-white p-1 rounded-full hover:bg-rose-600 transition"
                         title="Remove image"
                       >
                         <span className="material-symbols-outlined text-[16px]">close</span>
@@ -544,7 +544,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           </div>
 
           {/* Section 2: Mandatory Property Video Upload Field */}
-          <div className="pt-4 border-t border-[#bec9c5]/40 text-left">
+          <div className="pt-4 border-t border-slate-200 text-left">
             <VideoUploadField
               currentVideoUrl={draft.videoUrl}
               onVideoChange={(url, duration) => {
@@ -560,13 +560,13 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           <div className="flex space-x-3 pt-4">
             <button
               onClick={() => onNavigateStep(3)}
-              className="flex-1 py-3.5 rounded-2xl bg-[#e5e2e1] text-[#3f4946] font-bold text-xs"
+              className="flex-1 py-3.5 rounded-2xl bg-slate-100 text-slate-600 font-bold text-xs"
             >
               Back
             </button>
             <button
               onClick={() => onNavigateStep(5)}
-              className="flex-2 py-3.5 rounded-2xl bg-[#005145] text-white font-bold text-xs uppercase shadow-md"
+              className="flex-2 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase shadow-md"
             >
               Final Step
             </button>
@@ -576,9 +576,9 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
 
       {/* STEP 5: Pricing ETB & Anti-Fraud Agreement */}
       {currentStep === 5 && (
-        <div className="bg-[#fcf9f8] p-6 rounded-3xl listing-card-shadow space-y-5 border border-[#bec9c5]/40">
+        <div className="bg-white p-6 rounded-3xl listing-card-shadow space-y-5 border border-slate-200">
           <div>
-            <label className="block text-xs font-bold text-[#3f4946] mb-1">
+            <label className="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">
               Qiimaha Guriga (ETB - Ethiopian Birr):
             </label>
             <input
@@ -587,32 +587,32 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
               required
               value={draft.priceEtb}
               onChange={(e) => setDraft({ ...draft, priceEtb: Number(e.target.value) })}
-              className="w-full p-4 bg-[#f0eded] rounded-2xl text-2xl font-poppins font-black text-[#005145] text-center border border-[#bec9c5]/40"
+              className="w-full p-4 bg-rose-50/50 rounded-2xl text-2xl font-poppins font-black text-rose-600 text-center border border-rose-200 focus:ring-2 focus:ring-rose-600"
             />
           </div>
 
-          <div className="p-4 bg-[#f0eded] rounded-2xl text-xs space-y-2 border border-[#bec9c5]/40">
-            <div className="flex justify-between font-bold">
+          <div className="p-4 bg-slate-50 rounded-2xl text-xs space-y-2 border border-slate-200">
+            <div className="flex justify-between font-bold text-slate-900">
               <span>Magaca:</span>
               <span>{draft.title}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between text-slate-600">
               <span>Location:</span>
               <span>Jigjiga, {draft.kebele}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between text-slate-600">
               <span>GPS:</span>
               <span>{draft.gpsCoords}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between text-slate-600">
               <span>Nooca:</span>
               <span>{draft.mode === 'kiro' ? 'Kiro' : 'Iib'} ({draft.category})</span>
             </div>
-            <div className="flex justify-between font-bold text-[#005145]">
+            <div className="flex justify-between font-bold text-rose-600">
               <span>Sawirada:</span>
               <span>{draft.images.length} Photos</span>
             </div>
-            <div className="flex justify-between font-bold text-[#005145]">
+            <div className="flex justify-between font-bold text-rose-600">
               <span>Muuqaalka (Video Tour):</span>
               <span>{draft.videoUrl ? '✅ Video Tour Included' : '❌ No Video Attached'}</span>
             </div>
@@ -625,7 +625,7 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
                 type="checkbox"
                 checked={agreedToAntiFraud}
                 onChange={(e) => setAgreedToAntiFraud(e.target.checked)}
-                className="w-4 h-4 rounded text-[#005145] mt-0.5"
+                className="w-4 h-4 rounded text-rose-600 mt-0.5"
               />
               <span className="font-semibold text-[11px] leading-snug">
                 Waan waafaqsanahay sharciyada DHAMME: Sawirada iyo faahfaahinta gurigani waa 100% dhab. Waxaa si adag loo mamnuucay sawirada been abuurka ah ama guryaha aan jirin (Anti-Fraud Policy).
@@ -636,13 +636,12 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
           <button
             onClick={handleFinalSubmit}
             disabled={!agreedToAntiFraud}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#005145] to-[#0f6b5c] hover:brightness-110 text-white font-poppins font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all disabled:opacity-50"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 hover:shadow-rose-600/30 text-white font-poppins font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all disabled:opacity-50"
           >
             Daabac Guriga (Publish Property Now)
           </button>
         </div>
       )}
-
 
     </div>
   );
