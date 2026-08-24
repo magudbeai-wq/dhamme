@@ -2,14 +2,14 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://lbmsdvnqtabwws
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_tT5p5zHePZae6Ek7COXSyw_AB9KpZRv';
 
 /**
- * Crash-resistant Supabase REST & Auth client.
+ * Lightweight, crash-resistant Supabase REST & Live Broadcast Client.
  */
 export const supabase = {
   // REST DATABASE APIS
   from: (tableName: string) => ({
     select: async (query = '*') => {
       try {
-        const url = `${supabaseUrl}/rest/v1/${tableName}?select=${encodeURIComponent(query)}`;
+        const url = `${supabaseUrl}/rest/v1/${tableName}?select=${encodeURIComponent(query)}&order=created_at.desc`;
         const res = await fetch(url, {
           method: 'GET',
           headers: {
@@ -171,4 +171,3 @@ export const supabase = {
     }
   }
 };
-

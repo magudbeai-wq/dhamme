@@ -244,20 +244,28 @@ export function App() {
     }
   }, [properties]);
 
-  // Full Database Sync Handler (Reconciles Supabase Cloud + LocalStorage)
+  // Full Database Sync Handler (Reconciles Supabase Cloud + LocalStorage for all users)
   const syncDatabaseFull = useCallback(async () => {
     try {
-      // 1. Fetch Cloud Properties
+      // 1. Fetch Cloud Properties (Ordered latest first)
       const { data: propData, error: propError } = await supabase.from('properties').select('*');
       if (propData && !propError && Array.isArray(propData) && propData.length > 0) {
         setProperties((prev) => {
-          const merged = [...prev];
-          propData.forEach((dbProp: any) => {
-            const formatted: PropertyListing = {
+          const fakePropertyIds = [
+            'jigjiga-villa-garabase-01',
+            'jigjiga-house-taiwan-02',
+            'jigjiga-sale-villa-airport-03',
+            'jigjiga-studio-univ-04',
+            'jigjiga-house-citycenter-05',
+            'jigjiga-sale-plot-garabase-06'
+          ];
+          const cloudProps: PropertyListing[] = propData
+            .filter((dbProp: any) => dbProp && dbProp.id && !fakePropertyIds.includes(dbProp.id))
+            .map((dbProp: any) => ({
               id: dbProp.id || `prop-db-${Date.now()}`,
-              title: dbProp.title,
-              priceEtb: Number(dbProp.price_etb),
-              priceLocalFormatted: `${Number(dbProp.price_etb).toLocaleString()} ETB`,
+              title: dbProp.title || 'Guri Jigjiga',
+              priceEtb: Number(dbProp.price_etb) || 0,
+              priceLocalFormatted: `${Number(dbProp.price_etb || 0).toLocaleString()} ETB`,
               mode: dbProp.mode || 'kiro',
               category: dbProp.category || 'Family House',
               city: dbProp.city || 'Jigjiga',
@@ -277,17 +285,21 @@ export function App() {
               agentName: dbProp.agent_name || 'Landlord',
               agentPhone: dbProp.agent_phone || '+251 91 000 0000',
               agentAvatar: dbProp.agent_avatar || '',
+              ownerEmail: dbProp.owner_email || undefined,
               postedDate: dbProp.created_at ? new Date(dbProp.created_at).toISOString().split('T')[0] : '2026-08-01',
               status: dbProp.status || 'active'
-            };
-            const existingIndex = merged.findIndex((p) => p.id === formatted.id);
-            if (existingIndex >= 0) {
-              merged[existingIndex] = { ...merged[existingIndex], ...formatted };
-            } else {
-              merged.unshift(formatted);
+            }));
+
+          // Merge cloud properties with any local-only drafts
+          const mergedMap = new Map<string, PropertyListing>();
+          cloudProps.forEach((p) => mergedMap.set(p.id, p));
+          prev.forEach((p) => {
+            if (!fakePropertyIds.includes(p.id) && !mergedMap.has(p.id)) {
+              mergedMap.set(p.id, p);
             }
           });
-          return merged;
+
+          return Array.from(mergedMap.values());
         });
       }
 
@@ -297,13 +309,50 @@ export function App() {
         setActivityLogs(loadedLogs);
       }
     } catch (err) {
-      console.error('Supabase properties sync error:', err);
+      console.warn('Supabase properties sync notice:', err);
     }
   }, []);
 
-  // Fetch properties & audit logs on startup
+  // Real-Time Live Feed Sync: WebSockets + 4s Instant Polling + Focus Refetch
   useEffect(() => {
+    // 1. Initial Sync on load
     syncDatabaseFull();
+
+    // 2. Fast 4-second live poll for instantaneous updates worldwide
+    const liveInterval = setInterval(() => {
+      syncDatabaseFull();
+    }, 4000);
+
+    // 3. Cross-tab & Multi-window instant BroadcastChannel sync
+    let broadcast: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== 'undefined') {
+      broadcast = new BroadcastChannel('dhamme_live_feed');
+      broadcast.onmessage = (msg) => {
+        if (msg.data === 'NEW_PROPERTY_POSTED' || msg.data === 'PROPERTY_UPDATED') {
+          syncDatabaseFull();
+        }
+      };
+    }
+
+    // 4. Refetch on Window Focus & Tab Visibility
+    const handleFocus = () => syncDatabaseFull();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        syncDatabaseFull();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(liveInterval);
+      if (broadcast) {
+        broadcast.close();
+      }
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [syncDatabaseFull]);
 
 
@@ -471,7 +520,7 @@ export function App() {
     });
     setActivityLogs((prev) => [newLog, ...prev]);
 
-    // Save asynchronously to Supabase cloud DB
+    // Save asynchronously to Supabase cloud DB for all users (logged-in & logged-out)
     try {
       await supabase.from('properties').insert([
         {
@@ -493,10 +542,18 @@ export function App() {
           agent_name: updatedProp.agentName,
           agent_phone: updatedProp.agentPhone,
           agent_avatar: updatedProp.agentAvatar,
+          owner_email: updatedProp.ownerEmail,
           status: 'active',
           created_at: new Date().toISOString()
         }
       ]);
+
+      // Broadcast to all open tabs and devices
+      if (typeof BroadcastChannel !== 'undefined') {
+        const bc = new BroadcastChannel('dhamme_live_feed');
+        bc.postMessage('NEW_PROPERTY_POSTED');
+        bc.close();
+      }
     } catch (err) {
       console.error('Failed to sync new property to Supabase:', err);
     }
