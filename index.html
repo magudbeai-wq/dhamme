@@ -75,5 +75,18 @@
   <body class="bg-[#FAF9F6] text-[#111315] font-sans antialiased selection:bg-[#C8A96B]/30 selection:text-[#111315]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(function(registration) {
+              console.log('DHAMME ServiceWorker registered with scope: ', registration.scope);
+            })
+            .catch(function(err) {
+              console.warn('DHAMME ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

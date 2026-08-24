@@ -10,6 +10,7 @@
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
+    "tabbed",
     "standalone",
     "minimal-ui",
     "browser"
@@ -26,7 +27,13 @@
   ],
   "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "prefer_related_applications": false,
-  "related_applications": [],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.dhamme.app",
+      "id": "com.dhamme.app"
+    }
+  ],
   "scope_extensions": [
     {
       "origin": "https://capilorix.store"
@@ -44,6 +51,57 @@
   "edge_side_panel": {
     "preferred_width": 400
   },
+  "file_handlers": [
+    {
+      "action": "/",
+      "name": "Images",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ],
+      "accept": {
+        "image/*": [
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".webp"
+        ]
+      }
+    }
+  ],
+  "note_taking": {
+    "new_note_url": "/?screen=post_step1"
+  },
+  "widgets": [
+    {
+      "name": "DHAMME Real Estate",
+      "short_name": "DHAMME",
+      "description": "Quickly explore real estate listings in Jigjiga",
+      "tag": "dhamme_featured",
+      "template": "widget-template",
+      "ms_ac_template": "widgets/template.json",
+      "data": "widgets/data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/screenshot-mobile.png",
+          "sizes": "750x1334",
+          "label": "DHAMME Widget"
+        }
+      ],
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ],
+      "auth": false,
+      "update": 86400
+    }
+  ],
   "icons": [
     {
       "src": "/pwa-192x192.png",

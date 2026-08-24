@@ -1,0 +1,17 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "DHAMME Real Estate Jigjiga",
+      "weight": "Bolder",
+      "size": "Medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Hel guryaha Kiro iyo Iib ee magaalada Jigjiga",
+      "wrap": true
+    }
+  ]
+}
