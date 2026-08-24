@@ -7,6 +7,7 @@ interface AdminDashboardProps {
   properties: PropertyListing[];
   registeredAccounts: UserProfile[];
   activityLogs?: AuditActivityLog[];
+  currentUser?: UserProfile | null;
   onSelectProperty: (property: PropertyListing) => void;
   onDeleteProperty?: (id: string, reason?: string) => void;
   onUpdateProperty?: (updated: PropertyListing) => void;
@@ -15,12 +16,14 @@ interface AdminDashboardProps {
   onToggleUserVerification?: (userId: string) => void;
   onRefreshData?: () => Promise<void>;
   onExportBackup?: () => void;
+  onBackToHome?: () => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   properties,
   registeredAccounts,
   activityLogs = [],
+  currentUser,
   onSelectProperty,
   onDeleteProperty,
   onUpdateProperty,
@@ -28,8 +31,40 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onUnbanUser,
   onToggleUserVerification,
   onRefreshData,
-  onExportBackup
+  onExportBackup,
+  onBackToHome
 }) => {
+  // STRICT SECURITY GUARD: Master Admin Only
+  const isAuthorizedAdmin = Boolean(
+    currentUser && (currentUser.isAdmin || currentUser.email?.toLowerCase() === 'magudbeai@gmail.com')
+  );
+
+  if (!isAuthorizedAdmin) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center p-6 bg-[#FAF9F6]">
+        <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-[#E8E5DF] text-center shadow-xl space-y-4 animate-fade-in">
+          <div className="w-16 h-16 bg-[#FAF9F6] border border-[#E8E5DF] text-[#111315] rounded-full flex items-center justify-center mx-auto">
+            <span className="material-symbols-outlined text-3xl">lock</span>
+          </div>
+          <h2 className="text-xl font-bold font-serif text-[#17191C]">
+            Awood Uma Lihid (Access Restricted)
+          </h2>
+          <p className="text-xs text-[#74777B] leading-relaxed">
+            Boggan waxaa geli kara oo kaliya Master Admin-ka rasmiga ah ee DHAMME (magudbeai@gmail.com). Fadlan ku gal koontadaada saxda ah.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={onBackToHome}
+              className="w-full py-3 px-6 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-semibold text-xs transition active:scale-95 shadow-xs"
+            >
+              Ku Laabo Bogga Hore (Back to Home)
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const [activeTab, setActiveTab] = useState<'overview' | 'actions' | 'properties' | 'users' | 'videos' | 'kebeles'>('overview');
   const [searchFilter, setSearchFilter] = useState('');
   const [logFilter, setLogFilter] = useState<string>('all');

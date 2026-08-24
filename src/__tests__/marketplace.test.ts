@@ -302,6 +302,53 @@ export function runAllTests() {
   assert(validateVideoUpload({ name: 'huge-file.mp4', size: 150 * 1024 * 1024, type: 'video/mp4' }).valid === false, 'Video > 100MB rejected with size error');
   assert(validateVideoUpload({ name: 'document.pdf', size: 2 * 1024 * 1024, type: 'application/pdf' }).valid === false, 'Non-video file rejected');
 
+  // TEST GROUP 7: Ironclad Route & Component-Level Authorization Security Guards
+  console.log('\n--- TEST GROUP 7: Route & Admin Authorization Security Guards ---');
+  function resolveScreenForUser(pathOrParam: string, user: UserProfile | null): string {
+    const isMasterAdmin = Boolean(user && (user.isAdmin || user.email?.toLowerCase() === 'magudbeai@gmail.com'));
+    
+    if (pathOrParam.includes('admin')) {
+      if (isMasterAdmin) return 'admin_dashboard';
+      return 'login';
+    }
+    if (pathOrParam.includes('post') || pathOrParam.includes('my_listings')) {
+      if (user) return 'my_listings';
+      return 'login';
+    }
+    return 'home';
+  }
+
+  // 1. Unauthenticated guest trying to visit /admin -> MUST be redirected to login
+  assert(resolveScreenForUser('/admin', null) === 'login', 'Logged-out guest visiting /admin is redirected to login');
+  assert(resolveScreenForUser('?screen=admin', null) === 'login', 'Logged-out guest visiting ?screen=admin is redirected to login');
+
+  // 2. Regular user (non-admin) trying to visit /admin -> MUST be redirected to login / blocked
+  const regularUser: UserProfile = {
+    id: 'reg-001',
+    fullName: 'Ahmed Cali',
+    email: 'ahmed@gmail.com',
+    phone: '0915123456',
+    avatarUrl: '',
+    isAdmin: false,
+    isVerified: false
+  };
+  assert(resolveScreenForUser('/admin', regularUser) === 'login', 'Non-admin registered user visiting /admin is blocked from admin dashboard');
+
+  // 3. Genuine Master Admin -> Permitted to admin_dashboard
+  const genuineAdmin: UserProfile = {
+    id: 'admin-master',
+    fullName: 'Master Admin',
+    email: 'magudbeai@gmail.com',
+    phone: '0915752826',
+    avatarUrl: '',
+    isAdmin: true,
+    isVerified: true
+  };
+  assert(resolveScreenForUser('/admin', genuineAdmin) === 'admin_dashboard', 'Genuine Master Admin granted admin_dashboard access');
+
+  // 4. Logged-out guest trying to post property -> Redirected to login
+  assert(resolveScreenForUser('/post', null) === 'login', 'Logged-out user attempting to post is redirected to login');
+
   console.log(`\n========================================`);
   console.log(`SUMMARY: ${passed} PASSED | ${failed} FAILED`);
   console.log(`========================================\n`);

@@ -46,12 +46,39 @@ export function App() {
     const search = new URLSearchParams(window.location.search);
     const screenParam = search.get('screen');
 
+    // Read stored user from localStorage for secure pre-hydration checks
+    let storedUser: UserProfile | null = null;
+    try {
+      const saved = localStorage.getItem('dhamme_active_user');
+      if (saved) {
+        storedUser = JSON.parse(saved);
+      }
+    } catch (e) {}
+
+    const isMasterAdmin = Boolean(
+      storedUser && (storedUser.isAdmin || storedUser.email?.toLowerCase() === 'magudbeai@gmail.com')
+    );
+
     if (path.includes('login') || screenParam === 'login') return 'login';
     if (path.includes('signup') || screenParam === 'signup') return 'signup';
-    if (path.includes('admin') || screenParam === 'admin') return 'admin_dashboard';
-    if (path.includes('profile') || screenParam === 'profile') return 'profile';
     if (path.includes('privacy') || screenParam === 'privacy') return 'privacy';
     if (path.includes('terms') || screenParam === 'terms') return 'terms';
+    if (path.includes('profile') || screenParam === 'profile') return 'profile';
+
+    // 🔒 STRICT SECURITY: Never expose admin dashboard to unauthenticated or non-admin visitors
+    if (path.includes('admin') || screenParam === 'admin') {
+      if (isMasterAdmin) return 'admin_dashboard';
+      try { window.history.replaceState({}, '', '/login'); } catch (e) {}
+      return 'login';
+    }
+
+    // 🔒 STRICT SECURITY: Guard landlord posting and listings
+    if (path.includes('post') || screenParam?.startsWith('post') || path.includes('my_listings') || screenParam === 'my_listings') {
+      if (storedUser) return 'my_listings';
+      try { window.history.replaceState({}, '', '/login'); } catch (e) {}
+      return 'login';
+    }
+
     return 'splash';
   });
 
@@ -724,10 +751,21 @@ export function App() {
     }
 
     // Strict Admin route protection
-    if (screen === 'admin_dashboard' && (!userProfile?.isAdmin && userProfile?.email?.toLowerCase() !== 'magudbeai@gmail.com')) {
-      setCurrentScreen('login');
-      try { window.history.pushState({}, '', '/login'); } catch (e) {}
-      return;
+    if (screen === 'admin_dashboard') {
+      if (!userProfile) {
+        setCurrentScreen('login');
+        try { window.history.pushState({}, '', '/login'); } catch (e) {}
+        return;
+      }
+      const isMasterAdmin = Boolean(
+        userProfile.isAdmin || userProfile.email?.toLowerCase() === 'magudbeai@gmail.com'
+      );
+      if (!isMasterAdmin) {
+        alert('Awood uma lihid boggan maamulka (Access Denied: Master Admin Only).');
+        setCurrentScreen('home');
+        try { window.history.pushState({}, '', '/'); } catch (e) {}
+        return;
+      }
     }
 
     setCurrentScreen(screen);
@@ -875,14 +913,24 @@ export function App() {
             />
           )}
 
-          {/* POST LISTING 5-STEP WIZARD */}
+          {/* POST LISTING 5-STEP WIZARD (Requires Authentication) */}
           {currentScreen.startsWith('post_step') && (
-            <PostListingWizard
-              currentStep={parseInt(currentScreen.replace('post_step', ''), 10) || 1}
-              onNavigateStep={(step) => setCurrentScreen(`post_step${step}` as ScreenName)}
-              onAddProperty={handleAddProperty}
-              onCancel={() => setCurrentScreen('home')}
-            />
+            userProfile ? (
+              <PostListingWizard
+                currentStep={parseInt(currentScreen.replace('post_step', ''), 10) || 1}
+                onNavigateStep={(step) => setCurrentScreen(`post_step${step}` as ScreenName)}
+                onAddProperty={handleAddProperty}
+                onCancel={() => setCurrentScreen('home')}
+              />
+            ) : (
+              <AuthPage
+                initialScreen="login"
+                registeredAccounts={registeredAccounts}
+                onRegisterAccount={handleRegisterAccount}
+                onLoginSuccess={handleLoginSuccess}
+                onBackToHome={() => setCurrentScreen('home')}
+              />
+            )
           )}
 
           {/* FAVORITES */}
@@ -895,35 +943,57 @@ export function App() {
             />
           )}
 
-          {/* MY LISTINGS & LANDLORD ANALYTICS DASHBOARD */}
+          {/* MY LISTINGS & LANDLORD ANALYTICS DASHBOARD (Requires Authentication) */}
           {currentScreen === 'my_listings' && (
-            <MyListings
-              userListings={userListings}
-              onSelectProperty={handleSelectProperty}
-              onStartNewListing={() => handleNavigateScreen('post_step1')}
-              onUpdateStatus={handleUpdatePropertyStatus}
-            />
+            userProfile ? (
+              <MyListings
+                userListings={userListings}
+                onSelectProperty={handleSelectProperty}
+                onStartNewListing={() => handleNavigateScreen('post_step1')}
+                onUpdateStatus={handleUpdatePropertyStatus}
+              />
+            ) : (
+              <AuthPage
+                initialScreen="login"
+                registeredAccounts={registeredAccounts}
+                onRegisterAccount={handleRegisterAccount}
+                onLoginSuccess={handleLoginSuccess}
+                onBackToHome={() => setCurrentScreen('home')}
+              />
+            )
           )}
 
-          {/* MASTER ADMIN DASHBOARD */}
+          {/* MASTER ADMIN DASHBOARD (Strict Master Admin Authorization Gate) */}
           {currentScreen === 'admin_dashboard' && (
-            <AdminDashboard
-              properties={properties}
-              registeredAccounts={registeredAccounts}
-              activityLogs={activityLogs}
-              onSelectProperty={handleSelectProperty}
-              onDeleteProperty={handleDeleteProperty}
-              onUpdateProperty={handleUpdateProperty}
-              onBanUser={handleBanUser}
-              onUnbanUser={handleUnbanUser}
-              onToggleUserVerification={handleToggleUserVerification}
-              onRefreshData={syncDatabaseFull}
-              onExportBackup={() => downloadFullDatabaseBackup({
-                properties,
-                users: registeredAccounts,
-                activityLogs
-              })}
-            />
+            (userProfile && (userProfile.isAdmin || userProfile.email?.toLowerCase() === 'magudbeai@gmail.com')) ? (
+              <AdminDashboard
+                properties={properties}
+                registeredAccounts={registeredAccounts}
+                activityLogs={activityLogs}
+                currentUser={userProfile}
+                onSelectProperty={handleSelectProperty}
+                onDeleteProperty={handleDeleteProperty}
+                onUpdateProperty={handleUpdateProperty}
+                onBanUser={handleBanUser}
+                onUnbanUser={handleUnbanUser}
+                onToggleUserVerification={handleToggleUserVerification}
+                onRefreshData={syncDatabaseFull}
+                onExportBackup={() => downloadFullDatabaseBackup({
+                  properties,
+                  users: registeredAccounts,
+                  activityLogs
+                })}
+                onBackToHome={() => setCurrentScreen('home')}
+              />
+            ) : (
+              <AuthPage
+                initialScreen="login"
+                registeredAccounts={registeredAccounts}
+                onRegisterAccount={handleRegisterAccount}
+                onLoginSuccess={handleLoginSuccess}
+                onBackToHome={() => setCurrentScreen('home')}
+              />
+            )
           )}
 
           {/* PROFILE */}
