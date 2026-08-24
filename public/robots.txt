@@ -1,0 +1,39 @@
+# DHAMME Real Estate Robots.txt - Maximized for Google, Bing, Applebot, and AI Search Engines
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin_dashboard
+
+# AI Search & Crawler Permissions (Google AI Overview, Perplexity, ChatGPT, Claude)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+# XML Sitemap Link
+Sitemap: https://capilorix.store/sitemap.xml

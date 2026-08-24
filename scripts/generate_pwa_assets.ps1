@@ -59,11 +59,15 @@ function Generate-DhammeIcon {
     Write-Host "Generated icon: $outputPath ($($size)x$($size))"
 }
 
-# 1. Generate 192x192 PNG Icon
+# 1. Generate Google Search Favicon Multiples (48x48, 96x96, 144x144, 192x192)
+Generate-DhammeIcon -size 48 -outputPath "$publicDir\favicon-48x48.png" -isMaskable $false
+Generate-DhammeIcon -size 96 -outputPath "$publicDir\favicon-96x96.png" -isMaskable $false
+Generate-DhammeIcon -size 144 -outputPath "$publicDir\favicon-144x144.png" -isMaskable $false
 Generate-DhammeIcon -size 192 -outputPath "$publicDir\pwa-192x192.png" -isMaskable $false
 
-# 2. Generate 512x512 PNG Icon
+# 2. Generate 512x512 PNG Icon & Brand Logo
 Generate-DhammeIcon -size 512 -outputPath "$publicDir\pwa-512x512.png" -isMaskable $false
+Generate-DhammeIcon -size 512 -outputPath "$publicDir\dhamme-logo.png" -isMaskable $false
 
 # 3. Generate 512x512 Maskable PNG Icon (with safe zone)
 Generate-DhammeIcon -size 512 -outputPath "$publicDir\pwa-maskable-512x512.png" -isMaskable $true
@@ -71,8 +75,10 @@ Generate-DhammeIcon -size 512 -outputPath "$publicDir\pwa-maskable-512x512.png" 
 # 4. Generate Apple Touch Icon 180x180
 Generate-DhammeIcon -size 180 -outputPath "$publicDir\apple-touch-icon.png" -isMaskable $false
 
-# 5. Generate Favicon PNG 64x64
+# 5. Generate Favicon PNG 64x64 & Copy to favicon.ico
 Generate-DhammeIcon -size 64 -outputPath "$publicDir\favicon.png" -isMaskable $false
+Copy-Item "$publicDir\favicon-48x48.png" "$publicDir\favicon.ico" -Force
+
 
 # 6. Generate Desktop Screenshot (1280x720)
 function Generate-DesktopScreenshot {

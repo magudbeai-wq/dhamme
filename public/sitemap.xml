@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Homepage / Main Real Estate Marketplace Feed -->
+  <url>
+    <loc>https://capilorix.store/</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://capilorix.store/screenshot-desktop.png</image:loc>
+      <image:title>DHAMME Real Estate Jigjiga - Guryaha Kiro iyo Iibka</image:title>
+      <image:caption>Suuqa 1-aad ee guryaha kiro iyo iibka magaalada Jigjiga</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Guryaha Kiro ee Jigjiga (Rentals) -->
+  <url>
+    <loc>https://capilorix.store/?mode=kiro</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://capilorix.store/jigjiga-house-1.jpg</image:loc>
+      <image:title>Guryo Kiro ah Jigjiga</image:title>
+    </image:image>
+  </url>
+
+  <!-- Guryaha Iibka ah ee Jigjiga (For Sale) -->
+  <url>
+    <loc>https://capilorix.store/?mode=iib</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://capilorix.store/jigjiga-house-2.jpg</image:loc>
+      <image:title>Guryo iyo Dhul Iib ah Jigjiga</image:title>
+    </image:image>
+  </url>
+
+  <!-- Villas in Jigjiga -->
+  <url>
+    <loc>https://capilorix.store/?category=Villa</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Apartments in Jigjiga -->
+  <url>
+    <loc>https://capilorix.store/?category=Apartment</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Kebele 06 Garab'ase -->
+  <url>
+    <loc>https://capilorix.store/?kebele=Kebele+06</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Kebele 03 Taiwan Area -->
+  <url>
+    <loc>https://capilorix.store/?kebele=Kebele+03</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Kebele 08 Airport Road -->
+  <url>
+    <loc>https://capilorix.store/?kebele=Kebele+08</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Kebele 05 City Center -->
+  <url>
+    <loc>https://capilorix.store/?kebele=Kebele+05</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Post Property Wizard -->
+  <url>
+    <loc>https://capilorix.store/?screen=post_step1</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://capilorix.store/privacy</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://capilorix.store/terms</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+</urlset>
