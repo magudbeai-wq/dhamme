@@ -19,13 +19,22 @@ function Generate-DhammeIcon {
     $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
     $g.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::AntiAliasGridFit
 
-    # Charcoal background
+    # Charcoal background with smooth rounded corners matching logo
     $bgBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 17, 19, 21))
-    $g.FillRectangle($bgBrush, 0, 0, $size, $size)
+    $radius = [Math]::Max(4, [int]($size * 0.20))
+    $diam = $radius * 2
+    $path = New-Object System.Drawing.Drawing2D.GraphicsPath
+    $path.AddArc(0, 0, $diam, $diam, 180, 90)
+    $path.AddArc($size - $diam, 0, $diam, $diam, 270, 90)
+    $path.AddArc($size - $diam, $size - $diam, $diam, $diam, 0, 90)
+    $path.AddArc(0, $size - $diam, $diam, $diam, 90, 90)
+    $path.CloseFigure()
+    $g.FillPath($bgBrush, $path)
     $bgBrush.Dispose()
+    $path.Dispose()
 
     # Scale factor for maskable safe area or standard
-    $scale = if ($isMaskable) { 0.65 } else { 0.8 }
+    $scale = if ($isMaskable) { 0.65 } else { 0.82 }
     $center = $size / 2.0
 
     # Save state before rotation
@@ -33,18 +42,20 @@ function Generate-DhammeIcon {
     $g.TranslateTransform($center, $center)
     $g.RotateTransform(45.0)
 
-    # Outer Diamond in Champagne Gold #C8A96B
-    $outerSize = ($size * $scale) * 0.60
+    # Outer Diamond in Champagne Gold #C8A96B with rounded joins
+    $outerSize = ($size * $scale) * 0.58
     $halfOuter = $outerSize / 2.0
-    $strokeWidth = [Math]::Max(3.0, ($size * 0.065))
+    $strokeWidth = [Math]::Max(2.5, ($size * 0.075))
     $goldPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 200, 169, 107), $strokeWidth)
     $goldPen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
+    $goldPen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
+    $goldPen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
     
     $g.DrawRectangle($goldPen, -$halfOuter, -$halfOuter, $outerSize, $outerSize)
     $goldPen.Dispose()
 
     # Inner Diamond in White #FFFFFF
-    $innerSize = $outerSize * 0.45
+    $innerSize = $outerSize * 0.46
     $halfInner = $innerSize / 2.0
     $whiteBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))
     $g.FillRectangle($whiteBrush, -$halfInner, -$halfInner, $innerSize, $innerSize)
