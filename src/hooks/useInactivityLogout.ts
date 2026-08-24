@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 
-const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes of complete inactivity
+const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 const STORAGE_KEY_LAST_ACTIVE = 'dhamme_last_active_timestamp';
 
 interface UseInactivityLogoutOptions {
@@ -16,7 +16,6 @@ export function useInactivityLogout({
 }: UseInactivityLogoutOptions) {
   const [isLoggedOutDueToInactivity, setIsLoggedOutDueToInactivity] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const hasInitializedRef = useRef(false);
 
   const updateLastActiveTime = useCallback(() => {
     try {
@@ -26,18 +25,10 @@ export function useInactivityLogout({
     }
   }, []);
 
-  const clearInactivityNotice = useCallback(() => {
-    setIsLoggedOutDueToInactivity(false);
-  }, []);
-
   const triggerLogout = useCallback(() => {
-    if (!enabled) return;
     setIsLoggedOutDueToInactivity(true);
-    try {
-      localStorage.removeItem(STORAGE_KEY_LAST_ACTIVE);
-    } catch (e) {}
     onLogout();
-  }, [enabled, onLogout]);
+  }, [onLogout]);
 
   const checkTimeout = useCallback(() => {
     if (!enabled) return;
@@ -69,22 +60,16 @@ export function useInactivityLogout({
 
   useEffect(() => {
     if (!enabled) {
-      setIsLoggedOutDueToInactivity(false);
-      hasInitializedRef.current = false;
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
       return;
     }
 
-    // If just enabled (user just logged in), initialize active timestamp to NOW
-    if (!hasInitializedRef.current) {
-      updateLastActiveTime();
-      hasInitializedRef.current = true;
-    } else {
-      checkTimeout();
-    }
+    // Check if timeout already elapsed while inactive/closed
+    checkTimeout();
 
+    // Start timer & save active timestamp
     resetTimer();
 
     const activityEvents = [
@@ -122,10 +107,10 @@ export function useInactivityLogout({
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', handleWindowFocus);
 
-    // Periodic check every 30 seconds as a safety heartbeat
+    // Periodic check every 15 seconds as a safety heartbeat
     const interval = setInterval(() => {
       checkTimeout();
-    }, 30000);
+    }, 15000);
 
     return () => {
       if (timerRef.current) {
@@ -140,6 +125,10 @@ export function useInactivityLogout({
       window.removeEventListener('focus', handleWindowFocus);
     };
   }, [enabled, checkTimeout, resetTimer, updateLastActiveTime]);
+
+  const clearInactivityNotice = () => {
+    setIsLoggedOutDueToInactivity(false);
+  };
 
   return {
     isLoggedOutDueToInactivity,

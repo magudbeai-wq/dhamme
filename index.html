@@ -1,26 +1,47 @@
 <!doctype html>
-<html class="light" lang="so">
+<html class="light" lang="so" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://www.gstatic.com/labs-code/stitch/favicon-32x32.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#005145" />
+    <title>DHAMME - Real Estate Jigjiga Marketplace</title>
+
+    <!-- Canonical & SEO -->
     <link rel="canonical" href="https://capilorix.store" />
-    
-    <!-- SEO & Social Sharing Meta Tags -->
     <meta name="description" content="DHAMME Real Estate Marketplace in Jigjiga - Hel guryaha Kiro (Rent) iyo Iibka (Sale) ee magaalada Jigjiga." />
+    <meta name="keywords" content="Jigjiga real estate, guryo kiro jigjiga, guryo iib jigjiga, Dhamme app, Somali real estate" />
+    <meta name="author" content="DHAMME Real Estate" />
+
+    <!-- Open Graph & Social Sharing -->
     <meta property="og:title" content="DHAMME - Real Estate Marketplace (Jigjiga)" />
     <meta property="og:description" content="Kirayso ama Iibso guryaha ugu casrisan ee dhamaan Kebelada magaalada Jigjiga. Si fudud & professional ah." />
     <meta property="og:url" content="https://capilorix.store" />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://capilorix.store/screenshot-desktop.png" />
 
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DHAMME - Real Estate Marketplace (Jigjiga)" />
+    <meta name="twitter:description" content="Kirayso ama Iibso guryaha ugu casrisan ee Jigjiga." />
+    <meta name="twitter:image" content="https://capilorix.store/screenshot-desktop.png" />
+
+    <!-- PWA & Mobile Optimization -->
+    <meta name="theme-color" content="#111315" />
+    <meta name="application-name" content="DHAMME" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="DHAMME" />
+
+    <!-- Icons & Manifest -->
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <title>DHAMME - Real Estate Marketplace (Jigjiga)</title>
 
     <!-- Google Fonts & Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN & Config -->
@@ -31,25 +52,27 @@
         theme: {
           extend: {
             colors: {
-              "primary": "#005145",
-              "primary-container": "#0f6b5c",
-              "brand-sand": "#F2E8DC",
-              "secondary-container": "#ebe1d5",
-              "tertiary": "#7b2f10",
-              "surface": "#fcf9f8",
-              "surface-container-high": "#eae7e7",
-              "surface-container-highest": "#e5e2e1",
-              "on-surface": "#1b1b1c",
-              "on-surface-variant": "#3f4946",
-              "outline": "#6f7976",
-              "outline-variant": "#bec9c5"
+              "primary": "#111315",
+              "primary-container": "#17191C",
+              "brand-sand": "#FAF9F6",
+              "brand-gold": "#C8A96B",
+              "brand-charcoal": "#111315",
+              "secondary-container": "#FAF9F6",
+              "tertiary": "#C8A96B",
+              "surface": "#FFFFFF",
+              "surface-container-high": "#FAF9F6",
+              "surface-container-highest": "#E8E5DF",
+              "on-surface": "#111315",
+              "on-surface-variant": "#74777B",
+              "outline": "#E8E5DF",
+              "outline-variant": "#D0C9BF"
             }
           }
         }
       }
     </script>
   </head>
-  <body class="bg-[#F2E8DC] text-[#1b1b1c] font-inter">
+  <body class="bg-[#FAF9F6] text-[#111315] font-sans antialiased selection:bg-[#C8A96B]/30 selection:text-[#111315]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,16 +1,164 @@
 {
+  "id": "https://capilorix.store/",
+  "name": "DHAMME - Real Estate Jigjiga Marketplace",
   "short_name": "DHAMME",
-  "name": "DHAMME - Real Estate Jigjiga",
-  "icons": [
+  "description": "Hel guryaha Kiro (Rent) iyo Iibka (Sale) ee magaalada Jigjiga. Find verified rental and sale homes, villas, and apartments in Jigjiga with high-resolution photos and video tours.",
+  "lang": "so",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
+  "theme_color": "#111315",
+  "background_color": "#FAF9F6",
+  "categories": [
+    "business",
+    "lifestyle",
+    "shopping",
+    "utilities",
+    "productivity"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "scope_extensions": [
     {
-      "src": "https://www.gstatic.com/labs-code/stitch/favicon-32x32.png",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "origin": "https://capilorix.store"
+    },
+    {
+      "origin": "https://dhamme.app"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#005145",
-  "background_color": "#F2E8DC",
-  "orientation": "portrait"
+  "launch_handler": {
+    "client_mode": [
+      "focus-existing",
+      "auto"
+    ]
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DHAMME Real Estate Jigjiga Desktop Home Feed"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DHAMME Real Estate Jigjiga Mobile Marketplace"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Guryaha Kiro (Rentals)",
+      "short_name": "Kiro",
+      "description": "Fiiri guryaha kiro ee magaalada Jigjiga",
+      "url": "/?mode=kiro",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Guryaha Iibka (For Sale)",
+      "short_name": "Iib",
+      "description": "Fiiri guryaha iibka ee magaalada Jigjiga",
+      "url": "/?mode=iib",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Soo Geli Guri (Post Listing)",
+      "short_name": "Post",
+      "description": "Ku dar guri cusub oo kiro ama iib ah",
+      "url": "/?screen=post_step1",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Guryaha La Kaydiyay (Saved)",
+      "short_name": "Saved",
+      "description": "Fiiri guryaha aad kaydsatay",
+      "url": "/?screen=favorites",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+dhamme",
+      "url": "/?action=%s"
+    }
+  ]
 }
