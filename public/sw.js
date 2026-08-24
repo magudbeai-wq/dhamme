@@ -1,4 +1,4 @@
-// DHAMME Real Estate Jigjiga Service Worker v2.0
+// DHAMME Real Estate Jigjiga Service Worker v2.5
 const CACHE_NAME = 'dhamme-pwa-cache-v2';
 const PRECACHE_ASSETS = [
   '/',
@@ -44,15 +44,12 @@ self.addEventListener('activate', (event) => {
 
 // Fetch: Stale-While-Revalidate with Offline Fallback
 self.addEventListener('fetch', (event) => {
-  // Only intercept GET requests
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
 
-  // Skip chrome-extension or external analytics if any
   if (!url.protocol.startsWith('http')) return;
 
-  // For API or supabase requests, use network-first
   if (url.pathname.includes('/rest/v1/') || url.pathname.includes('/auth/v1/')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
@@ -60,7 +57,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Stale-While-Revalidate strategy for static resources & app navigation
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request)
@@ -74,7 +70,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // If offline and request is navigation, return cached root/index.html
           if (event.request.mode === 'navigate') {
             return caches.match('/index.html') || caches.match('/');
           }
@@ -84,6 +79,36 @@ self.addEventListener('fetch', (event) => {
       return cachedResponse || fetchPromise;
     })
   );
+});
+
+// Background Sync for offline resiliency
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-posts' || event.tag === 'sync-dhamme-data' || event.tag === 'sync-favorites') {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return fetch('/').then((response) => {
+          if (response && response.status === 200) {
+            return cache.put('/', response);
+          }
+        }).catch((err) => console.warn('Background sync notice:', err));
+      })
+    );
+  }
+});
+
+// Periodic Background Sync for instant updates
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'update-listings' || event.tag === 'dhamme-periodic-refresh') {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return fetch('/manifest.json').then((res) => {
+          if (res && res.status === 200) {
+            return cache.put('/manifest.json', res);
+          }
+        }).catch((err) => console.warn('Periodic sync notice:', err));
+      })
+    );
+  }
 });
 
 // Handle incoming background push notifications

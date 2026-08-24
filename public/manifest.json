@@ -9,8 +9,8 @@
   "scope": "/",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
     "tabbed",
+    "window-controls-overlay",
     "standalone",
     "minimal-ui",
     "browser"
@@ -39,7 +39,16 @@
       "origin": "https://capilorix.store"
     },
     {
+      "origin": "https://*.capilorix.store"
+    },
+    {
+      "origin": "https://accounts.capilorix.store"
+    },
+    {
       "origin": "https://dhamme.app"
+    },
+    {
+      "origin": "https://*.dhamme.app"
     }
   ],
   "launch_handler": {
