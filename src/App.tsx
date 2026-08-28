@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus, AuditActivityLog } from './types';
 import { INITIAL_REGISTERED_ACCOUNTS } from './data/usersData';
 import type { RegisteredAccount } from './data/usersData';
@@ -852,25 +853,51 @@ export function App() {
     <div className="min-h-screen bg-[#FAF9F6] text-[#17191C] font-sans">
       
       {/* 1. Splash Screen */}
-      {currentScreen === 'splash' && (
-        <SplashScreen onStart={() => setCurrentScreen('onboarding')} />
-      )}
+      <AnimatePresence mode="wait">
+        {currentScreen === 'splash' && (
+          <motion.div
+            key="splash-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SplashScreen onStart={() => setCurrentScreen('onboarding')} />
+          </motion.div>
+        )}
 
-      {/* 2. Onboarding Flow */}
-      {currentScreen === 'onboarding' && (
-        <Onboarding onComplete={() => setCurrentScreen('home')} />
-      )}
+        {/* 2. Onboarding Flow */}
+        {currentScreen === 'onboarding' && (
+          <motion.div
+            key="onboarding-screen"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Onboarding onComplete={() => setCurrentScreen('home')} />
+          </motion.div>
+        )}
 
-      {/* 3. Dedicated Authentication Full Page */}
-      {isAuthScreen && (
-        <AuthPage
-          initialScreen={currentScreen === 'signup' ? 'signup' : 'login'}
-          registeredAccounts={registeredAccounts}
-          onRegisterAccount={handleRegisterAccount}
-          onLoginSuccess={handleLoginSuccess}
-          onBackToHome={() => setCurrentScreen('home')}
-        />
-      )}
+        {/* 3. Dedicated Authentication Full Page */}
+        {isAuthScreen && (
+          <motion.div
+            key="auth-page-screen"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AuthPage
+              initialScreen={currentScreen === 'signup' ? 'signup' : 'login'}
+              registeredAccounts={registeredAccounts}
+              onRegisterAccount={handleRegisterAccount}
+              onLoginSuccess={handleLoginSuccess}
+              onBackToHome={() => setCurrentScreen('home')}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Layout Header */}
       {currentScreen !== 'splash' && currentScreen !== 'onboarding' && !isAuthScreen && (
@@ -881,146 +908,220 @@ export function App() {
         />
       )}
 
-      {/* Main View Area */}
+      {/* Main View Area with Smooth Page Navigation Transitions */}
       {currentScreen !== 'splash' && currentScreen !== 'onboarding' && !isAuthScreen && (
         <main className="w-full">
-          
-          {/* HOME FEED */}
-          {currentScreen === 'home' && (
-            <HomeFeed
-              properties={properties}
-              onSelectProperty={handleSelectProperty}
-              onOpenFilter={() => setShowFilterModal(true)}
-              favorites={favorites}
-              onToggleFavorite={handleToggleFavorite}
-              onStartPostListing={() => handleNavigateScreen('post_step1')}
-              activeFilter={activeFilter}
-              onUpdateFilter={(newFilter) => setActiveFilter(newFilter)}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            
+            {/* HOME FEED */}
+            {currentScreen === 'home' && (
+              <motion.div
+                key="screen-home"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <HomeFeed
+                  properties={properties}
+                  onSelectProperty={handleSelectProperty}
+                  onOpenFilter={() => setShowFilterModal(true)}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                  onStartPostListing={() => handleNavigateScreen('post_step1')}
+                  activeFilter={activeFilter}
+                  onUpdateFilter={(newFilter) => setActiveFilter(newFilter)}
+                />
+              </motion.div>
+            )}
 
-          {/* LISTING DETAILS */}
-          {currentScreen === 'details' && selectedProperty && (
-            <ListingDetails
-              property={selectedProperty}
-              userProfile={userProfile}
-              onBack={() => setCurrentScreen('home')}
-              isFav={favorites.includes(selectedProperty.id)}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          )}
+            {/* LISTING DETAILS */}
+            {currentScreen === 'details' && selectedProperty && (
+              <motion.div
+                key={`screen-details-${selectedProperty.id}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <ListingDetails
+                  property={selectedProperty}
+                  userProfile={userProfile}
+                  onBack={() => setCurrentScreen('home')}
+                  isFav={favorites.includes(selectedProperty.id)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              </motion.div>
+            )}
 
-          {/* POST LISTING 5-STEP WIZARD (Requires Authentication) */}
-          {currentScreen.startsWith('post_step') && (
-            userProfile ? (
-              <PostListingWizard
-                currentStep={parseInt(currentScreen.replace('post_step', ''), 10) || 1}
-                onNavigateStep={(step) => setCurrentScreen(`post_step${step}` as ScreenName)}
-                onAddProperty={handleAddProperty}
-                onCancel={() => setCurrentScreen('home')}
-              />
-            ) : (
-              <AuthPage
-                initialScreen="login"
-                registeredAccounts={registeredAccounts}
-                onRegisterAccount={handleRegisterAccount}
-                onLoginSuccess={handleLoginSuccess}
-                onBackToHome={() => setCurrentScreen('home')}
-              />
-            )
-          )}
+            {/* POST LISTING 5-STEP WIZARD (Requires Authentication) */}
+            {currentScreen.startsWith('post_step') && (
+              <motion.div
+                key={`screen-post-${currentScreen}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                {userProfile ? (
+                  <PostListingWizard
+                    currentStep={parseInt(currentScreen.replace('post_step', ''), 10) || 1}
+                    onNavigateStep={(step) => setCurrentScreen(`post_step${step}` as ScreenName)}
+                    onAddProperty={handleAddProperty}
+                    onCancel={() => setCurrentScreen('home')}
+                  />
+                ) : (
+                  <AuthPage
+                    initialScreen="login"
+                    registeredAccounts={registeredAccounts}
+                    onRegisterAccount={handleRegisterAccount}
+                    onLoginSuccess={handleLoginSuccess}
+                    onBackToHome={() => setCurrentScreen('home')}
+                  />
+                )}
+              </motion.div>
+            )}
 
-          {/* FAVORITES */}
-          {currentScreen === 'favorites' && (
-            <Favorites
-              favoriteIds={favorites}
-              allProperties={properties}
-              onSelectProperty={handleSelectProperty}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          )}
+            {/* FAVORITES */}
+            {currentScreen === 'favorites' && (
+              <motion.div
+                key="screen-favorites"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <Favorites
+                  favoriteIds={favorites}
+                  allProperties={properties}
+                  onSelectProperty={handleSelectProperty}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              </motion.div>
+            )}
 
-          {/* MY LISTINGS & LANDLORD ANALYTICS DASHBOARD (Requires Authentication) */}
-          {currentScreen === 'my_listings' && (
-            userProfile ? (
-              <MyListings
-                userListings={userListings}
-                onSelectProperty={handleSelectProperty}
-                onStartNewListing={() => handleNavigateScreen('post_step1')}
-                onUpdateStatus={handleUpdatePropertyStatus}
-              />
-            ) : (
-              <AuthPage
-                initialScreen="login"
-                registeredAccounts={registeredAccounts}
-                onRegisterAccount={handleRegisterAccount}
-                onLoginSuccess={handleLoginSuccess}
-                onBackToHome={() => setCurrentScreen('home')}
-              />
-            )
-          )}
+            {/* MY LISTINGS & LANDLORD ANALYTICS DASHBOARD (Requires Authentication) */}
+            {currentScreen === 'my_listings' && (
+              <motion.div
+                key="screen-my-listings"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                {userProfile ? (
+                  <MyListings
+                    userListings={userListings}
+                    onSelectProperty={handleSelectProperty}
+                    onStartNewListing={() => handleNavigateScreen('post_step1')}
+                    onUpdateStatus={handleUpdatePropertyStatus}
+                  />
+                ) : (
+                  <AuthPage
+                    initialScreen="login"
+                    registeredAccounts={registeredAccounts}
+                    onRegisterAccount={handleRegisterAccount}
+                    onLoginSuccess={handleLoginSuccess}
+                    onBackToHome={() => setCurrentScreen('home')}
+                  />
+                )}
+              </motion.div>
+            )}
 
-          {/* MASTER ADMIN DASHBOARD (Strict Master Admin Authorization Gate) */}
-          {currentScreen === 'admin_dashboard' && (
-            (userProfile && (userProfile.isAdmin || userProfile.email?.toLowerCase() === 'magudbeai@gmail.com')) ? (
-              <AdminDashboard
-                properties={properties}
-                registeredAccounts={registeredAccounts}
-                activityLogs={activityLogs}
-                currentUser={userProfile}
-                onSelectProperty={handleSelectProperty}
-                onDeleteProperty={handleDeleteProperty}
-                onUpdateProperty={handleUpdateProperty}
-                onBanUser={handleBanUser}
-                onUnbanUser={handleUnbanUser}
-                onToggleUserVerification={handleToggleUserVerification}
-                onRefreshData={syncDatabaseFull}
-                onExportBackup={() => downloadFullDatabaseBackup({
-                  properties,
-                  users: registeredAccounts,
-                  activityLogs
-                })}
-                onBackToHome={() => setCurrentScreen('home')}
-              />
-            ) : (
-              <AuthPage
-                initialScreen="login"
-                registeredAccounts={registeredAccounts}
-                onRegisterAccount={handleRegisterAccount}
-                onLoginSuccess={handleLoginSuccess}
-                onBackToHome={() => setCurrentScreen('home')}
-              />
-            )
-          )}
+            {/* MASTER ADMIN DASHBOARD (Strict Master Admin Authorization Gate) */}
+            {currentScreen === 'admin_dashboard' && (
+              <motion.div
+                key="screen-admin-dashboard"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                {(userProfile && (userProfile.isAdmin || userProfile.email?.toLowerCase() === 'magudbeai@gmail.com')) ? (
+                  <AdminDashboard
+                    properties={properties}
+                    registeredAccounts={registeredAccounts}
+                    activityLogs={activityLogs}
+                    currentUser={userProfile}
+                    onSelectProperty={handleSelectProperty}
+                    onDeleteProperty={handleDeleteProperty}
+                    onUpdateProperty={handleUpdateProperty}
+                    onBanUser={handleBanUser}
+                    onUnbanUser={handleUnbanUser}
+                    onToggleUserVerification={handleToggleUserVerification}
+                    onRefreshData={syncDatabaseFull}
+                    onExportBackup={() => downloadFullDatabaseBackup({
+                      properties,
+                      users: registeredAccounts,
+                      activityLogs
+                    })}
+                    onBackToHome={() => setCurrentScreen('home')}
+                  />
+                ) : (
+                  <AuthPage
+                    initialScreen="login"
+                    registeredAccounts={registeredAccounts}
+                    onRegisterAccount={handleRegisterAccount}
+                    onLoginSuccess={handleLoginSuccess}
+                    onBackToHome={() => setCurrentScreen('home')}
+                  />
+                )}
+              </motion.div>
+            )}
 
-          {/* PROFILE */}
-          {currentScreen === 'profile' && (
-            <Profile
-              userProfile={userProfile}
-              userListingsCount={userListings.length}
-              onNavigate={handleNavigateScreen}
-              onUpdateProfile={(updated) => {
-                setUserProfile(updated);
-                setRegisteredAccounts((prev) =>
-                  prev.map((acc) => (acc.email === updated.email ? { ...acc, ...updated } : acc))
-                );
-              }}
-              onOpenAuth={() => setCurrentScreen('login')}
-              onLogout={handleLogout}
-              onOpenAI={() => setShowAIModal(true)}
-            />
-          )}
+            {/* PROFILE */}
+            {currentScreen === 'profile' && (
+              <motion.div
+                key="screen-profile"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <Profile
+                  userProfile={userProfile}
+                  userListingsCount={userListings.length}
+                  onNavigate={handleNavigateScreen}
+                  onUpdateProfile={(updated) => {
+                    setUserProfile(updated);
+                    setRegisteredAccounts((prev) =>
+                      prev.map((acc) => (acc.email === updated.email ? { ...acc, ...updated } : acc))
+                    );
+                  }}
+                  onOpenAuth={() => setCurrentScreen('login')}
+                  onLogout={handleLogout}
+                  onOpenAI={() => setShowAIModal(true)}
+                />
+              </motion.div>
+            )}
 
-          {/* PRIVACY POLICY */}
-          {currentScreen === 'privacy' && (
-            <PrivacyPolicy onBack={() => handleNavigateScreen('home')} />
-          )}
+            {/* PRIVACY POLICY */}
+            {currentScreen === 'privacy' && (
+              <motion.div
+                key="screen-privacy"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <PrivacyPolicy onBack={() => handleNavigateScreen('home')} />
+              </motion.div>
+            )}
 
-          {/* TERMS OF SERVICE */}
-          {currentScreen === 'terms' && (
-            <TermsOfService onBack={() => handleNavigateScreen('home')} />
-          )}
+            {/* TERMS OF SERVICE */}
+            {currentScreen === 'terms' && (
+              <motion.div
+                key="screen-terms"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                <TermsOfService onBack={() => handleNavigateScreen('home')} />
+              </motion.div>
+            )}
 
+          </AnimatePresence>
         </main>
       )}
 
@@ -1033,66 +1134,89 @@ export function App() {
       )}
 
       {/* Filter Modal */}
-      {showFilterModal && (
-        <FilterModal
-          initialFilter={activeFilter}
-          onApply={(f) => setActiveFilter(f)}
-          onClose={() => setShowFilterModal(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showFilterModal && (
+          <FilterModal
+            initialFilter={activeFilter}
+            onApply={(f) => setActiveFilter(f)}
+            onClose={() => setShowFilterModal(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Auth Modal (Fallback Popup) */}
-      {showAuthModal && (
-        <AuthModal
-          initialScreen={authScreen}
-          registeredAccounts={registeredAccounts}
-          onRegisterAccount={handleRegisterAccount}
-          onLoginSuccess={handleLoginSuccess}
-          onClose={() => setShowAuthModal(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showAuthModal && (
+          <AuthModal
+            initialScreen={authScreen}
+            registeredAccounts={registeredAccounts}
+            onRegisterAccount={handleRegisterAccount}
+            onLoginSuccess={handleLoginSuccess}
+            onClose={() => setShowAuthModal(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Real Estate AI Modal */}
-      {showAIModal && (
-        <DhammeRealEstateAIModal onClose={() => setShowAIModal(false)} />
-      )}
+      <AnimatePresence>
+        {showAIModal && (
+          <DhammeRealEstateAIModal onClose={() => setShowAIModal(false)} />
+        )}
+      </AnimatePresence>
 
       {/* 10-Minute Session Expiry Notification Modal */}
-      {isLoggedOutDueToInactivity && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111315]/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-xl border border-[#E8E5DF] text-center relative overflow-hidden">
-            <div className="w-16 h-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded-full flex items-center justify-center mx-auto mb-4 text-[#111315]">
-              <span className="material-symbols-outlined text-3xl">timer_off</span>
-            </div>
-            
-            <h3 className="text-xl font-bold font-serif text-[#17191C] mb-2">
-              Session Auto-Logged Out
-            </h3>
-            
-            <p className="text-sm text-[#74777B] mb-6 leading-relaxed">
-              You were logged out after 10 minutes of inactivity or leaving the app to keep your Dhamme account and property listings secure.
-            </p>
+      <AnimatePresence>
+        {isLoggedOutDueToInactivity && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => clearInactivityNotice()}
+              className="fixed inset-0 bg-[#111315]/65 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+              className="relative bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[#E8E5DF] text-center z-10"
+            >
+              <div className="w-16 h-16 bg-[#FAF9F6] border border-[#E8E5DF] rounded-full flex items-center justify-center mx-auto mb-4 text-[#111315]">
+                <span className="material-symbols-outlined text-3xl">timer_off</span>
+              </div>
+              
+              <h3 className="text-xl font-bold font-serif text-[#111315] mb-2">
+                Session Auto-Logged Out
+              </h3>
+              
+              <p className="text-sm text-[#74777B] mb-6 leading-relaxed">
+                You were logged out after 10 minutes of inactivity or leaving the app to keep your Dhamme account and property listings secure.
+              </p>
 
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => {
-                  clearInactivityNotice();
-                  handleNavigateScreen('login');
-                }}
-                className="w-full py-3.5 px-6 bg-[#111315] hover:bg-[#17191C] text-white font-semibold rounded-xl transition-all shadow-xs active:scale-95 text-sm"
-              >
-                Sign Back In
-              </button>
-              <button
-                onClick={() => clearInactivityNotice()}
-                className="w-full py-3 px-6 bg-[#FAF9F6] border border-[#E8E5DF] text-[#74777B] font-medium rounded-xl hover:border-[#111315] transition-all text-sm"
-              >
-                Dismiss
-              </button>
-            </div>
+              <div className="flex flex-col gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                    clearInactivityNotice();
+                    handleNavigateScreen('login');
+                  }}
+                  className="w-full py-3.5 px-6 bg-[#111315] hover:bg-[#22272B] text-white font-semibold rounded-xl transition-all shadow-xs text-sm cursor-pointer"
+                >
+                  Sign Back In
+                </motion.button>
+                <button
+                  onClick={() => clearInactivityNotice()}
+                  className="w-full py-3 px-6 bg-[#FAF9F6] border border-[#E8E5DF] text-[#74777B] font-medium rounded-xl hover:border-[#111315] transition-all text-sm cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
     </div>
   );

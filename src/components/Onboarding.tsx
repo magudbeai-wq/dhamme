@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { DhammeLogo } from './DhammeLogo';
 
 interface OnboardingProps {
@@ -49,7 +50,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-[#FAF9F6] p-6 max-w-lg mx-auto shadow-2xl animate-fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-[#FAF9F6] p-6 max-w-lg mx-auto shadow-2xl overflow-y-auto">
       
       {/* Top Header with Animated Logo & Skip */}
       <div className="flex justify-between items-center pt-2">
@@ -58,56 +59,71 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         <div className="flex items-center space-x-3">
           <div className="flex space-x-1.5">
             {[1, 2, 3].map((i) => (
-              <div 
+              <motion.div 
                 key={i} 
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === step ? 'w-6 bg-[#111315]' : 'w-1.5 bg-[#E8E5DF]'
+                animate={{ width: i === step ? 24 : 6 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                className={`h-1.5 rounded-full ${
+                  i === step ? 'bg-[#111315]' : 'bg-[#E8E5DF]'
                 }`}
               />
             ))}
           </div>
           <button 
             onClick={onComplete}
-            className="text-xs font-semibold text-[#74777B] hover:text-[#17191C]"
+            className="text-xs font-semibold text-[#74777B] hover:text-[#111315] cursor-pointer"
           >
             Kaftan (Skip)
           </button>
         </div>
       </div>
 
-      {/* Hero Image Card */}
+      {/* Hero Image Card with Directional Animation */}
       <div className="my-auto py-4 space-y-6">
-        <div className="relative aspect-[4/3] w-full rounded-3xl overflow-hidden shadow-xs border border-[#E8E5DF] group">
-          <img 
-            src={current.image} 
-            alt={current.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#111315]/60 via-transparent to-transparent" />
-          <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-[#111315] text-[#C8A96B] flex items-center justify-center shadow-xs">
-            <span className="material-symbols-outlined text-[22px]">{current.icon}</span>
-          </div>
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current.id}
+            initial={{ opacity: 0, x: 25 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -25 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            className="space-y-6"
+          >
+            <div className="relative aspect-[4/3] w-full rounded-3xl overflow-hidden shadow-md border border-[#E8E5DF] group">
+              <img 
+                src={current.image} 
+                alt={current.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#111315]/60 via-transparent to-transparent" />
+              <div className="absolute top-4 right-4 w-10 h-10 rounded-2xl bg-[#111315] text-[#C8A96B] flex items-center justify-center shadow-xs">
+                <span className="material-symbols-outlined text-[22px]">{current.icon}</span>
+              </div>
+            </div>
 
-        <div className="text-center space-y-2 px-2">
-          <h2 className="font-serif text-2xl font-bold text-[#17191C]">
-            {current.titleSo}
-          </h2>
-          <p className="text-xs text-[#74777B] leading-relaxed max-w-sm mx-auto font-normal">
-            {current.descSo}
-          </p>
-        </div>
+            <div className="text-center space-y-2 px-2">
+              <h2 className="font-serif text-2xl font-bold text-[#111315]">
+                {current.titleSo}
+              </h2>
+              <p className="text-xs text-[#74777B] leading-relaxed max-w-sm mx-auto font-normal">
+                {current.descSo}
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Controls */}
       <div className="space-y-3 pb-4">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.96 }}
           onClick={handleNext}
-          className="w-full py-4 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-sm shadow-xs transition-all active:scale-95 flex items-center justify-center space-x-2"
+          className="w-full py-4 rounded-2xl bg-[#111315] hover:bg-[#22272B] text-white font-sans font-semibold text-sm shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
         >
           <span>{step === 3 ? 'Biloow (Get Started)' : 'Sii Soco (Next)'}</span>
           <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </button>
+        </motion.button>
       </div>
 
     </div>

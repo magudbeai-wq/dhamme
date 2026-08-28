@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { PropertyListing, FilterState, ListingMode, PropertyCategory } from '../types';
 import { MapView } from './MapView';
 
@@ -24,6 +25,26 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round((R * c) * 10) / 10;
 }
+
+const gridContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.07,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const cardItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: 'easeOut' as const }
+  }
+};
 
 export const HomeFeed: React.FC<HomeFeedProps> = ({
   properties,
@@ -164,13 +185,16 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
       .sort((a, b) => (a.calculatedDistKm ?? 999) - (b.calculatedDistKm ?? 999));
   }
 
-
   return (
-    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 animate-fade-in space-y-8">
+    <main className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 pt-4 pb-28 space-y-8">
       
       {/* LUXURY PHOTOGRAPHY-FIRST HERO BANNER */}
-      <section className="relative w-full rounded-3xl overflow-hidden shadow-sm border border-[#E8E5DF] group">
-        
+      <motion.section 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="relative w-full rounded-3xl overflow-hidden shadow-md border border-[#E8E5DF] group"
+      >
         {/* Full-bleed Photography Container */}
         <div className="relative aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden bg-[#111315]">
           <img
@@ -180,8 +204,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
           />
 
           {/* Dark Gradient Overlay for Text Legibility */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#111315]/90 via-[#111315]/50 to-[#111315]/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#111315]/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111315]/95 via-[#111315]/50 to-[#111315]/25" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#111315]/85 via-transparent to-transparent" />
 
           {/* Hero Content Overlay */}
           <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-between z-10">
@@ -192,26 +216,38 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
                 📍 JIGJIGA REAL ESTATE MARKETPLACE
               </span>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleRequestLiveGps}
                 disabled={gpsLoading}
-                className="hidden sm:flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-md hover:bg-white/20 transition"
+                className="hidden sm:flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-md hover:bg-white/20 transition cursor-pointer"
               >
                 <span className={`material-symbols-outlined text-[16px] text-[#C8A96B] ${gpsLoading ? 'animate-spin' : ''}`}>
                   {gpsLoading ? 'sync' : 'my_location'}
                 </span>
                 <span>{gpsLoading ? 'Navigating GPS...' : userGps ? '📍 Live GPS Active' : gpsError ? '📍 GPS Offline' : '📍 GPS Near Me'}</span>
-              </button>
+              </motion.button>
             </div>
 
             {/* Middle Serif Headline */}
             <div className="space-y-2 max-w-2xl text-left">
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight">
+              <motion.h1 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight"
+              >
                 DHamme ayaa kuu dhamaystiraya
-              </h1>
-              <p className="text-xs sm:text-sm text-[#FAF9F6]/80 font-sans max-w-lg leading-relaxed font-normal">
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-xs sm:text-sm text-[#FAF9F6]/80 font-sans max-w-lg leading-relaxed font-normal"
+              >
                 Kirayso ama Iibso guryaha ugu casrisan ee Jigjiga. Discover extraordinary homes in the Somali Region.
-              </p>
+              </motion.p>
             </div>
 
             {/* Single Elegant Unified Search Card */}
@@ -219,45 +255,53 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
               <div className="bg-white/95 backdrop-blur-md rounded-2xl p-2 sm:p-2.5 border border-[#E8E5DF] shadow-xl flex flex-col sm:flex-row items-center gap-2">
                 
                 {/* Search Query Input */}
-                <div className="flex-1 w-full flex items-center space-x-2 px-3 py-2 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF]">
+                <div className="flex-1 w-full flex items-center space-x-2 px-3 py-2 bg-[#FAF9F6] rounded-xl border border-[#E8E5DF] focus-within:border-[#C8A96B] focus-within:bg-white transition-all">
                   <span className="material-symbols-outlined text-[#74777B] text-[20px]">search</span>
                   <input
                     type="text"
                     placeholder="Raadi Kebele (Kebele 06 Garab'ase, Kebele 03 Taiwan, Kebele 08)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-transparent text-xs font-sans text-[#17191C] placeholder-[#74777B] focus:outline-none"
+                    className="w-full bg-transparent text-xs font-sans text-[#111315] placeholder-[#74777B] focus:outline-none"
                   />
                   {searchQuery && (
-                    <button onClick={() => setSearchQuery('')} className="text-[#74777B] hover:text-[#111315]">
+                    <motion.button 
+                      whileTap={{ scale: 0.85 }}
+                      onClick={() => setSearchQuery('')} 
+                      className="text-[#74777B] hover:text-[#111315] cursor-pointer"
+                    >
                       <span className="material-symbols-outlined text-[16px]">close</span>
-                    </button>
+                    </motion.button>
                   )}
                 </div>
 
                 {/* Filter Trigger */}
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={onOpenFilter}
-                  className="px-4 py-2.5 bg-white border border-[#E8E5DF] text-[#17191C] rounded-xl text-xs font-semibold hover:border-[#111315] transition flex items-center space-x-1.5 shrink-0"
+                  className="px-4 py-2.5 bg-white border border-[#E8E5DF] text-[#111315] rounded-xl text-xs font-semibold hover:border-[#C8A96B] transition flex items-center space-x-1.5 shrink-0 cursor-pointer shadow-2xs"
                 >
                   <span className="material-symbols-outlined text-[18px] text-[#74777B]">tune</span>
                   <span>Filters</span>
-                </button>
+                </motion.button>
 
                 {/* Main Unified Search Action CTA Button */}
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => {}}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-[#111315] hover:bg-[#17191C] text-white rounded-xl text-xs font-semibold transition shrink-0 flex items-center justify-center space-x-1.5 shadow-xs"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#111315] hover:bg-[#22272B] text-white rounded-xl text-xs font-semibold transition shrink-0 flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
                 >
                   <span>Raadi (Search)</span>
-                </button>
+                </motion.button>
 
               </div>
             </div>
 
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Mode Toggle & Filter Bar */}
       <section className="space-y-4">
@@ -265,67 +309,99 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-[#E8E5DF] pb-4">
           
           {/* Mode Tabs (Rent/Sale) */}
-          <div className="bg-[#FAF9F6] p-1 rounded-xl flex border border-[#E8E5DF] w-full sm:w-auto">
+          <div className="relative bg-[#FAF9F6] p-1 rounded-xl flex border border-[#E8E5DF] w-full sm:w-auto">
             <button
               onClick={() => handleModeChange('kiro')}
-              className={`py-2 px-5 rounded-lg font-sans font-semibold text-xs transition-all ${
-                activeFilter.mode === 'kiro'
-                  ? 'bg-[#111315] text-white shadow-xs'
-                  : 'text-[#74777B] hover:text-[#17191C]'
+              className={`relative py-2 px-5 rounded-lg font-sans font-semibold text-xs transition-colors cursor-pointer z-10 ${
+                activeFilter.mode === 'kiro' ? 'text-[#111315]' : 'text-[#74777B] hover:text-[#111315]'
               }`}
             >
-              Kiro (Rent)
+              {activeFilter.mode === 'kiro' && (
+                <motion.div
+                  layoutId="homeModeActivePill"
+                  className="absolute inset-0 bg-white rounded-lg shadow-xs border border-[#E8E5DF]"
+                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                />
+              )}
+              <span className="relative z-20">Kiro (Rent)</span>
             </button>
 
             <button
               onClick={() => handleModeChange('iib')}
-              className={`py-2 px-5 rounded-lg font-sans font-semibold text-xs transition-all ${
-                activeFilter.mode === 'iib'
-                  ? 'bg-[#111315] text-white shadow-xs'
-                  : 'text-[#74777B] hover:text-[#17191C]'
+              className={`relative py-2 px-5 rounded-lg font-sans font-semibold text-xs transition-colors cursor-pointer z-10 ${
+                activeFilter.mode === 'iib' ? 'text-[#111315]' : 'text-[#74777B] hover:text-[#111315]'
               }`}
             >
-              Iib (Sale)
+              {activeFilter.mode === 'iib' && (
+                <motion.div
+                  layoutId="homeModeActivePill"
+                  className="absolute inset-0 bg-white rounded-lg shadow-xs border border-[#E8E5DF]"
+                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                />
+              )}
+              <span className="relative z-20">Iib (Sale)</span>
             </button>
           </div>
 
           {/* Category Chips */}
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto">
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto py-1">
             {categories.map((cat) => {
               const isSelected = activeFilter.category === cat;
               return (
-                <button
+                <motion.button
                   key={cat}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleCategoryChange(cat)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
                     isSelected
-                      ? 'bg-[#111315] text-white font-semibold'
-                      : 'bg-white text-[#74777B] border border-[#E8E5DF] hover:border-[#111315] hover:text-[#17191C]'
+                      ? 'text-white font-semibold'
+                      : 'bg-white text-[#74777B] border border-[#E8E5DF] hover:border-[#111315] hover:text-[#111315]'
                   }`}
                 >
-                  {cat}
-                </button>
+                  {isSelected && (
+                    <motion.div
+                      layoutId="categoryHighlight"
+                      className="absolute inset-0 bg-[#111315] rounded-full shadow-xs -z-10"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <span>{cat}</span>
+                </motion.button>
               );
             })}
           </div>
 
           {/* Format Toggle (List / Map) */}
-          <div className="flex items-center bg-white p-1 rounded-xl border border-[#E8E5DF]">
+          <div className="flex items-center bg-white p-1 rounded-xl border border-[#E8E5DF] shadow-2xs">
             <button
               onClick={() => setViewFormat('list')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                viewFormat === 'list' ? 'bg-[#111315] text-white' : 'text-[#74777B]'
+              className={`relative px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                viewFormat === 'list' ? 'text-white font-semibold' : 'text-[#74777B]'
               }`}
             >
-              Liis
+              {viewFormat === 'list' && (
+                <motion.div
+                  layoutId="viewFormatPill"
+                  className="absolute inset-0 bg-[#111315] rounded-lg shadow-xs -z-10"
+                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                />
+              )}
+              <span>Liis</span>
             </button>
             <button
               onClick={() => setViewFormat('map')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                viewFormat === 'map' ? 'bg-[#111315] text-white' : 'text-[#74777B]'
+              className={`relative px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                viewFormat === 'map' ? 'text-white font-semibold' : 'text-[#74777B]'
               }`}
             >
-              Khariidad
+              {viewFormat === 'map' && (
+                <motion.div
+                  layoutId="viewFormatPill"
+                  className="absolute inset-0 bg-[#111315] rounded-lg shadow-xs -z-10"
+                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                />
+              )}
+              <span>Khariidad</span>
             </button>
           </div>
 
@@ -345,119 +421,147 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({
         </section>
       ) : (
         /* Property Cards Grid */
-        <section className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {filteredProperties.length === 0 ? (
-          <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-[#E8E5DF] p-8 space-y-4 shadow-xs">
-            <div className="w-16 h-16 rounded-full bg-[#FAF9F6] text-[#74777B] flex items-center justify-center mx-auto border border-[#E8E5DF]">
-              <span className="material-symbols-outlined text-[32px]">domain_disabled</span>
-            </div>
-            <h3 className="font-serif text-xl text-[#17191C]">
-              Weli Ma Jirtay Guryo La Soo Dhigay Jigjiga
-            </h3>
-            <p className="text-xs text-[#74777B] max-w-md mx-auto leading-relaxed">
-              Noqo qofka ugu horeeya ee gurigiisa ama dabaq kiro/iib ah Jigjiga ugu soo dhiga DHAMME Real Estate!
-            </p>
-            {onStartPostListing && (
-              <button
-                onClick={onStartPostListing}
-                className="px-6 py-3 rounded-xl bg-[#111315] text-white font-sans font-semibold text-xs shadow-xs hover:bg-[#17191C] transition inline-flex items-center space-x-2"
+        <AnimatePresence mode="wait">
+          {filteredProperties.length === 0 ? (
+            <motion.div 
+              key="empty-state"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="text-center py-20 bg-white rounded-3xl border border-[#E8E5DF] p-8 space-y-4 shadow-sm"
+            >
+              <motion.div 
+                animate={{ y: [0, -6, 0] }}
+                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                className="w-16 h-16 rounded-full bg-[#FAF9F6] text-[#74777B] flex items-center justify-center mx-auto border border-[#E8E5DF]"
               >
-                <span className="material-symbols-outlined text-[18px]">add</span>
-                <span>📍 Soo Dhig Gurigii Ugu Horeeyay (Post First Home)</span>
-              </button>
-            )}
-          </div>
-        ) : (
-          filteredProperties.map((property) => {
-            const isFav = favorites.includes(property.id);
-            const dist = (property as any).calculatedDistKm;
+                <span className="material-symbols-outlined text-[32px]">domain_disabled</span>
+              </motion.div>
+              <h3 className="font-serif text-xl text-[#111315]">
+                Weli Ma Jirtay Guryo La Soo Dhigay Jigjiga
+              </h3>
+              <p className="text-xs text-[#74777B] max-w-md mx-auto leading-relaxed">
+                Noqo qofka ugu horeeya ee gurigiisa ama dabaq kiro/iib ah Jigjiga ugu soo dhiga DHAMME Real Estate!
+              </p>
+              {onStartPostListing && (
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={onStartPostListing}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#111315] to-[#22272B] text-white font-sans font-semibold text-xs shadow-md transition inline-flex items-center space-x-2 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                  <span>📍 Soo Dhig Gurigii Ugu Horeeyay (Post First Home)</span>
+                </motion.button>
+              )}
+            </motion.div>
+          ) : (
+            <motion.section
+              key="properties-grid"
+              variants={gridContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+            >
+              {filteredProperties.map((property) => {
+                const isFav = favorites.includes(property.id);
+                const dist = (property as any).calculatedDistKm;
 
-            return (
-              <article
-                key={property.id}
-                onClick={() => onSelectProperty(property)}
-                className="bg-white rounded-3xl overflow-hidden listing-card-shadow border border-[#E8E5DF] flex flex-col group cursor-pointer"
-              >
-                {/* 4:3 Ratio Dominant Image */}
-                <div className="relative aspect-[4/3] w-full bg-[#FAF9F6] overflow-hidden">
-                  <img
-                    src={property.images[0]}
-                    alt={property.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    loading="lazy"
-                  />
-
-                  {/* Subtle Top-Left Verified Badge */}
-                  <div className="absolute top-3 left-3 z-10 flex items-center space-x-1.5">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#4A7A63] text-white shadow-xs backdrop-blur-md flex items-center space-x-1">
-                      <span className="material-symbols-outlined text-[12px]">verified</span>
-                      <span>Verified</span>
-                    </span>
-
-                    {property.videoUrl && (
-                      <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-white rounded-full text-[10px] font-medium flex items-center space-x-1">
-                        <span className="material-symbols-outlined text-[12px]">videocam</span>
-                        <span>Tour</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Subtle Circular Favorite Icon Top-Right */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleFavorite(property.id);
-                    }}
-                    className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xs hover:scale-110 active:scale-95 transition z-10"
-                    title={isFav ? 'Remove Favorite' : 'Add Favorite'}
+                return (
+                  <motion.article
+                    key={property.id}
+                    variants={cardItemVariants}
+                    whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                    onClick={() => onSelectProperty(property)}
+                    className="bg-white rounded-3xl overflow-hidden listing-card-shadow border border-[#E8E5DF] hover:border-[#C8A96B]/50 flex flex-col group cursor-pointer transition-colors"
                   >
-                    <span className={`material-symbols-outlined text-[18px] ${isFav ? 'fill-1 text-[#111315]' : 'text-[#74777B]'}`}>
-                      favorite
-                    </span>
-                  </button>
+                    {/* 4:3 Ratio Dominant Image */}
+                    <div className="relative aspect-[4/3] w-full bg-[#FAF9F6] overflow-hidden">
+                      <img
+                        src={property.images[0]}
+                        alt={property.title}
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                        loading="lazy"
+                      />
 
-                </div>
+                      {/* Subtle Top-Left Verified Badge */}
+                      <div className="absolute top-3 left-3 z-10 flex items-center space-x-1.5">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#4A7A63] text-white shadow-xs backdrop-blur-md flex items-center space-x-1">
+                          <span className="material-symbols-outlined text-[12px]">verified</span>
+                          <span>Verified</span>
+                        </span>
 
-                {/* Clean Text Block Below */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                  <div>
-                    <div className="flex justify-between items-baseline">
-                      <span className="text-[11px] font-semibold text-[#74777B] uppercase tracking-wider">
-                        {property.city}, {property.kebele}
-                      </span>
-                      <span className="font-serif font-bold text-lg text-[#17191C]">
-                        {property.priceLocalFormatted}
-                      </span>
+                        {property.videoUrl && (
+                          <motion.span 
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                            className="px-2.5 py-1 bg-black/70 backdrop-blur-md text-white rounded-full text-[10px] font-medium flex items-center space-x-1"
+                          >
+                            <span className="material-symbols-outlined text-[12px] text-[#C8A96B]">videocam</span>
+                            <span>Tour</span>
+                          </motion.span>
+                        )}
+                      </div>
+
+                      {/* Circular Favorite Icon Top-Right */}
+                      <motion.button
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.85 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleFavorite(property.id);
+                        }}
+                        className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-md z-10 cursor-pointer"
+                        title={isFav ? 'Remove Favorite' : 'Add Favorite'}
+                      >
+                        <span className={`material-symbols-outlined text-[18px] transition-colors ${isFav ? 'fill-1 text-red-500' : 'text-[#74777B]'}`}>
+                          favorite
+                        </span>
+                      </motion.button>
+
                     </div>
 
-                    <h3 className="font-sans text-sm font-semibold text-[#17191C] leading-snug group-hover:text-[#C8A96B] transition-colors line-clamp-1 mt-1">
-                      {property.title}
-                    </h3>
-                  </div>
+                    {/* Clean Text Block Below */}
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                      <div>
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-[11px] font-semibold text-[#74777B] uppercase tracking-wider">
+                            {property.city}, {property.kebele}
+                          </span>
+                          <span className="font-serif font-bold text-lg text-[#111315] group-hover:text-[#C8A96B] transition-colors">
+                            {property.priceLocalFormatted}
+                          </span>
+                        </div>
 
-                  {/* Clean Spec Line */}
-                  <div className="pt-2 border-t border-[#E8E5DF] flex items-center justify-between text-xs text-[#74777B]">
-                    <div className="flex items-center space-x-3">
-                      <span>{property.beds} Beds</span>
-                      <span>•</span>
-                      <span>{property.baths} Baths</span>
-                      <span>•</span>
-                      <span>{property.areaSqm} m²</span>
+                        <h3 className="font-sans text-sm font-semibold text-[#111315] leading-snug line-clamp-1 mt-1">
+                          {property.title}
+                        </h3>
+                      </div>
+
+                      {/* Clean Spec Line */}
+                      <div className="pt-2 border-t border-[#E8E5DF] flex items-center justify-between text-xs text-[#74777B]">
+                        <div className="flex items-center space-x-3">
+                          <span>{property.beds} Beds</span>
+                          <span>•</span>
+                          <span>{property.baths} Baths</span>
+                          <span>•</span>
+                          <span>{property.areaSqm} m²</span>
+                        </div>
+
+                        {dist !== undefined && (
+                          <span className="text-[10px] font-semibold text-[#4A7A63] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                            {dist} km
+                          </span>
+                        )}
+                      </div>
+
                     </div>
-
-                    {dist !== undefined && (
-                      <span className="text-[10px] font-medium text-[#4A7A63]">
-                        {dist} km
-                      </span>
-                    )}
-                  </div>
-
-                </div>
-              </article>
-            );
-          })
-        )}
-      </section>
+                  </motion.article>
+                );
+              })}
+            </motion.section>
+          )}
+        </AnimatePresence>
       )}
 
     </main>
