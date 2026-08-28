@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { SignIn, SignUp, useSignIn } from '@clerk/clerk-react';
 import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
-
 import { supabase } from '../../services/supabaseClient';
 
 interface AuthModalProps {
@@ -21,33 +19,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLoginSuccess,
   onClose
 }) => {
-  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
-  const [authMode, setAuthMode] = useState<'local' | 'clerk'>('local');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     try {
       setIsGoogleLoading(true);
       setErrorMsg('');
-
-      // Try Supabase Google OAuth
       supabase.auth.signInWithGoogle();
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
-      if (isSignInLoaded && signIn && (signIn as any).authenticateWithRedirect) {
-        await signIn.authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: window.location.origin,
-          redirectUrlComplete: window.location.origin,
-        });
-      } else {
-        window.location.href = screen === 'signup' 
-          ? 'https://accounts.capilorix.store/sign-up' 
-          : 'https://accounts.capilorix.store/sign-in';
-      }
-    } finally {
-      setTimeout(() => setIsGoogleLoading(false), 3000);
+      setErrorMsg('Google Sign-In connection failed. Please try Email Login.');
+      setIsGoogleLoading(false);
     }
   };
   
@@ -230,32 +213,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <div className="flex-1 h-px bg-[#E8E5DF]" />
         </div>
 
-        {/* Auth Mode Toggle */}
-        <div className="flex bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF]">
-          <button
-            type="button"
-            onClick={() => setAuthMode('local')}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              authMode === 'local'
-                ? 'bg-[#111315] text-white shadow-xs'
-                : 'text-[#74777B] hover:text-[#17191C]'
-            }`}
-          >
-            📝 Direct Auth
-          </button>
-          <button
-            type="button"
-            onClick={() => setAuthMode('clerk')}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              authMode === 'clerk'
-                ? 'bg-[#111315] text-white shadow-xs'
-                : 'text-[#74777B] hover:text-[#17191C]'
-            }`}
-          >
-            🔒 Clerk Auth
-          </button>
-        </div>
-
         {errorMsg && (
           <div className="p-3 bg-[#A8453F]/10 text-[#A8453F] rounded-xl text-xs font-medium border border-[#A8453F]/30">
             {errorMsg}
@@ -268,8 +225,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
-        {/* LOCAL FORM AUTHENTICATION */}
-        {authMode === 'local' && screen === 'login' && (
+        {/* LOGIN SCREEN */}
+        {screen === 'login' && (
           <form onSubmit={handleLogin} className="space-y-3.5 text-left">
             <div className="text-center pt-1">
               <h3 className="font-serif font-bold text-xl text-[#17191C]">
@@ -310,7 +267,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95"
+              className="w-full py-3.5 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               Soo Gal (Login)
             </button>
@@ -323,7 +280,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setErrorMsg('');
                   setScreen('signup');
                 }} 
-                className="text-[#111315] font-semibold underline"
+                className="text-[#111315] font-semibold underline cursor-pointer"
               >
                 Sameey Koonto (Sign Up)
               </button>
@@ -332,7 +289,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         )}
 
         {/* SIGN UP SCREEN */}
-        {authMode === 'local' && screen === 'signup' && (
+        {screen === 'signup' && (
           <form onSubmit={handleSignUp} className="space-y-3 text-left">
             <div className="text-center pt-1">
               <h3 className="font-serif font-bold text-xl text-[#17191C]">
@@ -401,7 +358,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95"
+              className="w-full py-3.5 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               Abuur Koonto (Sign Up)
             </button>
@@ -414,34 +371,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setErrorMsg('');
                   setScreen('login');
                 }} 
-                className="text-[#111315] font-semibold underline"
+                className="text-[#111315] font-semibold underline cursor-pointer"
               >
                 Soo Gal (Login)
               </button>
             </div>
           </form>
-        )}
-
-        {/* CLERK AUTHENTICATION */}
-        {authMode === 'clerk' && (
-          <div className="py-2 flex flex-col items-center justify-center space-y-4 w-full">
-            <div className="w-full overflow-x-auto flex justify-center">
-              {screen === 'login' ? (
-                <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-              ) : (
-                <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-              )}
-            </div>
-
-            <a
-              href={screen === 'signup' ? 'https://accounts.capilorix.store/sign-up' : 'https://accounts.capilorix.store/sign-in'}
-              target="_self"
-              className="text-xs font-semibold text-[#111315] hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF]"
-            >
-              <span>🔗 Open Clerk Hosted Authentication Portal</span>
-              <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-            </a>
-          </div>
         )}
 
       </div>

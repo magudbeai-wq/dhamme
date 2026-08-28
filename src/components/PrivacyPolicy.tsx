@@ -43,7 +43,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
           <h2 className="text-base font-bold text-slate-900">2. Information We Collect</h2>
           <p>We collect information that identifies, relates to, or describes you ("Personal Information"), including:</p>
           <ul className="list-disc pl-5 space-y-1.5">
-            <li><strong>Account Information:</strong> Name, email address, phone number, and profile avatar when registering or using Google OAuth / Clerk Authentication.</li>
+            <li><strong>Account Information:</strong> Name, email address, phone number, and profile avatar when registering or using Google OAuth / Email Authentication.</li>
             <li><strong>Google User Data:</strong> When you log in via Google Sign-In, we request access to your primary email address, full name, and profile picture to authenticate your identity.</li>
             <li><strong>Property Listing Data:</strong> Titles, descriptions, images, prices, locations (Jigjiga, Kebeles), and contact information provided by landlords and agents.</li>
             <li><strong>Usage & Device Information:</strong> IP addresses, browser types, device identifiers, and pages visited for security and performance optimization.</li>
@@ -64,7 +64,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
         <section className="space-y-3 text-sm text-slate-600 leading-relaxed">
           <h2 className="text-base font-bold text-slate-900">4. Data Sharing and Protection</h2>
           <p>
-            We do not sell, rent, or trade your personal information to third parties. We share data only with service providers required for operating our platform (e.g., Clerk Auth, Supabase DB, Vercel hosting) under strict confidentiality agreements.
+            We do not sell, rent, or trade your personal information to third parties. We share data only with service providers required for operating our platform (e.g., Supabase Cloud DB, Vercel hosting) under strict confidentiality agreements.
           </p>
         </section>
 

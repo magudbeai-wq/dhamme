@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { SignIn, SignUp, useSignIn } from '@clerk/clerk-react';
 import type { UserProfile } from '../../types';
 import type { RegisteredAccount } from '../../data/usersData';
 import { DhammeLogo } from '../DhammeLogo';
-
 import { supabase } from '../../services/supabaseClient';
 
 interface AuthPageProps {
@@ -21,9 +19,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   onLoginSuccess,
   onBackToHome
 }) => {
-  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
   const [screen, setScreen] = useState<'login' | 'signup' | 'forgot_password'>(initialScreen);
-  const [authMode, setAuthMode] = useState<'local' | 'clerk'>('local');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Form State
@@ -38,28 +34,15 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     return /\S+@\S+\.\S+/.test(emailStr);
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     try {
       setIsGoogleLoading(true);
       setErrorMsg('');
-
-      // 1. Try Supabase Google OAuth
       supabase.auth.signInWithGoogle();
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
-      if (isSignInLoaded && signIn && (signIn as any).authenticateWithRedirect) {
-        await signIn.authenticateWithRedirect({
-          strategy: 'oauth_google',
-          redirectUrl: window.location.origin,
-          redirectUrlComplete: window.location.origin,
-        });
-      } else {
-        window.location.href = screen === 'signup' 
-          ? 'https://accounts.capilorix.store/sign-up' 
-          : 'https://accounts.capilorix.store/sign-in';
-      }
-    } finally {
-      setTimeout(() => setIsGoogleLoading(false), 3000);
+      setErrorMsg('Google Sign-In connection failed. Please try Email Login.');
+      setIsGoogleLoading(false);
     }
   };
 
@@ -183,31 +166,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] pb-16 pt-4 px-4 sm:px-6">
-      
-      {/* TOP BAR */}
-      <div className="max-w-lg mx-auto flex items-center justify-between py-4 mb-4 border-b border-[#E8E5DF]">
+    <div className="min-h-[85vh] flex flex-col justify-center items-center px-4 py-8 bg-[#FAF9F6] animate-fade-in">
+      <div className="bg-white max-w-md w-full p-6 sm:p-8 rounded-3xl shadow-sm space-y-5 text-center relative border border-[#E8E5DF]">
+        
+        {/* Back to Marketplace Button */}
         <button
           onClick={onBackToHome}
-          className="flex items-center space-x-2 text-sm font-semibold text-[#111315] hover:text-[#17191C] transition"
+          className="absolute left-6 top-6 text-xs text-[#74777B] hover:text-[#17191C] font-semibold flex items-center gap-1 active:scale-95 transition"
         >
-          <span className="material-symbols-outlined">arrow_back</span>
-          <span>U noqo Guriga (Home)</span>
+          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span>Suuqa (Home)</span>
         </button>
 
-        <DhammeLogo variant="sm" animated={false} showSubtitle={false} />
-      </div>
-
-      {/* DEDICATED AUTH CARD */}
-      <div className="max-w-md mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-[#E8E5DF] space-y-6 text-center">
-        
-        <div className="space-y-1">
-          <h1 className="font-serif text-2xl font-bold text-[#17191C]">
-            {screen === 'login' ? 'Soo Gal Koontadaada' : screen === 'signup' ? 'Sameey Koonto Cusub' : 'Dib u hel Password-ka'}
-          </h1>
-          <p className="text-xs text-[#74777B]">
-            DHAMME Real Estate • Jigjiga Somali Region
-          </p>
+        {/* Header Logo */}
+        <div className="pt-4 flex justify-center">
+          <DhammeLogo variant="md" animated={true} showSubtitle={true} />
         </div>
 
         {/* Google OAuth Direct Button */}
@@ -215,9 +188,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isGoogleLoading}
-          className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-[#FAF9F6] border border-[#E8E5DF] text-[#17191C] font-sans font-semibold text-sm flex items-center justify-center gap-3 shadow-xs hover:border-[#111315] transition-all active:scale-95 disabled:opacity-50"
+          className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-[#FAF9F6] border border-[#E8E5DF] text-[#17191C] font-sans font-semibold text-xs flex items-center justify-center gap-3 shadow-xs hover:border-[#111315] transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -235,262 +208,180 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
             />
           </svg>
-          <span>{isGoogleLoading ? 'Waa la fasaxayaa...' : 'Ku Soo Gal Google (Google Sign-In)'}</span>
+          {isGoogleLoading ? 'Connecting Google...' : 'Ku Soo Gal Google (Google Sign-In)'}
         </button>
 
-        <div className="relative flex py-1 items-center">
-          <div className="flex-grow border-t border-[#E8E5DF]"></div>
-          <span className="flex-shrink mx-4 text-xs font-semibold text-[#74777B] uppercase tracking-wider">AMA (OR)</span>
-          <div className="flex-grow border-t border-[#E8E5DF]"></div>
+        <div className="flex items-center gap-2 my-1">
+          <div className="flex-1 h-px bg-[#E8E5DF]" />
+          <span className="text-[10px] text-[#74777B] uppercase font-medium">ama Gmail / Email</span>
+          <div className="flex-1 h-px bg-[#E8E5DF]" />
         </div>
 
-        {/* Mode Selector */}
-        <div className="grid grid-cols-2 gap-2 bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E5DF]">
-          <button
-            type="button"
-            onClick={() => setAuthMode('local')}
-            className={`py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1 ${
-              authMode === 'local' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#74777B]'
-            }`}
-          >
-            <span>📝 Direct Auth</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setAuthMode('clerk')}
-            className={`py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1 ${
-              authMode === 'clerk' ? 'bg-[#111315] text-white shadow-xs' : 'text-[#74777B]'
-            }`}
-          >
-            <span>🔒 Clerk Auth</span>
-          </button>
-        </div>
-
-        {/* Error / Success Alerts */}
         {errorMsg && (
-          <div className="p-3 bg-[#A8453F]/10 border border-[#A8453F]/30 text-[#A8453F] rounded-xl text-xs font-semibold">
+          <div className="p-3.5 bg-[#A8453F]/10 text-[#A8453F] rounded-xl text-xs font-medium border border-[#A8453F]/30 text-left">
             {errorMsg}
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 bg-[#4A7A63]/10 border border-[#4A7A63]/30 text-[#4A7A63] rounded-xl text-xs font-semibold">
+          <div className="p-3.5 bg-[#4A7A63]/10 text-[#4A7A63] rounded-xl text-xs font-semibold border border-[#4A7A63]/30 text-left">
             {successMsg}
           </div>
         )}
 
-        {/* DIRECT FORM AUTHENTICATION */}
-        {authMode === 'local' && (
-          <div>
-            {screen === 'login' && (
-              <form onSubmit={handleLogin} className="space-y-4 text-left">
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Gmail / Email:
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="magacaaga@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Password-ka:
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <div className="text-right">
-                  <button
-                    type="button"
-                    onClick={() => setScreen('forgot_password')}
-                    className="text-xs text-[#111315] font-semibold hover:underline"
-                  >
-                    Ma harawday Password-ka?
-                  </button>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3.5 rounded-xl bg-[#111315] text-white font-semibold text-sm shadow-xs hover:bg-[#17191C] transition"
-                >
-                  Soo Gal (Login)
-                </button>
-              </form>
-            )}
-
-            {screen === 'signup' && (
-              <form onSubmit={handleSignUp} className="space-y-4 text-left">
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Magacaaga Buuxa:
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Axmed Cali Maxamed"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Gmail / Email:
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="magacaaga@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Telefoonka:
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="e.g. +251 91 500 0000"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Password Cusub:
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3.5 rounded-xl bg-[#111315] text-white font-semibold text-sm shadow-xs hover:bg-[#17191C] transition"
-                >
-                  Sameey Koonto (Sign Up)
-                </button>
-              </form>
-            )}
-
-            {screen === 'forgot_password' && (
-              <div className="space-y-4 text-left">
-                <p className="text-xs text-[#74777B]">
-                  Soo gali Gmail-kaaga si aan kuugu soo dirno nambar ama link aad ku badasho password-ka.
-                </p>
-                <div>
-                  <label className="block text-xs font-semibold text-[#74777B] mb-1">
-                    Gmail / Email:
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="magacaaga@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-sm font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!validateEmail(email)) {
-                      setErrorMsg('Fadlan qor Gmail sax ah.');
-                      return;
-                    }
-                    setSuccessMsg('Fariin waa loo diray Gmail-kaaga. Fadlan eeg inbox-kaaga.');
-                  }}
-                  className="w-full py-3.5 rounded-xl bg-[#111315] text-white font-semibold text-sm shadow-xs hover:bg-[#17191C] transition"
-                >
-                  Soo Dir Link-ga (Reset Password)
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* CLERK AUTHENTICATION */}
-        {authMode === 'clerk' && (
-          <div className="py-2 flex flex-col items-center justify-center space-y-4 w-full">
-            <div className="w-full overflow-x-auto flex justify-center">
-              {screen === 'login' ? (
-                <SignIn routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-              ) : (
-                <SignUp routing="virtual" appearance={{ elements: { footer: { display: 'none' } } }} />
-              )}
+        {/* LOGIN SCREEN */}
+        {screen === 'login' && (
+          <form onSubmit={handleLogin} className="space-y-4 text-left">
+            <div className="text-center pt-1">
+              <h3 className="font-serif font-bold text-xl text-[#17191C]">
+                Soo Gal (Login)
+              </h3>
+              <p className="text-xs text-[#74777B]">
+                Geli Gmail-ka aad ku sameysatay koontada iyo Password-ka.
+              </p>
             </div>
 
-            <a
-              href={screen === 'signup' ? 'https://accounts.capilorix.store/sign-up' : 'https://accounts.capilorix.store/sign-in'}
-              target="_self"
-              className="text-xs font-semibold text-[#111315] hover:underline flex items-center justify-center gap-1 py-2 px-4 rounded-xl bg-[#FAF9F6] border border-[#E8E5DF]"
-            >
-              <span>🔗 Open Clerk Hosted Authentication Portal</span>
-              <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-            </a>
-          </div>
-        )}
+            <div>
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                Gmail / Email:
+              </label>
+              <input
+                type="email"
+                required
+                placeholder="magacaaga@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
+              />
+            </div>
 
-        {/* Footer Toggle links */}
-        <div className="pt-2 border-t border-[#E8E5DF] text-xs text-[#74777B]">
-          {screen === 'login' ? (
-            <p>
-              Miyaanad lahayn koonto?{' '}
-              <button
+            <div>
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                Password:
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-4 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95 cursor-pointer"
+            >
+              Soo Gal (Login)
+            </button>
+
+            <div className="text-center text-xs text-[#74777B] pt-2">
+              Ma lehid koonto?{' '}
+              <button 
                 type="button"
                 onClick={() => {
-                  setScreen('signup');
                   setErrorMsg('');
-                  setSuccessMsg('');
-                }}
-                className="font-semibold text-[#111315] hover:underline"
+                  setScreen('signup');
+                }} 
+                className="text-[#111315] font-semibold underline cursor-pointer"
               >
                 Sameey Koonto (Sign Up)
               </button>
-            </p>
-          ) : (
-            <p>
-              Horay ma u lahayd koonto?{' '}
-              <button
+            </div>
+          </form>
+        )}
+
+        {/* SIGN UP SCREEN */}
+        {screen === 'signup' && (
+          <form onSubmit={handleSignUp} className="space-y-3.5 text-left">
+            <div className="text-center pt-1">
+              <h3 className="font-serif font-bold text-xl text-[#17191C]">
+                Sameey Koonto Cusub
+              </h3>
+              <p className="text-xs text-[#74777B]">
+                Geli macluumaadkaaga saxda ah si aad koonto u abuurto.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                Magacaaga Buuxa (Full Name):
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Qor magacaaga Buuxa"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                Gmail / Email Address:
+              </label>
+              <input
+                type="email"
+                required
+                placeholder="magacaaga@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                Phone Number (Ethiopia):
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="+251 9..."
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-[#74777B] uppercase mb-1">
+                Password (Min 6 chars):
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3.5 bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#17191C] border border-[#E8E5DF] focus:border-[#111315] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-4 rounded-xl bg-[#111315] hover:bg-[#17191C] text-white font-sans font-semibold text-xs uppercase shadow-xs transition-all active:scale-95 cursor-pointer"
+            >
+              Abuur Koonto (Sign Up)
+            </button>
+
+            <div className="text-center text-xs text-[#74777B] pt-2">
+              Hadaad leedahay koonto?{' '}
+              <button 
                 type="button"
                 onClick={() => {
-                  setScreen('login');
                   setErrorMsg('');
-                  setSuccessMsg('');
-                }}
-                className="font-semibold text-[#111315] hover:underline"
+                  setScreen('login');
+                }} 
+                className="text-[#111315] font-semibold underline cursor-pointer"
               >
                 Soo Gal (Login)
               </button>
-            </p>
-          )}
-        </div>
+            </div>
+          </form>
+        )}
 
       </div>
     </div>

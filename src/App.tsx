@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useUser, useClerk } from '@clerk/clerk-react';
 import type { ScreenName, PropertyListing, FilterState, UserProfile, ListingStatus, AuditActivityLog } from './types';
 import { INITIAL_REGISTERED_ACCOUNTS } from './data/usersData';
 import type { RegisteredAccount } from './data/usersData';
@@ -33,9 +32,6 @@ const BACKUP_STORAGE_KEYS = [
 ];
 
 export function App() {
-  const { isLoaded: isClerkLoaded, isSignedIn: isClerkSignedIn, user: clerkUser } = useUser();
-  const { signOut: clerkSignOut } = useClerk();
-
   // Register Web Push Service Worker on startup
   useEffect(() => {
     registerServiceWorker();
@@ -175,30 +171,6 @@ export function App() {
     return saved ? JSON.parse(saved) : null;
   });
 
-  // Sync Clerk User state into userProfile
-  useEffect(() => {
-    if (isClerkLoaded && isClerkSignedIn && clerkUser) {
-      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
-      const fullName = clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'Dhamme User';
-      const avatarUrl = clerkUser.imageUrl || '';
-      const phone = clerkUser.primaryPhoneNumber?.phoneNumber || '';
-      const isAdmin = email.toLowerCase() === 'magudbeai@gmail.com';
-
-      const updatedProfile: UserProfile = {
-        id: clerkUser.id,
-        fullName,
-        email,
-        phone,
-        avatarUrl,
-        bio: 'Dhamme Verified User (Clerk Auth)',
-        joinedDate: new Date(clerkUser.createdAt || Date.now()).toISOString().split('T')[0],
-        isAdmin,
-        isVerified: true
-      };
-      setUserProfile(updatedProfile);
-    }
-  }, [isClerkLoaded, isClerkSignedIn, clerkUser]);
-
 
   // Sync Supabase Google OAuth callback from URL hash
   useEffect(() => {
@@ -297,13 +269,14 @@ export function App() {
               category: dbProp.category || 'Family House',
               city: dbProp.city || 'Jigjiga',
               kebele: dbProp.kebele || 'Kebele 06',
-              beds: dbProp.beds || 3,
-              baths: dbProp.baths || 2,
-              areaSqm: dbProp.area_sqm || 180,
-              water: dbProp.water || 'Yes',
-              electricity: dbProp.electricity || '24h',
-              pool: dbProp.pool || 'No',
-              images: dbProp.images?.length > 0 ? dbProp.images : ['/jigjiga-house-1.jpg'],
+              beds: Number(dbProp.beds) || 3,
+              baths: Number(dbProp.baths) || 2,
+              areaSqm: Number(dbProp.area_sqm) || 180,
+              water: dbProp.water ?? 'Yes',
+              electricity: dbProp.electricity ?? '24h',
+              pool: dbProp.pool ?? 'No',
+              isFeatured: dbProp.is_featured ?? true,
+              images: Array.isArray(dbProp.images) && dbProp.images.length > 0 ? dbProp.images : ['https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80'],
               videoUrl: dbProp.video_url || undefined,
               videoThumbnail: dbProp.video_thumbnail || undefined,
               videoDuration: dbProp.video_duration ? Number(dbProp.video_duration) : undefined,
@@ -314,7 +287,13 @@ export function App() {
               agentAvatar: dbProp.agent_avatar || '',
               ownerEmail: dbProp.owner_email || undefined,
               postedDate: dbProp.created_at ? new Date(dbProp.created_at).toISOString().split('T')[0] : '2026-08-01',
-              status: dbProp.status || 'active'
+              gpsCoords: dbProp.gps_coords || undefined,
+              nearDistance: dbProp.near_distance || undefined,
+              lat: dbProp.lat ? Number(dbProp.lat) : undefined,
+              lng: dbProp.lng ? Number(dbProp.lng) : undefined,
+              status: dbProp.status || 'active',
+              viewsCount: dbProp.views_count ? Number(dbProp.views_count) : 1,
+              inquiriesCount: dbProp.inquiries_count ? Number(dbProp.inquiries_count) : 0
             }));
 
           // Merge cloud properties with any local-only drafts
@@ -501,8 +480,22 @@ export function App() {
         beds: updatedProp.beds,
         baths: updatedProp.baths,
         area_sqm: updatedProp.areaSqm,
+        water: String(updatedProp.water),
+        electricity: String(updatedProp.electricity),
+        pool: String(updatedProp.pool),
+        is_featured: updatedProp.isFeatured ?? true,
+        images: updatedProp.images,
+        video_url: updatedProp.videoUrl || null,
+        video_duration: updatedProp.videoDuration || 0,
+        video_status: updatedProp.videoStatus || 'active',
         description: updatedProp.description,
-        status: updatedProp.status,
+        gps_coords: updatedProp.gpsCoords || null,
+        near_distance: updatedProp.nearDistance || null,
+        lat: updatedProp.lat || 9.3524,
+        lng: updatedProp.lng || 42.7961,
+        status: updatedProp.status || 'active',
+        views_count: updatedProp.viewsCount || 1,
+        inquiries_count: updatedProp.inquiriesCount || 0,
         updated_at: new Date().toISOString()
       }], 'id');
     } catch (err) {
@@ -561,16 +554,26 @@ export function App() {
           beds: updatedProp.beds,
           baths: updatedProp.baths,
           area_sqm: updatedProp.areaSqm,
-          description: updatedProp.description,
+          water: String(updatedProp.water),
+          electricity: String(updatedProp.electricity),
+          pool: String(updatedProp.pool),
+          is_featured: updatedProp.isFeatured ?? true,
           images: updatedProp.images,
-          video_url: updatedProp.videoUrl,
-          video_duration: updatedProp.videoDuration,
-          video_status: updatedProp.videoStatus,
+          video_url: updatedProp.videoUrl || null,
+          video_duration: updatedProp.videoDuration || 0,
+          video_status: updatedProp.videoStatus || 'active',
+          description: updatedProp.description,
           agent_name: updatedProp.agentName,
           agent_phone: updatedProp.agentPhone,
           agent_avatar: updatedProp.agentAvatar,
           owner_email: updatedProp.ownerEmail,
+          gps_coords: updatedProp.gpsCoords || null,
+          near_distance: updatedProp.nearDistance || null,
+          lat: updatedProp.lat || 9.3524,
+          lng: updatedProp.lng || 42.7961,
           status: 'active',
+          views_count: 1,
+          inquiries_count: 0,
           created_at: new Date().toISOString()
         }
       ]);
@@ -815,17 +818,11 @@ export function App() {
   };
 
   const handleLogout = () => {
-    if (isClerkSignedIn) {
-      clerkSignOut();
-    }
     setUserProfile(null);
     setCurrentScreen('home');
   };
 
   const handleIdleLogout = () => {
-    if (isClerkSignedIn) {
-      clerkSignOut();
-    }
     setUserProfile(null);
     setCurrentScreen('login'); // Direct navigation to Login page on Idle timeout
 
@@ -838,7 +835,7 @@ export function App() {
 
   // 10-Minute User Inactivity & Background Abandonment Logout Tracker
   const { isLoggedOutDueToInactivity, clearInactivityNotice } = useInactivityLogout({
-    enabled: Boolean(userProfile || isClerkSignedIn),
+    enabled: Boolean(userProfile),
     onLogout: handleIdleLogout
   });
 

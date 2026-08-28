@@ -49,7 +49,7 @@ export const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
         <section className="space-y-3 text-sm text-slate-600 leading-relaxed">
           <h2 className="text-base font-bold text-slate-900">3. Account Registration & User Responsibilities</h2>
           <ul className="list-disc pl-5 space-y-1.5">
-            <li>You must provide accurate and truthful information when creating an account or logging in via Google / Clerk authentication.</li>
+            <li>You must provide accurate and truthful information when creating an account or logging in via Google OAuth / Email authentication.</li>
             <li>You are responsible for maintaining the confidentiality of your login credentials and for all activities under your account.</li>
             <li>Landlords and property posters must ensure that listed properties accurately reflect physical dimensions, price in Ethiopian Birr (ETB), location, and amenities.</li>
             <li>Posting fraudulent, deceptive, offensive, or illegal listings is strictly prohibited and will result in immediate account termination.</li>

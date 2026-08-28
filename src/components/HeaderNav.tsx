@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
 import type { ScreenName, UserProfile } from '../types';
 import { DhammeLogo } from './DhammeLogo';
 import type { Language } from '../i18n/translations';
@@ -165,25 +164,13 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#C8A96B]" />
           </button>
 
-          {/* Clerk User Button / App Profile Avatar */}
-          <SignedIn>
-            <div className="flex items-center space-x-2">
-              <UserButton afterSignOutUrl="/" />
-              <button
-                onClick={() => onNavigate('profile')}
-                className="hidden sm:flex text-xs font-semibold text-[#111315] hover:underline"
-              >
-                Profile
-              </button>
-            </div>
-          </SignedIn>
-
-          <SignedOut>
-            <div 
-              onClick={() => onNavigate('profile')}
-              className="w-9 h-9 rounded-full border border-[#E8E5DF] bg-white flex items-center justify-center overflow-hidden active:scale-95 transition-all cursor-pointer shadow-xs hover:border-[#111315] relative"
-              title="Sign In / Profile"
-            >
+          {/* User Profile Avatar / Sign In */}
+          <button 
+            onClick={() => onNavigate('profile')}
+            className="flex items-center space-x-2 active:scale-95 transition-all cursor-pointer group"
+            title={userProfile ? `Profile (${userProfile.fullName})` : 'Sign In / Profile'}
+          >
+            <div className="w-9 h-9 rounded-full border border-[#E8E5DF] bg-white flex items-center justify-center overflow-hidden shadow-xs group-hover:border-[#111315] transition-colors relative">
               {userProfile?.avatarUrl ? (
                 <img 
                   className="w-full h-full object-cover" 
@@ -196,7 +183,12 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 </span>
               )}
             </div>
-          </SignedOut>
+            {userProfile && (
+              <span className="hidden md:inline text-xs font-semibold text-[#111315] group-hover:underline max-w-[100px] truncate">
+                {userProfile.fullName.split(' ')[0]}
+              </span>
+            )}
+          </button>
 
         </div>
 

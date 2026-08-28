@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { NewListingDraft, PropertyListing, PropertyCategory } from '../types';
 import { JIGJIGA_XAAFADAHA, JIGJIGA_KEBELES } from '../data/jigjigaLocations';
 import { VideoUploadField } from './VideoUploadField';
+import { compressImageFile } from '../utils/imageCompressor';
 
 interface PostListingWizardProps {
   currentStep: number;
@@ -78,24 +79,32 @@ export const PostListingWizard: React.FC<PostListingWizardProps> = ({
     );
   };
 
-  // Image Upload Handler using FileReader (File to Data URL)
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image Upload Handler using High-Performance Client Compressor
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          const resultUrl = reader.result;
-          setDraft((prev) => ({
-            ...prev,
-            images: [...prev.images, resultUrl]
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    for (const file of Array.from(files)) {
+      try {
+        const compressedUrl = await compressImageFile(file);
+        setDraft((prev) => ({
+          ...prev,
+          images: [...prev.images, compressedUrl]
+        }));
+      } catch (err) {
+        console.warn('Image compression fallback:', err);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (typeof reader.result === 'string') {
+            setDraft((prev) => ({
+              ...prev,
+              images: [...prev.images, reader.result as string]
+            }));
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
     e.target.value = '';
   };

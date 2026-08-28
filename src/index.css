@@ -102,12 +102,3 @@ body {
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-/* Hide Clerk Development Mode Footer & Branding */
-.cl-footer,
-.cl-footerAction,
-.cl-dev-mode,
-[class*="cl-footer"],
-[class*="cl-dev-mode"] {
-  display: none !important;
-}
